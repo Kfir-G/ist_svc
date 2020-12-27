@@ -15,7 +15,6 @@ import org.jdom2.input.SAXBuilder;
 
 /**
  * xml工具类
- * @author miklchen
  *
  */
 public class XMLUtil {
