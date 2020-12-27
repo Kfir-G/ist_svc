@@ -1,0 +1,539 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ist.svc.dao.OrderMapper">
+  <resultMap id="BaseResultMap" type="com.ist.svc.domain.Order">
+    <id column="orderid" jdbcType="BIGINT" property="orderid" />
+    <result column="orderno" jdbcType="INTEGER" property="orderno" />
+    <result column="userid" jdbcType="BIGINT" property="userid" />
+    <result column="addressid" jdbcType="BIGINT" property="addressid" />
+    <result column="shopid" jdbcType="INTEGER" property="shopId" />
+    <result column="shopname" jdbcType="VARCHAR" property="shopName" />
+    <result column="status" jdbcType="SMALLINT" property="status" />
+    <result column="sumfee" jdbcType="REAL" property="sumfee" />
+    <result column="discountfee" jdbcType="REAL" property="discountfee" />
+    <result column="couponfee" jdbcType="REAL" property="couponfee" />
+    <result column="deductionfee" jdbcType="REAL" property="deductionfee" />
+    <result column="fee" jdbcType="REAL" property="fee" />
+    <result column="freightFee" jdbcType="REAL" property="freightfee" />
+    <result column="payfee" jdbcType="REAL" property="payfee" />
+    <result column="paytime" jdbcType="TIMESTAMP" property="paytime" />
+    <result column="paytype" jdbcType="SMALLINT" property="paytype" />
+    <result column="transid" jdbcType="VARCHAR" property="transid" />
+    <result column="createtime" jdbcType="TIMESTAMP" property="createtime" />
+    <result column="updatetime" jdbcType="TIMESTAMP" property="updatetime" />
+    <result column="channelid" jdbcType="INTEGER" property="channelid" />
+    <result column="oldUserid" jdbcType="BIGINT" property="olduserid" />
+    <result column="descr" jdbcType="VARCHAR" property="descr" />
+  </resultMap>
+  <resultMap id="BaseResultMapDetail" type="com.ist.svc.domain.Order">
+    <id column="orderid" jdbcType="BIGINT" property="orderid" />
+    <result column="orderno" jdbcType="INTEGER" property="orderno" />
+    <result column="userid" jdbcType="BIGINT" property="userid" />
+    <result column="addressid" jdbcType="BIGINT" property="addressid" />
+    <result column="shopid" jdbcType="INTEGER" property="shopId" />
+    <result column="shopname" jdbcType="VARCHAR" property="shopName" />
+    <result column="amount" jdbcType="INTEGER" property="amount" />
+    <result column="status" jdbcType="SMALLINT" property="status" />
+    <result column="sumfee" jdbcType="REAL" property="sumfee" />
+    <result column="discountfee" jdbcType="REAL" property="discountfee" />
+    <result column="couponfee" jdbcType="REAL" property="couponfee" />
+    <result column="deductionfee" jdbcType="REAL" property="deductionfee" />
+    <result column="fee" jdbcType="REAL" property="fee" />
+    <result column="freightFee" jdbcType="REAL" property="freightfee" />
+    <result column="payfee" jdbcType="REAL" property="payfee" />
+    <result column="paytime" jdbcType="TIMESTAMP" property="paytime" />
+    <result column="paytype" jdbcType="SMALLINT" property="paytype" />
+    <result column="transid" jdbcType="VARCHAR" property="transid" />
+    <result column="createtime" jdbcType="TIMESTAMP" property="createtime" />
+    <result column="updatetime" jdbcType="TIMESTAMP" property="updatetime" />
+    <result column="channelid" jdbcType="INTEGER" property="channelid" />
+    <result column="oldUserid" jdbcType="BIGINT" property="olduserid" />
+    <result column="descr" jdbcType="VARCHAR" property="descr" />
+    <collection property="orderDetails" ofType="com.ist.svc.domain.OrderDetail" javaType="java.util.List">
+      <id column="detailid" jdbcType="BIGINT" property="detailid" />
+      <result column="shopid" jdbcType="INTEGER" property="shopid" />
+      <result column="orderid" jdbcType="BIGINT" property="orderid" />
+      <result column="prodinfoid" jdbcType="INTEGER" property="prodinfoid" />
+      <result column="prodid" jdbcType="INTEGER" property="prodid" />
+      <result column="name" jdbcType="VARCHAR" property="name" />
+      <result column="headimg" jdbcType="VARCHAR" property="headimg" />
+      <result column="spec" jdbcType="VARCHAR" property="spec" />
+      <result column="status" jdbcType="SMALLINT" property="status" />
+      <result column="detailSaleFee" jdbcType="REAL" property="salefee" />
+      <result column="detailAmount" jdbcType="INTEGER" property="amount" />
+      <result column="detailSumfee" jdbcType="REAL" property="sumfee" />
+      <result column="discountid" jdbcType="INTEGER" property="discountid" />
+      <result column="detailDiscountFee" jdbcType="REAL" property="discountfee" />
+      <result column="couponid" jdbcType="INTEGER" property="couponid" />
+      <result column="couponfee" jdbcType="REAL" property="couponfee" />
+      <result column="detailFee" jdbcType="REAL" property="fee" />
+      <result column="detailFreightFee" jdbcType="REAL" property="freightfee" />
+      <result column="delivery" jdbcType="SMALLINT" property="delivery" />
+      <result column="deliveryno" jdbcType="VARCHAR" property="deliveryno" />
+      <result column="detailPayFee" jdbcType="REAL" property="payfee" />
+      <result column="descr" jdbcType="VARCHAR" property="descr" />
+      <result column="safekeep" jdbcType="SMALLINT" property="safekeep" />
+      <result column="safekeepmoney" jdbcType="REAL" property="safekeepmoney" />
+      <result column="transferorderid" jdbcType="BIGINT" property="transferorderid" />
+      <result column="createtime" jdbcType="TIMESTAMP" property="createtime" />
+      <result column="updatetime" jdbcType="TIMESTAMP" property="updatetime" />
+      <result column="reservetime" jdbcType="TIMESTAMP" property="reservetime" />
+      <result column="usetime" jdbcType="TIMESTAMP" property="usetime" />
+    </collection>
+  </resultMap>
+  <sql id="Base_Column_List_Detail">
+    o.orderid,o.orderno,o.shopId,o.shopName,o.userid,o.addressid, o.`status`, o.sumfee, o.discountfee, o.couponfee, o.deductionfee,
+    o.fee, o.freightFee, o.payfee, o.paytime, o.paytype, o.transid, o.createtime, o.updatetime, o.channelid,
+    o.oldUserid, o.descr,od.detailid, od.orderid, od.userid, od.shopid, od.prodinfoid, od.prodid, od.`name`, od.headimg, od.spec, od.`status`,
+    od.salefee as detailSaleFee, od.amount as detailAmount, od.SumFee as detailSumfee, od.discountid, od.discountfee as detailDiscountFee, od.couponid, od.couponfee, od.fee as detailFee, od.freightfee as detailFreightFee,
+    od.delivery, od.deliveryno, od.payfee as detailPayFee, od.descr, od.safekeep, od.safekeepmoney, od.transferorderid, od.createtime,
+    od.updatetime, od.reservetime, od.usetime
+  </sql>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    orderid, orderno, shopId, shopName, userid, addressid, `status`, sumfee, discountfee, couponfee, deductionfee,
+    fee, freightFee, payfee, paytime, paytype, transid, createtime, updatetime, channelid,
+    oldUserid, descr
+  </sql>
+  <select id="selectByExample" parameterType="com.ist.svc.domain.OrderExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from `order`
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from `order`
+    where orderid = #{orderid,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from `order`
+    where orderid = #{orderid,jdbcType=BIGINT}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.ist.svc.domain.OrderExample">
+    delete from `order`
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.ist.svc.domain.Order">
+    <selectKey keyProperty="orderid" order="AFTER" resultType="java.lang.Long">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into order (orderno, userid, addressid,
+      `status`, sumfee, discountfee,
+      couponfee, deductionfee, fee,
+      freightFee, payfee, paytime,
+      paytype, transid, createtime,
+      updatetime, channelid, oldUserid,
+      descr)
+    values (#{orderno,jdbcType=INTEGER}, #{userid,jdbcType=BIGINT}, #{addressid,jdbcType=BIGINT},
+      #{status,jdbcType=SMALLINT}, #{sumfee,jdbcType=REAL}, #{discountfee,jdbcType=REAL},
+      #{couponfee,jdbcType=REAL}, #{deductionfee,jdbcType=REAL}, #{fee,jdbcType=REAL},
+      #{freightfee,jdbcType=REAL}, #{payfee,jdbcType=REAL}, #{paytime,jdbcType=TIMESTAMP},
+      #{paytype,jdbcType=SMALLINT}, #{transid,jdbcType=VARCHAR}, #{createtime,jdbcType=TIMESTAMP},
+      #{updatetime,jdbcType=TIMESTAMP}, #{channelid,jdbcType=INTEGER}, #{olduserid,jdbcType=BIGINT},
+      #{descr,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.ist.svc.domain.Order">
+    <selectKey keyProperty="orderid" order="AFTER" resultType="java.lang.Long">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into `order`
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="orderno != null">
+        orderno,
+      </if>
+      <if test="userid != null">
+        userid,
+      </if>
+      <if test="addressid != null">
+        addressid,
+      </if>
+      <if test="shopId != null">
+        shopid,
+      </if>
+      <if test="shopName != null">
+        shopname,
+      </if>
+      <if test="status != null">
+        `status`,
+      </if>
+      <if test="sumfee != null">
+        sumfee,
+      </if>
+      <if test="discountfee != null">
+        discountfee,
+      </if>
+      <if test="couponfee != null">
+        couponfee,
+      </if>
+      <if test="deductionfee != null">
+        deductionfee,
+      </if>
+      <if test="fee != null">
+        fee,
+      </if>
+      <if test="freightfee != null">
+        freightFee,
+      </if>
+      <if test="payfee != null">
+        payfee,
+      </if>
+      <if test="paytime != null">
+        paytime,
+      </if>
+      <if test="paytype != null">
+        paytype,
+      </if>
+      <if test="transid != null">
+        transid,
+      </if>
+      <if test="createtime != null">
+        createtime,
+      </if>
+      <if test="updatetime != null">
+        updatetime,
+      </if>
+      <if test="channelid != null">
+        channelid,
+      </if>
+      <if test="olduserid != null">
+        oldUserid,
+      </if>
+      <if test="descr != null">
+        descr,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="orderno != null">
+        #{orderno,jdbcType=INTEGER},
+      </if>
+      <if test="userid != null">
+        #{userid,jdbcType=BIGINT},
+      </if>
+      <if test="addressid != null">
+        #{addressid,jdbcType=BIGINT},
+      </if>
+      <if test="shopId != null">
+        #{shopId,jdbcType=INTEGER},
+      </if>
+      <if test="shopName != null">
+        #{shopName,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=SMALLINT},
+      </if>
+      <if test="sumfee != null">
+        #{sumfee,jdbcType=REAL},
+      </if>
+      <if test="discountfee != null">
+        #{discountfee,jdbcType=REAL},
+      </if>
+      <if test="couponfee != null">
+        #{couponfee,jdbcType=REAL},
+      </if>
+      <if test="deductionfee != null">
+        #{deductionfee,jdbcType=REAL},
+      </if>
+      <if test="fee != null">
+        #{fee,jdbcType=REAL},
+      </if>
+      <if test="freightfee != null">
+        #{freightfee,jdbcType=REAL},
+      </if>
+      <if test="payfee != null">
+        #{payfee,jdbcType=REAL},
+      </if>
+      <if test="paytime != null">
+        #{paytime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="paytype != null">
+        #{paytype,jdbcType=SMALLINT},
+      </if>
+      <if test="transid != null">
+        #{transid,jdbcType=VARCHAR},
+      </if>
+      <if test="createtime != null">
+        #{createtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updatetime != null">
+        #{updatetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="channelid != null">
+        #{channelid,jdbcType=INTEGER},
+      </if>
+      <if test="olduserid != null">
+        #{olduserid,jdbcType=BIGINT},
+      </if>
+      <if test="descr != null">
+        #{descr,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.ist.svc.domain.OrderExample" resultType="java.lang.Long">
+    select count(*) from `order`
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update `order`
+    <set>
+      <if test="record.orderid != null">
+        orderid = #{record.orderid,jdbcType=BIGINT},
+      </if>
+      <if test="record.orderno != null">
+        orderno = #{record.orderno,jdbcType=INTEGER},
+      </if>
+      <if test="record.userid != null">
+        userid = #{record.userid,jdbcType=BIGINT},
+      </if>
+      <if test="record.addressid != null">
+        addressid = #{record.addressid,jdbcType=BIGINT},
+      </if>
+      <if test="record.status != null">
+        `status` = #{record.status,jdbcType=SMALLINT},
+      </if>
+      <if test="record.sumfee != null">
+        sumfee = #{record.sumfee,jdbcType=REAL},
+      </if>
+      <if test="record.discountfee != null">
+        discountfee = #{record.discountfee,jdbcType=REAL},
+      </if>
+      <if test="record.couponfee != null">
+        couponfee = #{record.couponfee,jdbcType=REAL},
+      </if>
+      <if test="record.deductionfee != null">
+        deductionfee = #{record.deductionfee,jdbcType=REAL},
+      </if>
+      <if test="record.fee != null">
+        fee = #{record.fee,jdbcType=REAL},
+      </if>
+      <if test="record.freightfee != null">
+        freightFee = #{record.freightfee,jdbcType=REAL},
+      </if>
+      <if test="record.payfee != null">
+        payfee = #{record.payfee,jdbcType=REAL},
+      </if>
+      <if test="record.paytime != null">
+        paytime = #{record.paytime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.paytype != null">
+        paytype = #{record.paytype,jdbcType=SMALLINT},
+      </if>
+      <if test="record.transid != null">
+        transid = #{record.transid,jdbcType=VARCHAR},
+      </if>
+      <if test="record.createtime != null">
+        createtime = #{record.createtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.updatetime != null">
+        updatetime = #{record.updatetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.channelid != null">
+        channelid = #{record.channelid,jdbcType=INTEGER},
+      </if>
+      <if test="record.olduserid != null">
+        oldUserid = #{record.olduserid,jdbcType=BIGINT},
+      </if>
+      <if test="record.descr != null">
+        descr = #{record.descr,jdbcType=VARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update `order`
+    set orderid = #{record.orderid,jdbcType=BIGINT},
+      orderno = #{record.orderno,jdbcType=INTEGER},
+      userid = #{record.userid,jdbcType=BIGINT},
+      addressid = #{record.addressid,jdbcType=BIGINT},
+      `status` = #{record.status,jdbcType=SMALLINT},
+      sumfee = #{record.sumfee,jdbcType=REAL},
+      discountfee = #{record.discountfee,jdbcType=REAL},
+      couponfee = #{record.couponfee,jdbcType=REAL},
+      deductionfee = #{record.deductionfee,jdbcType=REAL},
+      fee = #{record.fee,jdbcType=REAL},
+      freightFee = #{record.freightfee,jdbcType=REAL},
+      payfee = #{record.payfee,jdbcType=REAL},
+      paytime = #{record.paytime,jdbcType=TIMESTAMP},
+      paytype = #{record.paytype,jdbcType=SMALLINT},
+      transid = #{record.transid,jdbcType=VARCHAR},
+      createtime = #{record.createtime,jdbcType=TIMESTAMP},
+      updatetime = #{record.updatetime,jdbcType=TIMESTAMP},
+      channelid = #{record.channelid,jdbcType=INTEGER},
+      oldUserid = #{record.olduserid,jdbcType=BIGINT},
+      descr = #{record.descr,jdbcType=VARCHAR}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.ist.svc.domain.Order">
+    update `order`
+    <set>
+      <if test="orderno != null">
+        orderno = #{orderno,jdbcType=INTEGER},
+      </if>
+      <if test="userid != null">
+        userid = #{userid,jdbcType=BIGINT},
+      </if>
+      <if test="addressid != null">
+        addressid = #{addressid,jdbcType=BIGINT},
+      </if>
+      <if test="status != null">
+        `status` = #{status,jdbcType=SMALLINT},
+      </if>
+      <if test="sumfee != null">
+        sumfee = #{sumfee,jdbcType=REAL},
+      </if>
+      <if test="discountfee != null">
+        discountfee = #{discountfee,jdbcType=REAL},
+      </if>
+      <if test="couponfee != null">
+        couponfee = #{couponfee,jdbcType=REAL},
+      </if>
+      <if test="deductionfee != null">
+        deductionfee = #{deductionfee,jdbcType=REAL},
+      </if>
+      <if test="fee != null">
+        fee = #{fee,jdbcType=REAL},
+      </if>
+      <if test="freightfee != null">
+        freightFee = #{freightfee,jdbcType=REAL},
+      </if>
+      <if test="payfee != null">
+        payfee = #{payfee,jdbcType=REAL},
+      </if>
+      <if test="paytime != null">
+        paytime = #{paytime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="paytype != null">
+        paytype = #{paytype,jdbcType=SMALLINT},
+      </if>
+      <if test="transid != null">
+        transid = #{transid,jdbcType=VARCHAR},
+      </if>
+      <if test="createtime != null">
+        createtime = #{createtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updatetime != null">
+        updatetime = #{updatetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="channelid != null">
+        channelid = #{channelid,jdbcType=INTEGER},
+      </if>
+      <if test="olduserid != null">
+        oldUserid = #{olduserid,jdbcType=BIGINT},
+      </if>
+      <if test="descr != null">
+        descr = #{descr,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where orderid = #{orderid,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.ist.svc.domain.Order">
+    update `order`
+    set orderno = #{orderno,jdbcType=INTEGER},
+      userid = #{userid,jdbcType=BIGINT},
+      addressid = #{addressid,jdbcType=BIGINT},
+      `status` = #{status,jdbcType=SMALLINT},
+      sumfee = #{sumfee,jdbcType=REAL},
+      discountfee = #{discountfee,jdbcType=REAL},
+      couponfee = #{couponfee,jdbcType=REAL},
+      deductionfee = #{deductionfee,jdbcType=REAL},
+      fee = #{fee,jdbcType=REAL},
+      freightFee = #{freightfee,jdbcType=REAL},
+      payfee = #{payfee,jdbcType=REAL},
+      paytime = #{paytime,jdbcType=TIMESTAMP},
+      paytype = #{paytype,jdbcType=SMALLINT},
+      transid = #{transid,jdbcType=VARCHAR},
+      createtime = #{createtime,jdbcType=TIMESTAMP},
+      updatetime = #{updatetime,jdbcType=TIMESTAMP},
+      channelid = #{channelid,jdbcType=INTEGER},
+      oldUserid = #{olduserid,jdbcType=BIGINT},
+      descr = #{descr,jdbcType=VARCHAR}
+    where orderid = #{orderid,jdbcType=BIGINT}
+  </update>
+  <select id="selectsByParams" resultMap="BaseResultMapDetail" parameterType="map">
+    select <include refid="Base_Column_List_Detail"></include>
+    from `order` o join order_detail od on o.orderid=od.orderid
+    <where>
+      <if test="userId != null">
+        and o.userid = #{userId,jdbcType=BIGINT}
+      </if>
+      <if test="status != null and status != ''">
+        and o.status = #{status,jdbcType=SMALLINT}
+      </if>
+    </where>
+    order by o.orderid desc
+  </select>
+</mapper>

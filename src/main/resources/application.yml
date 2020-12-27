@@ -1,0 +1,61 @@
+# 开发环境配置
+server:
+    port: 447
+    servlet:
+        # 应用的访问路径
+        context-path: /ist_svc
+    ssl: #添加的ssl自签名证书
+        key-store: classpath:2913098_530edu.com.jks #注意路径要配置正确
+        key-store-password: ypqEeWLn
+        key-alias: alias
+        key-password: ypqEeWLn
+    tomcat:
+        # tomcat的URI编码
+        uri-encoding: UTF-8
+    connectionTimeout: -1
+http: # 新加一个http的端口号配置
+    port: 8888
+# Spring配置
+spring:
+    # 启用配置文件
+    profiles:
+        active: local
+    # 模板引擎
+    thymeleaf:
+        mode: HTML
+        encoding: utf-8
+        # 禁用缓存
+        cache: false
+    jackson:
+        time-zone: GMT+8
+        date-format: yyyy-MM-dd HH:mm:ss
+    servlet:
+        multipart:
+            max-file-size: 1GB
+            max-request-size: 1GB
+    mvc:
+        hiddenmethod:
+            filter:
+                enabled: true
+
+
+# MyBatis
+mybatis:
+    # 搜索指定包别名
+    typeAliasesPackage: com.ist.svc.domain
+    # 配置mapper的扫描，找到所有的mapper.xml映射文件
+    mapperLocations: classpath*:mapper/**/*Mapper.xml
+
+# PageHelper分页插件
+pagehelper:
+    helperDialect: mysql
+    reasonable: true
+    supportMethodsArguments: true
+    params: count=countSql
+
+logging:
+    level:
+        com:
+            ist:
+                svc:
+                   dao: debug

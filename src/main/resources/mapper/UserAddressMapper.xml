@@ -1,0 +1,331 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ist.svc.dao.UserAddressMapper">
+  <resultMap id="BaseResultMap" type="com.ist.svc.domain.UserAddress">
+    <id column="addressid" jdbcType="BIGINT" property="addressid" />
+    <result column="userid" jdbcType="BIGINT" property="userid" />
+    <result column="status" jdbcType="SMALLINT" property="status" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="phone" jdbcType="VARCHAR" property="phone" />
+    <result column="areaid" jdbcType="INTEGER" property="areaid" />
+    <result column="address" jdbcType="VARCHAR" property="address" />
+    <result column="isdefault" jdbcType="SMALLINT" property="isdefault" />
+    <result column="createtime" jdbcType="TIMESTAMP" property="createtime" />
+    <result column="updatetime" jdbcType="TIMESTAMP" property="updatetime" />
+  </resultMap>
+  <resultMap id="BaseResultMapDetail" type="com.ist.svc.domain.UserAddress">
+    <id column="addressid" jdbcType="BIGINT" property="addressid" />
+    <result column="userid" jdbcType="BIGINT" property="userid" />
+    <result column="status" jdbcType="SMALLINT" property="status" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="phone" jdbcType="VARCHAR" property="phone" />
+    <result column="areaid" jdbcType="INTEGER" property="areaid" />
+    <result column="address" jdbcType="VARCHAR" property="address" />
+    <result column="isdefault" jdbcType="SMALLINT" property="isdefault" />
+    <result column="createtime" jdbcType="TIMESTAMP" property="createtime" />
+    <result column="updatetime" jdbcType="TIMESTAMP" property="updatetime" />
+    <result column="province" jdbcType="VARCHAR" property="province" />
+    <result column="city" jdbcType="VARCHAR" property="city" />
+    <result column="area" jdbcType="VARCHAR" property="area" />
+    <result column="picker" jdbcType="VARCHAR" property="picker" />
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List_Detail">
+    A.addressid, A.userid, A.`status`, A.`name`, A.phone, A.areaid, A.address, A.isdefault, A.createtime,
+    A.updatetime,B.province,B.city,B.area,B.picker
+  </sql>
+  <sql id="Base_Column_List">
+    addressid, userid, `status`, `name`, phone, areaid, address, isdefault, createtime,
+    updatetime
+  </sql>
+  <select id="selectByExample" parameterType="com.ist.svc.domain.UserAddressExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from user_address
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="queryByParams" parameterType="map" resultMap="BaseResultMapDetail">
+    select
+    <include refid="Base_Column_List_Detail" />
+     from user_address A left join info_area B on A.areaid=B.areaid
+     <where>
+       <if test="userId!=null and userId!=''">
+            and A.userid = #{userId,jdbcType=BIGINT}
+       </if>
+       <if test="addressId!=null">
+            and A.addressid = #{addressId,jdbcType=BIGINT}
+       </if>
+       <if test="isDefault!=null">
+         and A.isdefault = #{isDefault,jdbcType=SMALLINT}
+       </if>
+       <if test="status!=null">
+         and A.status = #{status,jdbcType=SMALLINT}
+       </if>
+     </where>
+     order by A.addressid desc
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from user_address
+    where addressid = #{addressid,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from user_address
+    where addressid = #{addressid,jdbcType=BIGINT}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.ist.svc.domain.UserAddressExample">
+    delete from user_address
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.ist.svc.domain.UserAddress">
+    <selectKey keyProperty="addressid" order="AFTER" resultType="java.lang.Long">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into user_address (userid, `status`, `name`, 
+      phone, areaid, address, 
+      isdefault, createtime, updatetime
+      )
+    values (#{userid,jdbcType=BIGINT}, #{status,jdbcType=SMALLINT}, #{name,jdbcType=VARCHAR}, 
+      #{phone,jdbcType=VARCHAR}, #{areaid,jdbcType=INTEGER}, #{address,jdbcType=VARCHAR}, 
+      #{isdefault,jdbcType=SMALLINT}, #{createtime,jdbcType=TIMESTAMP}, #{updatetime,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.ist.svc.domain.UserAddress">
+    <selectKey keyProperty="addressid" order="AFTER" resultType="java.lang.Long">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into user_address
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="userid != null">
+        userid,
+      </if>
+      <if test="status != null">
+        `status`,
+      </if>
+      <if test="name != null">
+        `name`,
+      </if>
+      <if test="phone != null">
+        phone,
+      </if>
+      <if test="areaid != null">
+        areaid,
+      </if>
+      <if test="address != null">
+        address,
+      </if>
+      <if test="isdefault != null">
+        isdefault,
+      </if>
+      <if test="createtime != null">
+        createtime,
+      </if>
+      <if test="updatetime != null">
+        updatetime,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="userid != null">
+        #{userid,jdbcType=BIGINT},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=SMALLINT},
+      </if>
+      <if test="name != null">
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="phone != null">
+        #{phone,jdbcType=VARCHAR},
+      </if>
+      <if test="areaid != null">
+        #{areaid,jdbcType=INTEGER},
+      </if>
+      <if test="address != null">
+        #{address,jdbcType=VARCHAR},
+      </if>
+      <if test="isdefault != null">
+        #{isdefault,jdbcType=SMALLINT},
+      </if>
+      <if test="createtime != null">
+        #{createtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updatetime != null">
+        #{updatetime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.ist.svc.domain.UserAddressExample" resultType="java.lang.Long">
+    select count(*) from user_address
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update user_address
+    <set>
+      <if test="record.addressid != null">
+        addressid = #{record.addressid,jdbcType=BIGINT},
+      </if>
+      <if test="record.userid != null">
+        userid = #{record.userid,jdbcType=BIGINT},
+      </if>
+      <if test="record.status != null">
+        `status` = #{record.status,jdbcType=SMALLINT},
+      </if>
+      <if test="record.name != null">
+        `name` = #{record.name,jdbcType=VARCHAR},
+      </if>
+      <if test="record.phone != null">
+        phone = #{record.phone,jdbcType=VARCHAR},
+      </if>
+      <if test="record.areaid != null">
+        areaid = #{record.areaid,jdbcType=INTEGER},
+      </if>
+      <if test="record.address != null">
+        address = #{record.address,jdbcType=VARCHAR},
+      </if>
+      <if test="record.isdefault != null">
+        isdefault = #{record.isdefault,jdbcType=SMALLINT},
+      </if>
+      <if test="record.createtime != null">
+        createtime = #{record.createtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.updatetime != null">
+        updatetime = #{record.updatetime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update user_address
+    set addressid = #{record.addressid,jdbcType=BIGINT},
+      userid = #{record.userid,jdbcType=BIGINT},
+      `status` = #{record.status,jdbcType=SMALLINT},
+      `name` = #{record.name,jdbcType=VARCHAR},
+      phone = #{record.phone,jdbcType=VARCHAR},
+      areaid = #{record.areaid,jdbcType=INTEGER},
+      address = #{record.address,jdbcType=VARCHAR},
+      isdefault = #{record.isdefault,jdbcType=SMALLINT},
+      createtime = #{record.createtime,jdbcType=TIMESTAMP},
+      updatetime = #{record.updatetime,jdbcType=TIMESTAMP}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.ist.svc.domain.UserAddress">
+    update user_address
+    <set>
+      <if test="userid != null">
+        userid = #{userid,jdbcType=BIGINT},
+      </if>
+      <if test="status != null">
+        `status` = #{status,jdbcType=SMALLINT},
+      </if>
+      <if test="name != null">
+        `name` = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="phone != null">
+        phone = #{phone,jdbcType=VARCHAR},
+      </if>
+      <if test="areaid != null">
+        areaid = #{areaid,jdbcType=INTEGER},
+      </if>
+      <if test="address != null">
+        address = #{address,jdbcType=VARCHAR},
+      </if>
+      <if test="isdefault != null">
+        isdefault = #{isdefault,jdbcType=SMALLINT},
+      </if>
+      <if test="createtime != null">
+        createtime = #{createtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updatetime != null">
+        updatetime = #{updatetime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where addressid = #{addressid,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.ist.svc.domain.UserAddress">
+    update user_address
+    set userid = #{userid,jdbcType=BIGINT},
+      `status` = #{status,jdbcType=SMALLINT},
+      `name` = #{name,jdbcType=VARCHAR},
+      phone = #{phone,jdbcType=VARCHAR},
+      areaid = #{areaid,jdbcType=INTEGER},
+      address = #{address,jdbcType=VARCHAR},
+      isdefault = #{isdefault,jdbcType=SMALLINT},
+      createtime = #{createtime,jdbcType=TIMESTAMP},
+      updatetime = #{updatetime,jdbcType=TIMESTAMP}
+    where addressid = #{addressid,jdbcType=BIGINT}
+  </update>
+</mapper>

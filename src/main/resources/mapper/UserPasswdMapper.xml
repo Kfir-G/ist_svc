@@ -1,0 +1,317 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ist.svc.dao.UserPasswdMapper">
+  <resultMap id="BaseResultMap" type="com.ist.svc.domain.UserPasswd">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="loginname" jdbcType="VARCHAR" property="loginname" />
+    <result column="passwd" jdbcType="VARCHAR" property="passwd" />
+    <result column="changenum" jdbcType="SMALLINT" property="changenum" />
+    <result column="status" jdbcType="SMALLINT" property="status" />
+    <result column="offtime" jdbcType="TIMESTAMP" property="offtime" />
+    <result column="userid" jdbcType="DECIMAL" property="userid" />
+    <result column="createtime" jdbcType="TIMESTAMP" property="createtime" />
+  </resultMap>
+  <resultMap id="UserInfoResultMap" type="com.ist.svc.domain.UserPasswd">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="loginname" jdbcType="VARCHAR" property="loginname" />
+    <result column="passwd" jdbcType="VARCHAR" property="passwd" />
+    <result column="usertype" jdbcType="SMALLINT" property="userType" />
+    <result column="changenum" jdbcType="SMALLINT" property="changenum" />
+    <result column="status" jdbcType="SMALLINT" property="status" />
+    <result column="offtime" jdbcType="TIMESTAMP" property="offtime" />
+    <result column="userid" jdbcType="DECIMAL" property="userid" />
+    <result column="createtime" jdbcType="TIMESTAMP" property="createtime" />
+    <result column="phone" jdbcType="VARCHAR" property="phone" />
+    <result column="unicode" jdbcType="VARCHAR" property="unicode" />
+    <result column="nickname" jdbcType="VARCHAR" property="nickName" />
+    <result column="idcard" jdbcType="VARCHAR" property="idCard" />
+    <result column="birthday" jdbcType="TIMESTAMP" property="birthday" />
+    <result column="age" jdbcType="SMALLINT" property="age" />
+    <result column="sex" jdbcType="SMALLINT" property="sex" />
+    <result column="avatarUrl" jdbcType="VARCHAR" property="avatarUrl" />
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    id, loginname, passwd, changenum, `status`, offtime, userid, createtime
+  </sql>
+  <sql id="Base_USER_INFO_Column_List">
+    up.loginname, up.passwd, up.usertype,up.changenum, up.`status`, up.offtime, up.userid, up.createtime, u.unicode, u.nickname, u.idcard, u.birthday, u.age, u.sex, u.phone, u.address,
+    u.cityid, u.home,u.avatarUrl
+  </sql>
+  <select id="selectByExample" parameterType="com.ist.svc.domain.UserPasswdExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from user_passwd
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from user_passwd
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from user_passwd
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.ist.svc.domain.UserPasswdExample">
+    delete from user_passwd
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.ist.svc.domain.UserPasswd">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into user_passwd (loginname, passwd, changenum,
+    `status`, offtime, userid,
+    createtime)
+    values (#{loginname,jdbcType=VARCHAR}, #{passwd,jdbcType=VARCHAR}, #{changenum,jdbcType=SMALLINT},
+    #{status,jdbcType=SMALLINT}, #{offtime,jdbcType=TIMESTAMP}, #{userid,jdbcType=DECIMAL},
+    #{createtime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.ist.svc.domain.UserPasswd">
+<!--    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">-->
+<!--      SELECT LAST_INSERT_ID()-->
+<!--    </selectKey>-->
+    insert into user_passwd
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="loginname != null">
+        loginname,
+      </if>
+      <if test="passwd != null">
+        passwd,
+      </if>
+      <if test="userType != null">
+        usertype,
+      </if>
+      <if test="changenum != null">
+        changenum,
+      </if>
+      <if test="status != null">
+        `status`,
+      </if>
+      <if test="offtime != null">
+        offtime,
+      </if>
+      <if test="userid != null">
+        userid,
+      </if>
+      <if test="createtime != null">
+        createtime,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="loginname != null">
+        #{loginname,jdbcType=VARCHAR},
+      </if>
+      <if test="passwd != null">
+        #{passwd,jdbcType=VARCHAR},
+      </if>
+      <if test="userType != null">
+        #{userType,jdbcType=SMALLINT},
+      </if>
+      <if test="changenum != null">
+        #{changenum,jdbcType=SMALLINT},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=SMALLINT},
+      </if>
+      <if test="offtime != null">
+        #{offtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="userid != null">
+        #{userid,jdbcType=DECIMAL},
+      </if>
+      <if test="createtime != null">
+        #{createtime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.ist.svc.domain.UserPasswdExample" resultType="java.lang.Long">
+    select count(*) from user_passwd
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update user_passwd
+    <set>
+      <if test="record.id != null">
+        id = #{record.id,jdbcType=BIGINT},
+      </if>
+      <if test="record.loginname != null">
+        loginname = #{record.loginname,jdbcType=VARCHAR},
+      </if>
+      <if test="record.passwd != null">
+        passwd = #{record.passwd,jdbcType=VARCHAR},
+      </if>
+      <if test="record.changenum != null">
+        changenum = #{record.changenum,jdbcType=SMALLINT},
+      </if>
+      <if test="record.status != null">
+        `status` = #{record.status,jdbcType=SMALLINT},
+      </if>
+      <if test="record.offtime != null">
+        offtime = #{record.offtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.userid != null">
+        userid = #{record.userid,jdbcType=BIGINT},
+      </if>
+      <if test="record.createtime != null">
+        createtime = #{record.createtime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update user_passwd
+    set id = #{record.id,jdbcType=BIGINT},
+    loginname = #{record.loginname,jdbcType=VARCHAR},
+    passwd = #{record.passwd,jdbcType=VARCHAR},
+    changenum = #{record.changenum,jdbcType=SMALLINT},
+    `status` = #{record.status,jdbcType=SMALLINT},
+    offtime = #{record.offtime,jdbcType=TIMESTAMP},
+    userid = #{record.userid,jdbcType=BIGINT},
+    createtime = #{record.createtime,jdbcType=TIMESTAMP}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.ist.svc.domain.UserPasswd">
+    update user_passwd
+    <set>
+      <if test="loginname != null">
+        loginname = #{loginname,jdbcType=VARCHAR},
+      </if>
+      <if test="passwd != null">
+        passwd = #{passwd,jdbcType=VARCHAR},
+      </if>
+      <if test="changenum != null">
+        changenum = #{changenum,jdbcType=SMALLINT},
+      </if>
+      <if test="status != null">
+        `status` = #{status,jdbcType=SMALLINT},
+      </if>
+      <if test="offtime != null">
+        offtime = #{offtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="userid != null">
+        userid = #{userid,jdbcType=DECIMAL},
+      </if>
+      <if test="createtime != null">
+        createtime = #{createtime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.ist.svc.domain.UserPasswd">
+    update user_passwd
+    set loginname = #{loginname,jdbcType=VARCHAR},
+      passwd = #{passwd,jdbcType=VARCHAR},
+      changenum = #{changenum,jdbcType=SMALLINT},
+      `status` = #{status,jdbcType=SMALLINT},
+      offtime = #{offtime,jdbcType=TIMESTAMP},
+      userid = #{userid,jdbcType=DECIMAL},
+      createtime = #{createtime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <select id="selectByParams" parameterType="map" resultMap="UserInfoResultMap">
+    select <include refid="Base_USER_INFO_Column_List"></include>
+    from user_passwd up left join user u on up.userid=u.userid
+    <include refid="Example_USER_INFO_Where_Clause"></include>
+    limit 1
+  </select>
+  <sql id="Example_USER_INFO_Where_Clause">
+    <where>
+      <if test="loginName != null">
+        and up.loginname = #{loginName,jdbcType=VARCHAR}
+      </if>
+      <if test="wechat != null">
+        and u.wechat = #{wechat,jdbcType=VARCHAR}
+      </if>
+      <if test="userId != null">
+        and u.userId = #{userId,jdbcType=DECIMAL}
+      </if>
+      <if test="userIds!=null">
+        and u.userId in
+        <foreach collection="userIds" item="userid" open="(" separator="," close=")">
+            #{userid}
+        </foreach>
+      </if>
+    </where>
+  </sql>
+  <select id="selectsByParams" parameterType="map" resultMap="UserInfoResultMap">
+    select <include refid="Base_USER_INFO_Column_List"></include>
+    from user_passwd up left join user u on up.userid=u.userid
+    <include refid="Example_USER_INFO_Where_Clause"></include>
+  </select>
+</mapper>

@@ -1,0 +1,322 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ist.svc.dao.MsgWindowMapper">
+  <resultMap id="BaseResultMap" type="com.ist.svc.domain.MsgWindow">
+    <id column="windowId" jdbcType="BIGINT" property="windowid" />
+    <result column="type" jdbcType="SMALLINT" property="type" />
+    <result column="shopid" jdbcType="INTEGER" property="shopid" />
+    <result column="shopname" jdbcType="VARCHAR" property="shopname" />
+    <result column="shopavatarurl" jdbcType="VARCHAR" property="shopavatarurl" />
+    <result column="talker" jdbcType="BIGINT" property="talker" />
+    <result column="nickname" jdbcType="VARCHAR" property="nickname" />
+    <result column="avatarUrl" jdbcType="VARCHAR" property="avatarurl" />
+    <result column="createtime" jdbcType="TIMESTAMP" property="createtime" />
+  </resultMap>
+  <resultMap id="BaseResultMapDetail" type="com.ist.svc.domain.MsgWindow">
+    <id column="mvWindowId" jdbcType="BIGINT" property="windowid" />
+    <result column="type" jdbcType="SMALLINT" property="type" />
+    <result column="shopid" jdbcType="INTEGER" property="shopid" />
+    <result column="shopname" jdbcType="VARCHAR" property="shopname" />
+    <result column="shopavatarurl" jdbcType="VARCHAR" property="shopavatarurl" />
+    <result column="talker" jdbcType="BIGINT" property="talker" />
+    <result column="nickname" jdbcType="VARCHAR" property="nickname" />
+    <result column="avatarUrl" jdbcType="VARCHAR" property="avatarurl" />
+    <result column="mwCreateTime" jdbcType="TIMESTAMP" property="createtime" />
+    <collection property="msgs" ofType="com.ist.svc.domain.Msg" javaType="java.util.List">
+        <id column="msgid" jdbcType="BIGINT" property="msgid" />
+        <result column="mWindowId" jdbcType="BIGINT" property="windowid" />
+        <result column="msgtype" jdbcType="SMALLINT" property="msgtype" />
+        <result column="content" jdbcType="VARCHAR" property="content" />
+        <result column="sender" jdbcType="BIGINT" property="sender" />
+        <result column="senderame" jdbcType="VARCHAR" property="senderame" />
+        <result column="status" jdbcType="SMALLINT" property="status" />
+        <result column="mCreateTime" jdbcType="TIMESTAMP" property="createtime" />
+        <result column="mUpdateTime" jdbcType="TIMESTAMP" property="updatetime" />
+    </collection>
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    windowId, `type`, shopid, shopname, shopavatarurl, talker, nickname, avatarUrl, createtime
+  </sql>
+  <select id="selectByExample" parameterType="com.ist.svc.domain.MsgWindowExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from msg_window
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from msg_window
+    where windowId = #{windowid,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from msg_window
+    where windowId = #{windowid,jdbcType=BIGINT}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.ist.svc.domain.MsgWindowExample">
+    delete from msg_window
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.ist.svc.domain.MsgWindow">
+    insert into msg_window (windowId, `type`, shopid, 
+      shopname, shopavatarurl, talker, 
+      nickname, avatarUrl, createtime
+      )
+    values (#{windowid,jdbcType=BIGINT}, #{type,jdbcType=SMALLINT}, #{shopid,jdbcType=INTEGER}, 
+      #{shopname,jdbcType=VARCHAR}, #{shopavatarurl,jdbcType=VARCHAR}, #{talker,jdbcType=BIGINT}, 
+      #{nickname,jdbcType=VARCHAR}, #{avatarurl,jdbcType=VARCHAR}, #{createtime,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.ist.svc.domain.MsgWindow">
+    insert into msg_window
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="windowid != null">
+        windowId,
+      </if>
+      <if test="type != null">
+        `type`,
+      </if>
+      <if test="shopid != null">
+        shopid,
+      </if>
+      <if test="shopname != null">
+        shopname,
+      </if>
+      <if test="shopavatarurl != null">
+        shopavatarurl,
+      </if>
+      <if test="talker != null">
+        talker,
+      </if>
+      <if test="nickname != null">
+        nickname,
+      </if>
+      <if test="avatarurl != null">
+        avatarUrl,
+      </if>
+      <if test="createtime != null">
+        createtime,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="windowid != null">
+        #{windowid,jdbcType=BIGINT},
+      </if>
+      <if test="type != null">
+        #{type,jdbcType=SMALLINT},
+      </if>
+      <if test="shopid != null">
+        #{shopid,jdbcType=INTEGER},
+      </if>
+      <if test="shopname != null">
+        #{shopname,jdbcType=VARCHAR},
+      </if>
+      <if test="shopavatarurl != null">
+        #{shopavatarurl,jdbcType=VARCHAR},
+      </if>
+      <if test="talker != null">
+        #{talker,jdbcType=BIGINT},
+      </if>
+      <if test="nickname != null">
+        #{nickname,jdbcType=VARCHAR},
+      </if>
+      <if test="avatarurl != null">
+        #{avatarurl,jdbcType=VARCHAR},
+      </if>
+      <if test="createtime != null">
+        #{createtime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.ist.svc.domain.MsgWindowExample" resultType="java.lang.Long">
+    select count(*) from msg_window
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update msg_window
+    <set>
+      <if test="record.windowid != null">
+        windowId = #{record.windowid,jdbcType=BIGINT},
+      </if>
+      <if test="record.type != null">
+        `type` = #{record.type,jdbcType=SMALLINT},
+      </if>
+      <if test="record.shopid != null">
+        shopid = #{record.shopid,jdbcType=INTEGER},
+      </if>
+      <if test="record.shopname != null">
+        shopname = #{record.shopname,jdbcType=VARCHAR},
+      </if>
+      <if test="record.shopavatarurl != null">
+        shopavatarurl = #{record.shopavatarurl,jdbcType=VARCHAR},
+      </if>
+      <if test="record.talker != null">
+        talker = #{record.talker,jdbcType=BIGINT},
+      </if>
+      <if test="record.nickname != null">
+        nickname = #{record.nickname,jdbcType=VARCHAR},
+      </if>
+      <if test="record.avatarurl != null">
+        avatarUrl = #{record.avatarurl,jdbcType=VARCHAR},
+      </if>
+      <if test="record.createtime != null">
+        createtime = #{record.createtime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update msg_window
+    set windowId = #{record.windowid,jdbcType=BIGINT},
+      `type` = #{record.type,jdbcType=SMALLINT},
+      shopid = #{record.shopid,jdbcType=INTEGER},
+      shopname = #{record.shopname,jdbcType=VARCHAR},
+      shopavatarurl = #{record.shopavatarurl,jdbcType=VARCHAR},
+      talker = #{record.talker,jdbcType=BIGINT},
+      nickname = #{record.nickname,jdbcType=VARCHAR},
+      avatarUrl = #{record.avatarurl,jdbcType=VARCHAR},
+      createtime = #{record.createtime,jdbcType=TIMESTAMP}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.ist.svc.domain.MsgWindow">
+    update msg_window
+    <set>
+      <if test="type != null">
+        `type` = #{type,jdbcType=SMALLINT},
+      </if>
+      <if test="shopid != null">
+        shopid = #{shopid,jdbcType=INTEGER},
+      </if>
+      <if test="shopname != null">
+        shopname = #{shopname,jdbcType=VARCHAR},
+      </if>
+      <if test="shopavatarurl != null">
+        shopavatarurl = #{shopavatarurl,jdbcType=VARCHAR},
+      </if>
+      <if test="talker != null">
+        talker = #{talker,jdbcType=BIGINT},
+      </if>
+      <if test="nickname != null">
+        nickname = #{nickname,jdbcType=VARCHAR},
+      </if>
+      <if test="avatarurl != null">
+        avatarUrl = #{avatarurl,jdbcType=VARCHAR},
+      </if>
+      <if test="createtime != null">
+        createtime = #{createtime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where windowId = #{windowid,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.ist.svc.domain.MsgWindow">
+    update msg_window
+    set `type` = #{type,jdbcType=SMALLINT},
+      shopid = #{shopid,jdbcType=INTEGER},
+      shopname = #{shopname,jdbcType=VARCHAR},
+      shopavatarurl = #{shopavatarurl,jdbcType=VARCHAR},
+      talker = #{talker,jdbcType=BIGINT},
+      nickname = #{nickname,jdbcType=VARCHAR},
+      avatarUrl = #{avatarurl,jdbcType=VARCHAR},
+      createtime = #{createtime,jdbcType=TIMESTAMP}
+    where windowId = #{windowid,jdbcType=BIGINT}
+  </update>
+  <select id="selectsByParams" parameterType="map" resultMap="BaseResultMapDetail">
+        select mw.createtime as mwCreateTime,mw.windowId as mvWindowId,mw.`type`,mw.shopid,mw.shopname,mw.shopavatarurl,mw.talker,mw.nickname,mw.avatarUrl,m.createtime as mCreateTime,m.msgid,m.windowid as mWindowId,m.msgtype,m.content,m.sender,m.senderame,m.status,m.createtime as mCreateTime,m.updatetime as mUpdateTime from msg_window mw left join msg m on mw.windowId=m.windowId
+        <where>
+          <if test="shopId!=null and shopId!=''">
+            and mw.shopId = #{shopId,jdbcType=INTEGER}
+          </if>
+          <if test="talker!=null and talker!=''">
+            and mw.talker = #{talker,jdbcType=BIGINT}
+          </if>
+          <if test="createTime!=null ">
+            <![CDATA[ and m.Createtime>#{createTime,jdbcType=TIMESTAMP}  ]]>
+          </if>
+          <if test="msgId!=null">
+            <![CDATA[ and m.msgid> #{msgId,jdbcType=BIGINT} ]]>
+          </if>
+          <if test="status!=null and status!=''">
+            and m.status = #{status,jdbcType=SMALLINT}
+          </if>
+        </where>
+  </select>
+  <update id="updateByParams" parameterType="map">
+    update msg A, card.msg_window B
+    set A.status=0
+    where A.status=#{status,jdbcType=SMALLINT} and B.talker=#{talker,jdbcType=BIGINT} and A.windowId=B.windowid
+  </update>
+</mapper>

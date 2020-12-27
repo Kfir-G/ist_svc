@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ist.svc.dao.ShopCouponProdMapper">
+  <resultMap id="BaseResultMap" type="com.ist.svc.domain.ShopCouponProd">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="couponid" jdbcType="INTEGER" property="couponid" />
+    <result column="prodinfoId" jdbcType="INTEGER" property="prodinfoid" />
+    <result column="prodid" jdbcType="INTEGER" property="prodid" />
+    <result column="headimg" jdbcType="VARCHAR" property="headimg" />
+    <result column="prodname" jdbcType="VARCHAR" property="prodname" />
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    id, couponid, prodinfoId, prodid, headimg, prodname
+  </sql>
+  <select id="selectByExample" parameterType="com.ist.svc.domain.ShopCouponProdExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from shop_coupon_prod
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from shop_coupon_prod
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from shop_coupon_prod
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.ist.svc.domain.ShopCouponProdExample">
+    delete from shop_coupon_prod
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.ist.svc.domain.ShopCouponProd">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into shop_coupon_prod (couponid, prodinfoId, prodid, 
+      headimg, prodname)
+    values (#{couponid,jdbcType=INTEGER}, #{prodinfoid,jdbcType=INTEGER}, #{prodid,jdbcType=INTEGER}, 
+      #{headimg,jdbcType=VARCHAR}, #{prodname,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.ist.svc.domain.ShopCouponProd">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into shop_coupon_prod
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="couponid != null">
+        couponid,
+      </if>
+      <if test="prodinfoid != null">
+        prodinfoId,
+      </if>
+      <if test="prodid != null">
+        prodid,
+      </if>
+      <if test="headimg != null">
+        headimg,
+      </if>
+      <if test="prodname != null">
+        prodname,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="couponid != null">
+        #{couponid,jdbcType=INTEGER},
+      </if>
+      <if test="prodinfoid != null">
+        #{prodinfoid,jdbcType=INTEGER},
+      </if>
+      <if test="prodid != null">
+        #{prodid,jdbcType=INTEGER},
+      </if>
+      <if test="headimg != null">
+        #{headimg,jdbcType=VARCHAR},
+      </if>
+      <if test="prodname != null">
+        #{prodname,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.ist.svc.domain.ShopCouponProdExample" resultType="java.lang.Long">
+    select count(*) from shop_coupon_prod
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update shop_coupon_prod
+    <set>
+      <if test="record.id != null">
+        id = #{record.id,jdbcType=BIGINT},
+      </if>
+      <if test="record.couponid != null">
+        couponid = #{record.couponid,jdbcType=INTEGER},
+      </if>
+      <if test="record.prodinfoid != null">
+        prodinfoId = #{record.prodinfoid,jdbcType=INTEGER},
+      </if>
+      <if test="record.prodid != null">
+        prodid = #{record.prodid,jdbcType=INTEGER},
+      </if>
+      <if test="record.headimg != null">
+        headimg = #{record.headimg,jdbcType=VARCHAR},
+      </if>
+      <if test="record.prodname != null">
+        prodname = #{record.prodname,jdbcType=VARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update shop_coupon_prod
+    set id = #{record.id,jdbcType=BIGINT},
+      couponid = #{record.couponid,jdbcType=INTEGER},
+      prodinfoId = #{record.prodinfoid,jdbcType=INTEGER},
+      prodid = #{record.prodid,jdbcType=INTEGER},
+      headimg = #{record.headimg,jdbcType=VARCHAR},
+      prodname = #{record.prodname,jdbcType=VARCHAR}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.ist.svc.domain.ShopCouponProd">
+    update shop_coupon_prod
+    <set>
+      <if test="couponid != null">
+        couponid = #{couponid,jdbcType=INTEGER},
+      </if>
+      <if test="prodinfoid != null">
+        prodinfoId = #{prodinfoid,jdbcType=INTEGER},
+      </if>
+      <if test="prodid != null">
+        prodid = #{prodid,jdbcType=INTEGER},
+      </if>
+      <if test="headimg != null">
+        headimg = #{headimg,jdbcType=VARCHAR},
+      </if>
+      <if test="prodname != null">
+        prodname = #{prodname,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.ist.svc.domain.ShopCouponProd">
+    update shop_coupon_prod
+    set couponid = #{couponid,jdbcType=INTEGER},
+      prodinfoId = #{prodinfoid,jdbcType=INTEGER},
+      prodid = #{prodid,jdbcType=INTEGER},
+      headimg = #{headimg,jdbcType=VARCHAR},
+      prodname = #{prodname,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

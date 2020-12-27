@@ -1,0 +1,2570 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <script type="text/javascript" th:inline="javascript">
+        /*<![CDATA[*/
+        ctxPath = /*[[@{/}]]*/'';
+        /*]]>*/
+        var socket;
+        function openSocket() {
+            if(typeof(WebSocket) == "undefined") {
+                console.log("您的浏览器不支持WebSocket");
+            }else{
+                console.log("您的浏览器支持WebSocket");
+                //实现化WebSocket对象，指定要连接的服务器地址与端口  建立连接
+                //等同于socket = new WebSocket("ws://localhost:8888/xxxx/im/25");
+                //var socketUrl="${request.contextPath}/im/"+$("#userId").val();
+                // var socketUrl="https://brofarm.cn/ist_svc/imserver/"+$("#userId").val();
+                var socketUrl="http://127.0.0.1:8888/ist_svc/imserver/"+document.socketSendMsgForm.sendId.value+"/" + "14l6l1qal9kakhqah7kmhae9523kc9j70p36cpm6orj6chq68o32e9h60pj0c1g64t32cto0idv4cov83klcrfd";
+                socketUrl=socketUrl.replace("https","wss").replace("http","ws");
+                console.log(socketUrl);
+                if(socket!=null){
+                    socket.close();
+                    socket=null;
+                }
+                socket = new WebSocket(socketUrl);
+                //打开事件
+                socket.onopen = function() {
+                    console.log("websocket已打开");
+                    //socket.send("这是来自客户端的消息" + location.href + new Date());
+                };
+                //获得消息事件
+                socket.onmessage = function(msg) {
+                    console.log(msg.data);
+                    //发现消息进入    开始处理前端触发逻辑
+                };
+                //关闭事件
+                socket.onclose = function() {
+                    console.log("websocket已关闭");
+                };
+                //发生了错误事件
+                socket.onerror = function() {
+                    console.log("websocket发生了错误");
+                }
+            }
+        }
+        function sendMessage() {
+            if(typeof(WebSocket) == "undefined") {
+                console.log("您的浏览器不支持WebSocket");
+            }else {
+                console.log("您的浏览器支持WebSocket");//document.socketSendMsgForm.windowId.value sender
+                console.log('[{"content":"'+document.socketSendMsgForm.contentText.value+'","sender":"'+document.socketSendMsgForm.sendId.value+'","msgType":"'+document.socketSendMsgForm.msgType.value+'","senderName":"'+document.socketSendMsgForm.senderName.value+'","windowId":"'+document.socketSendMsgForm.windowId.value+'"}]}');
+                socket.send('[{"content":"'+document.socketSendMsgForm.contentText.value+'","sender":"'+document.socketSendMsgForm.sendId.value+'","msgType":"'+document.socketSendMsgForm.msgType.value+'","senderName":"'+document.socketSendMsgForm.senderName.value+'","windowId":"'+document.socketSendMsgForm.windowId.value+'"}]}');
+            }
+        }
+    </script>
+    <script type="text/javascript" th:src="@{/js/md5.js}"></script>
+    <script type="text/javascript" th:src="@{/js/jquery.min.js}"></script>
+    <title>接口测试页</title>
+</head>
+<body>
+<form th:action="@{/user/userRegister}" method="post" name="userRegisterForm" id="userRegisterForm">
+    <table border="1">
+        <tr align="center">
+            <td colspan="2">用户注册</td>
+        </tr>
+        <tr>
+            <td>手机号</td>
+            <td><input type="text" name="phone" value="13823366732"></input>*</td>
+        </tr>
+        <tr>
+            <td>登陆账号</td>
+            <td><input type="text" name="loginName" value="13823366732"></input>*</td>
+        </tr>
+        <tr>
+            <td>登陆密码</td>
+            <td><input type="text" name="password"></input>*</td>
+        </tr>
+        <tr>
+            <td>用户类型</td>
+            <td>
+                <select name="userType">
+                    <option value="1" selected="selected">手机号</option>
+                </select>*
+            </td>
+        </tr>
+        <tr>
+            <td>昵称</td>
+            <td><input type="text" name="nickName" value="ist"></input>*</td>
+        </tr>
+        <tr>
+            <td>wechat</td>
+            <td><input type="text" name="wechat" value=""></input>*</td>
+        </tr>
+        <tr>
+            <td>头像地址</td>
+            <td><input type="text" name="avatarUrl" value="/avatar/20180531/104300090565803170727/103801/"></input>*</td>
+        </tr>
+        <tr>
+            <td>身份证号</td>
+            <td><input type="text" name="idCard"></input>*</td>
+        </tr>
+        <tr>
+            <td>出生日期</td>
+            <td><input type="text" name="birthday"></input>*</td>
+        </tr>
+        <tr>
+            <td>年龄</td>
+            <td><input type="text" name="age"></input>*</td>
+        </tr>
+        <tr>
+            <td>性别</td>
+            <td><input type="text" name="sex"></input>*</td>
+        </tr>
+        <tr>
+            <td>常住城市</td>
+            <td><input type="text" name="cityId"></input>*</td>
+        </tr>
+        <tr>
+            <td>户籍地址</td>
+            <td><input type="text" name="home"></input>*</td>
+        </tr>
+        <tr>
+            <td>应用编号</td>
+            <td><input type="text" name="appId" value="20191030001"></input>*</td>
+        </tr>
+        <tr align="center">
+            <td colspan="2">
+                <input type="hidden" name="time" id="userRegisterTime"></input>
+                <input type="hidden" name="sign" id="userRegisterSign"></input>
+                <input type="button" name="提交" value="提交" onclick="userRegister();"></input>
+            </td>
+        </tr>
+    </table>
+</form>
+<br></br>
+<form th:action="@{/user/userLogin}" method="post" name="userLoginForm" id="userLoginForm">
+    <table border="1">
+        <tr align="center">
+            <td colspan="2">用户登陆</td>
+        </tr>
+        <tr>
+            <td>登陆账号</td>
+            <td><input type="text" name="loginName" value="13823366732"></input></td>
+        </tr>
+        <tr>
+            <td>登陆方式</td>
+            <td>
+                <select name="loginType">
+                    <option value="1" selected="selected">账号密码</option>
+                    <option value="2" >短信验证码</option>
+                    <option value="3" >微信授权登录</option>
+                </select>*
+            </td>
+        </tr>
+        <tr>
+            <td>微信code</td>
+            <td><input type="text" name="wxCode" value="021IGYZ01ZSwcZ15owY01cA0011IGYZT"></input></td>
+        </tr>
+        <tr>
+            <td>短信验证码</td>
+            <td><input type="text" name="smsCode" value="12345"></input></td>
+        </tr>
+        <tr>
+            <td>登陆密码</td>
+            <td><input type="text" name="password"></input></td>
+        </tr>
+        <tr>
+            <td>应用编号</td>
+            <td><input type="text" name="appId" value="20191030001"></input>*</td>
+        </tr>
+        <tr align="center">
+            <td colspan="2">
+                <input type="hidden" name="time" id="userLoginTime"></input>
+                <input type="hidden" name="sign" id="userLoginSign"></input>
+                <input type="button" name="提交" value="提交" onclick="userLogin();"></input>
+            </td>
+        </tr>
+    </table>
+</form>
+<br></br>
+<form th:action="@{/user/clearMemUserLogin}" method="post" name="clearMemUserLoginForm" id="clearMemUserLoginForm">
+    <table border="1">
+        <tr align="center">
+            <td colspan="2">清除用户缓存</td>
+        </tr>
+        <tr>
+            <td>用户userId</td>
+            <td><input type="text" name="userId" value=""></input></td>
+        </tr>
+        <tr>
+            <td>用户登录名</td>
+            <td><input type="text" name="loginName" value=""></input></td>
+        </tr>
+        <tr align="center">
+            <td colspan="2">
+                <input type="submit" name="提交" value="提交" onclick=""></input>
+            </td>
+        </tr>
+    </table>
+</form>
+<br></br>
+<form th:action="@{/user/userVerifyToken}" method="post" name="userVerifyTokenForm" id="userVerifyTokenForm">
+    <table border="1">
+        <tr align="center">
+            <td colspan="2">token校验</td>
+        </tr>
+        <tr>
+            <td>tokenId</td>
+            <td><input type="text" name="tokenId" value=""></input></td>
+        </tr>
+        <tr>
+            <td>用户userId</td>
+            <td><input type="text" name="userId"></input></td>
+        </tr>
+        <tr>
+            <td>应用编号</td>
+            <td><input type="text" name="appId" value="20191030001"></input>*</td>
+        </tr>
+        <tr align="center">
+            <td colspan="2">
+                <input type="hidden" name="time" id="userVerifyTokenTime"></input>
+                <input type="hidden" name="sign" id="userVerifyTokenSign"></input>
+                <input type="button" name="提交" value="提交" onclick="userVerifyToken();"></input>
+            </td>
+        </tr>
+    </table>
+</form>
+<br></br>
+<form th:action="@{/user/queryUserInfo}" method="post" name="queryUserInfoForm" id="queryUserInfoForm">
+    <table border="1">
+        <tr align="center">
+            <td colspan="2">用户信息查询</td>
+        </tr>
+        <tr>
+            <td>操作类型</td>
+            <td><input type="text" name="operType" value="1"></input>*</td>
+        </tr>
+        <tr>
+            <td>登陆用户名</td>
+            <td><input type="text" name="loginName" value="13823366732"></input>*</td>
+        </tr>
+        <tr>
+            <td>用户userId</td>
+            <td><input type="text" name="userId" value=""></input>*</td>
+        </tr>
+        <tr>
+            <td>应用编号</td>
+            <td><input type="text" name="appId" value="20191030001"></input>*</td>
+        </tr>
+        <tr align="center">
+            <td colspan="2">
+                <input type="hidden" name="time" id="queryUserInfoTime"></input>
+                <input type="hidden" name="sign" id="queryUserInfoSign"></input>
+                <input type="button" name="提交" value="提交" onclick="queryUserInfo();"></input>
+            </td>
+        </tr>
+    </table>
+</form>
+<br></br>
+<form th:action="@{/user/getUsersByUserIds}" method="post" name="getUsersByUserIdsForm" id="getUsersByUserIdsForm">
+    <table border="1">
+        <tr align="center">
+            <td colspan="2">用户信息查询（根据userIds）</td>
+        <tr>
+            <td>登陆用户名</td>
+            <td><input type="text" name="loginName" value="13823366732"></input>*</td>
+        </tr>
+        <tr>
+            <td>用户userIds</td>
+            <td><input type="text" name="userIds" value=""></input>*</td>
+        </tr>
+        <tr>
+            <td>用户userId</td>
+            <td><input type="text" name="userId" value=""></input>*</td>
+        </tr>
+        <tr>
+            <td>登陆令牌</td>
+            <td><input type="text" name="tokenId" value="959l8nqlad2l4nqk9t5kaji98hfjkc9j70p36cpm6orj6cjs68o32e9h60pj0c1g65u32ctm12ef0f8q9vmleq70"></input>*</td>
+        </tr>
+        <tr>
+            <td>应用编号</td>
+            <td><input type="text" name="appId" value="20191030001"></input>*</td>
+        </tr>
+        <tr align="center">
+            <td colspan="2">
+                <input type="hidden" name="time" id="getUsersByUserIdsTime"></input>
+                <input type="hidden" name="sign" id="getUsersByUserIdsSign"></input>
+                <input type="button" name="提交" value="提交" onclick="getUsersByUserIds();"></input>
+            </td>
+        </tr>
+    </table>
+</form>
+<br></br>
+<form th:action="@{/user/sendValidSms}" method="post" name="sendValidSmsForm" id="sendValidSmsForm">
+    <table border="1">
+        <tr align="center">
+            <td colspan="2">发送短信验证码</td>
+        </tr>
+        <tr>
+            <td>手机号码</td>
+            <td><input type="text" name="phone" value="13823366732"></input>*</td>
+        </tr>
+        <tr>
+            <td>应用编号</td>
+            <td><input type="text" name="appId" value="20191030001"></input>*</td>
+        </tr>
+        <tr align="center">
+            <td colspan="2">
+                <input type="hidden" name="time" id="sendValidSmsTime"></input>
+                <input type="hidden" name="sign" id="sendValidSmsSign"></input>
+                <input type="button" name="提交" value="提交" onclick="sendValidSms();"></input>
+            </td>
+        </tr>
+    </table>
+</form>
+<br></br>
+<form th:action="@{/prod/queryProdInfo}" method="post" name="prodQueryForm" id="prodQueryForm">
+    <table border="1">
+        <tr align="center">
+            <td colspan="2">商品信息查询</td>
+        </tr>
+        <tr>
+            <td>产品编号</td>
+            <td><input type="text" name="prodInfoId" value="1000000229"></input>*</td>
+        </tr>
+        <tr>
+            <td>每页大小</td>
+            <td><input type="text" name="pageSize" value="3"></input>*</td>
+        </tr>
+        <tr>
+            <td>第几页</td>
+            <td><input type="text" name="pageNum" value="1"></input>*</td>
+        </tr>
+        <tr>
+            <td>应用编号</td>
+            <td><input type="text" name="appId" value="20191030001"></input>*</td>
+        </tr>
+        <tr align="center">
+            <td colspan="2">
+                <input type="hidden" name="time" id="prodQueryTime"></input>
+                <input type="hidden" name="sign" id="prodQuerySign"></input>
+                <input type="button" name="提交" value="提交" onclick="prodQuery();"></input>
+            </td>
+        </tr>
+    </table>
+</form>
+<br></br>
+<form th:action="@{/prod/queryProdInfoByKey}" method="post" name="queryProdInfoByKeyForm" id="queryProdInfoByKeyForm">
+    <table border="1">
+        <tr align="center">
+            <td colspan="2">根据关键字查询商品列表</td>
+        </tr>
+        <tr>
+            <td>产品编号</td>
+            <td><input type="text" name="key" value="123"></input>*</td>
+        </tr>
+        <tr>
+            <td>每页大小</td>
+            <td><input type="text" name="pageSize" value="3"></input>*</td>
+        </tr>
+        <tr>
+            <td>第几页</td>
+            <td><input type="text" name="pageNum" value="1"></input>*</td>
+        </tr>
+        <tr>
+            <td>应用编号</td>
+            <td><input type="text" name="appId" value="20191030001"></input>*</td>
+        </tr>
+        <tr align="center">
+            <td colspan="2">
+                <input type="hidden" name="time" id="queryProdInfoByKeyTime"></input>
+                <input type="hidden" name="sign" id="queryProdInfoByKeySign"></input>
+                <input type="button" name="提交" value="提交" onclick="queryProdInfoByKey();"></input>
+            </td>
+        </tr>
+    </table>
+</form>
+<br></br>
+<form th:action="@{/prod/queryProdInfoByShopId}" method="post" name="queryProdInfoByShopIdForm" id="queryProdInfoByShopIdForm">
+    <table border="1">
+        <tr align="center">
+            <td colspan="2">根据商店id查询商品列表</td>
+        </tr>
+        <tr>
+            <td>商店id</td>
+            <td><input type="text" name="shopId" value="123"></input>*</td>
+        </tr>
+        <tr>
+            <td>每页大小</td>
+            <td><input type="text" name="pageSize" value="3"></input>*</td>
+        </tr>
+        <tr>
+            <td>第几页</td>
+            <td><input type="text" name="pageNum" value="1"></input>*</td>
+        </tr>
+        <tr>
+            <td>应用编号</td>
+            <td><input type="text" name="appId" value="20191030001"></input>*</td>
+        </tr>
+        <tr align="center">
+            <td colspan="2">
+                <input type="hidden" name="time" id="queryProdInfoByShopIdTime"></input>
+                <input type="hidden" name="sign" id="queryProdInfoByShopIdSign"></input>
+                <input type="button" name="提交" value="提交" onclick="queryProdInfoByShopId();"></input>
+            </td>
+        </tr>
+    </table>
+</form>
+<br></br>
+<form th:action="@{/prod/queryProdInfoByProdInfoIds}" method="post" name="queryProdInfoByProdInfoIdsForm" id="queryProdInfoByProdInfoIdsForm">
+    <table border="1">
+        <tr align="center">
+            <td colspan="2">根据prodInfoIds查询商品列表</td>
+        </tr>
+        <tr>
+            <td>prodInfoIds</td>
+            <td><input type="text" name="prodInfoIds" value="123"></input>*</td>
+        </tr>
+        <tr>
+            <td>每页大小</td>
+            <td><input type="text" name="pageSize" value="3"></input>*</td>
+        </tr>
+        <tr>
+            <td>第几页</td>
+            <td><input type="text" name="pageNum" value="1"></input>*</td>
+        </tr>
+        <tr>
+            <td>应用编号</td>
+            <td><input type="text" name="appId" value="20191030001"></input>*</td>
+        </tr>
+        <tr align="center">
+            <td colspan="2">
+                <input type="hidden" name="time" id="queryProdInfoByProdInfoIdsTime"></input>
+                <input type="hidden" name="sign" id="queryProdInfoByProdInfoIdsSign"></input>
+                <input type="button" name="提交" value="提交" onclick="queryProdInfoByProdInfoIds();"></input>
+            </td>
+        </tr>
+    </table>
+</form>
+<br></br>
+<form th:action="@{/prod/queryProdInfoByProdType}" method="post" name="queryProdInfoByProdTypeForm" id="queryProdInfoByProdTypeForm">
+    <table border="1">
+        <tr align="center">
+            <td colspan="2">根据商品类别查询商品列表</td>
+        </tr>
+        <tr>
+            <td>商品类型</td>
+            <td><input type="text" name="prodType" value="123"></input>*</td>
+        </tr>
+        <tr>
+            <td>每页大小</td>
+            <td><input type="text" name="pageSize" value="3"></input>*</td>
+        </tr>
+        <tr>
+            <td>第几页</td>
+            <td><input type="text" name="pageNum" value="1"></input>*</td>
+        </tr>
+        <tr>
+            <td>应用编号</td>
+            <td><input type="text" name="appId" value="20191030001"></input>*</td>
+        </tr>
+        <tr align="center">
+            <td colspan="2">
+                <input type="hidden" name="time" id="queryProdInfoByProdTypeTime"></input>
+                <input type="hidden" name="sign" id="queryProdInfoByProdTypeSign"></input>
+                <input type="button" name="提交" value="提交" onclick="queryProdInfoByProdType();"></input>
+            </td>
+        </tr>
+    </table>
+</form>
+<br></br>
+<form th:action="@{/user/addUserAddress}" method="post" name="addUserAddressForm" id="addUserAddressForm">
+    <table border="1">
+        <tr align="center">
+            <td colspan="2">用户地址添加(修改)</td>
+        </tr>
+        <tr>
+            <td>用户userId</td>
+            <td><input type="text" name="userId" value="105100000000002191130"></input>*</td>
+        </tr>
+        <tr>
+            <td>用户登陆账号</td>
+            <td><input type="text" name="loginName" value="13823366732"></input>*</td>
+        </tr>
+        <tr>
+            <td>操作类型</td>
+            <td><select name="optType">
+                <option value="1">添加</option>
+                <option value="2">修改</option>
+            </select>*</td>
+        </tr>
+        <tr>
+            <td>登陆令牌</td>
+            <td><input type="text" name="tokenId" value="959l8nqlad2l4nqk9t5kaji98hfjkc9j70p36cpm6orj6cjs68o32e9h60pj0c1g65u32ctm0mdvme8o8vhlqpvd"></input>*</td>
+        </tr>
+        <tr>
+            <td>原地址id</td>
+            <td><input type="text" name="oldAddressId" value=""></input>*</td>
+        </tr>
+        <tr>
+            <td>收件人姓名</td>
+            <td><input type="text" name="name" value=""></input>*</td>
+        </tr>
+        <tr>
+            <td>收件人联系电话</td>
+            <td><input type="text" name="phone" value=""></input>*</td>
+        </tr>
+        <tr>
+            <td>区域id</td>
+            <td><input type="text" name="areaId" value=""></input>*</td>
+        </tr>
+        <tr>
+            <td>具体地址</td>
+            <td><input type="text" name="address" value=""></input>*</td>
+        </tr>
+        <tr>
+            <td>是否是默认地址</td>
+            <td><select name="isDefault">
+                <option value="1">默认</option>
+                <option value="0">非默认</option>
+            </select>*</td>
+        </tr>
+        <tr>
+            <td>应用编号</td>
+            <td><input type="text" name="appId" value="20191030001"></input>*</td>
+        </tr>
+        <tr align="center">
+            <td colspan="2">
+                <input type="hidden" name="time" id="addUserAddressTime"></input>
+                <input type="hidden" name="sign" id="addUserAddressSign"></input>
+                <input type="button" name="提交" value="提交" onclick="addUserAddress();"></input>
+            </td>
+        </tr>
+    </table>
+</form>
+<br></br>
+<form th:action="@{/user/delUserAddress}" method="post" name="delUserAddressForm" id="delUserAddressForm">
+    <table border="1">
+        <tr align="center">
+            <td colspan="2">用户地址刪除</td>
+        </tr>
+        <tr>
+            <td>用户userId</td>
+            <td><input type="text" name="userId" value="105100000000002191130"></input>*</td>
+        </tr>
+        <tr>
+            <td>用户登陆账号</td>
+            <td><input type="text" name="loginName" value="13823366732"></input>*</td>
+        </tr>
+        <tr>
+            <td>登陆令牌</td>
+            <td><input type="text" name="tokenId" value="959l8nqlad2l4nqk9t5kaji98hfjkc9j70p36cpm6orj6cjs68o32e9h60pj0c1g65u32ctm0mdvme8o8vhlqpvd"></input>*</td>
+        </tr>
+        <tr>
+            <td>地址id</td>
+            <td><input type="text" name="addressId" value=""></input>*</td>
+        </tr>
+        <tr>
+            <td>应用编号</td>
+            <td><input type="text" name="appId" value="20191030001"></input>*</td>
+        </tr>
+        <tr align="center">
+            <td colspan="2">
+                <input type="hidden" name="time" id="delUserAddressTime"></input>
+                <input type="hidden" name="sign" id="delUserAddressSign"></input>
+                <input type="button" name="提交" value="提交" onclick="delUserAddress();"></input>
+            </td>
+        </tr>
+    </table>
+</form>
+<br></br>
+<form th:action="@{/user/queryUserAddress}" method="post" name="queryUserAddressForm" id="queryUserAddressForm">
+    <table border="1">
+        <tr align="center">
+            <td colspan="2">用户地址查询</td>
+        </tr>
+        <tr>
+            <td>用户userId</td>
+            <td><input type="text" name="userId" value="1051000000006191208"></input>*</td>
+        </tr>
+        <tr>
+            <td>用户登陆账号</td>
+            <td><input type="text" name="loginName" value="13823366732"></input>*</td>
+        </tr>
+        <tr>
+            <td>查询类型</td>
+            <td><select name="queryType">
+                <option value="1">根据userId查询</option>
+                <option value="2">根据addressId查询</option>
+            </select>*</td>
+        </tr>
+        <tr>
+            <td>地址id</td>
+            <td><input type="text" name="addressId" value=""></input>*</td>
+        </tr>
+        <tr>
+            <td>登陆令牌</td>
+            <td><input type="text" name="tokenId" value="959l8nqlad2l4nqk9t5kaji98hfjkc9j70p36cpm6orj6cjs68o32e9h60pj0c1g65u32ctm12ef0f8q9vmleq70"></input>*</td>
+        </tr>
+        <tr>
+            <td>应用编号</td>
+            <td><input type="text" name="appId" value="20191030001"></input>*</td>
+        </tr>
+        <tr align="center">
+            <td colspan="2">
+                <input type="hidden" name="time" id="queryUserAddressTime"></input>
+                <input type="hidden" name="sign" id="queryUserAddressSign"></input>
+                <input type="button" name="提交" value="提交" onclick="queryUserAddress();"></input>
+            </td>
+        </tr>
+    </table>
+</form>
+<br></br>
+<form th:action="@{/coupon/getUserCoupon}" method="post" name="getUserCouponForm" id="getUserCouponForm">
+    <table border="1">
+        <tr align="center">
+            <td colspan="2">获取用户已领取的优惠券</td>
+        </tr>
+        <tr>
+            <td>用户userId</td>
+            <td><input type="text" name="userId" value="1051000000006191208"></input>*</td>
+        </tr>
+        <tr>
+            <td>用户登陆账号</td>
+            <td><input type="text" name="loginName" value="13823366732"></input>*</td>
+        </tr>
+        <tr>
+            <td>商家id(多个以逗号分隔)</td>
+            <td><input type="text" name="shopIds" value=""></input>*</td>
+        </tr>
+        <tr>
+            <td>劵状态</td>
+            <td><select name="status">
+                <option value="">所有</option>
+                <option value="1">未使用</option>
+                <option value="2">已使用</option>
+            </select>*</td>
+        </tr>
+        <tr>
+            <td>登陆令牌</td>
+            <td><input type="text" name="tokenId" value="959l8nqlad2l4nqk9t5kaji98hfjkc9j70p36cpm6orj6cjs68o32e9h60pj0c1g65u32ctm12ef0f8q9vmleq70"></input>*</td>
+        </tr>
+        <tr>
+            <td>应用编号</td>
+            <td><input type="text" name="appId" value="20191030001"></input>*</td>
+        </tr>
+        <tr align="center">
+            <td colspan="2">
+                <input type="hidden" name="time" id="getUserCouponTime"></input>
+                <input type="hidden" name="sign" id="getUserCouponSign"></input>
+                <input type="button" name="提交" value="提交" onclick="getUserCoupon();"></input>
+            </td>
+        </tr>
+    </table>
+</form>
+<br></br>
+<form th:action="@{/coupon/receiveCoupon}" method="post" name="receiveCouponForm" id="receiveCouponForm">
+    <table border="1">
+        <tr align="center">
+            <td colspan="2">用户领取优惠券</td>
+        </tr>
+        <tr>
+            <td>用户userId</td>
+            <td><input type="text" name="userId" value="1051000000006191208"></input>*</td>
+        </tr>
+        <tr>
+            <td>用户登陆账号</td>
+            <td><input type="text" name="loginName" value="13823366732"></input>*</td>
+        </tr>
+        <tr>
+            <td>劵id</td>
+            <td><input type="text" name="couponId" value=""></input>*</td>
+        </tr>
+        <tr>
+            <td>登陆令牌</td>
+            <td><input type="text" name="tokenId" value="959l8nqlad2l4nqk9t5kaji98hfjkc9j70p36cpm6orj6cjs68o32e9h60pj0c1g65u32ctm12ef0f8q9vmleq70"></input>*</td>
+        </tr>
+        <tr>
+            <td>应用编号</td>
+            <td><input type="text" name="appId" value="20191030001"></input>*</td>
+        </tr>
+        <tr align="center">
+            <td colspan="2">
+                <input type="hidden" name="time" id="receiveCouponTime"></input>
+                <input type="hidden" name="sign" id="receiveCouponSign"></input>
+                <input type="button" name="提交" value="提交" onclick="receiveCoupon();"></input>
+            </td>
+        </tr>
+    </table>
+</form>
+<br></br>
+<form th:action="@{/coupon/useCoupon}" method="post" name="useCouponForm" id="useCouponForm">
+    <table border="1">
+        <tr align="center">
+            <td colspan="2">用户使用优惠券</td>
+        </tr>
+        <tr>
+            <td>用户userId</td>
+            <td><input type="text" name="userId" value="1051000000006191208"></input>*</td>
+        </tr>
+        <tr>
+            <td>用户登陆账号</td>
+            <td><input type="text" name="loginName" value="13823366732"></input>*</td>
+        </tr>
+        <tr>
+            <td>劵id</td>
+            <td><input type="text" name="couponId" value=""></input>*</td>
+        </tr>
+        <tr>
+            <td>领取记录id</td>
+            <td><input type="text" name="userCouponId" value=""></input>*</td>
+        </tr>
+        <tr>
+            <td>orderId</td>
+            <td><input type="text" name="orderId" value=""></input>*</td>
+        </tr>
+        <tr>
+            <td>登陆令牌</td>
+            <td><input type="text" name="tokenId" value="959l8nqlad2l4nqk9t5kaji98hfjkc9j70p36cpm6orj6cjs68o32e9h60pj0c1g65u32ctm12ef0f8q9vmleq70"></input>*</td>
+        </tr>
+        <tr>
+            <td>应用编号</td>
+            <td><input type="text" name="appId" value="20191030001"></input>*</td>
+        </tr>
+        <tr align="center">
+            <td colspan="2">
+                <input type="hidden" name="time" id="useCouponTime"></input>
+                <input type="hidden" name="sign" id="useCouponSign"></input>
+                <input type="button" name="提交" value="提交" onclick="useCoupon();"></input>
+            </td>
+        </tr>
+    </table>
+</form>
+<br></br>
+<form th:action="@{/coupon/getShopCoupon}" method="post" name="getShopCouponForm" id="getShopCouponForm">
+    <table border="1">
+        <tr align="center">
+            <td colspan="2">商家获取优惠券</td>
+        </tr>
+        <tr>
+            <td>用户userId</td>
+            <td><input type="text" name="userId" value="1051000000006191208"></input>*</td>
+        </tr>
+        <tr>
+            <td>prodId</td>
+            <td><input type="text" name="prodId" value=""></input>*</td>
+        </tr>
+        <tr>
+            <td>用户登陆账号</td>
+            <td><input type="text" name="loginName" value="13823366732"></input>*</td>
+        </tr>
+        <tr>
+            <td>商家id(多个以逗号分隔)</td>
+            <td><input type="text" name="shopIds" value=""></input>*</td>
+        </tr>
+        <tr>
+            <td>劵状态</td>
+            <td><select name="status">
+                <option value="">所有</option>
+                <option value="1">正常</option>
+                <option value="2">已下线</option>
+            </select>*</td>
+        </tr>
+        <tr>
+            <td>登陆令牌</td>
+            <td><input type="text" name="tokenId" value="959l8nqlad2l4nqk9t5kaji98hfjkc9j70p36cpm6orj6cjs68o32e9h60pj0c1g65u32ctm12ef0f8q9vmleq70"></input>*</td>
+        </tr>
+        <tr>
+            <td>应用编号</td>
+            <td><input type="text" name="appId" value="20191030001"></input>*</td>
+        </tr>
+        <tr align="center">
+            <td colspan="2">
+                <input type="hidden" name="time" id="getShopCouponTime"></input>
+                <input type="hidden" name="sign" id="getShopCouponSign"></input>
+                <input type="button" name="提交" value="提交" onclick="getShopCoupon();"></input>
+            </td>
+        </tr>
+    </table>
+</form>
+<br></br>
+<form th:action="@{/order/getCartProdList}" method="post" name="getCartProdListForm" id="getCartProdListForm">
+    <table border="1">
+        <tr align="center">
+            <td colspan="2">获取用户已加入购物车的商品</td>
+        </tr>
+        <tr>
+            <td>用户userId</td>
+            <td><input type="text" name="userId" value="1051000000006191208"></input>*</td>
+        </tr>
+        <tr>
+            <td>用户登陆账号</td>
+            <td><input type="text" name="loginName" value="13823366732"></input>*</td>
+        </tr>
+        <tr>
+            <td>每页大小</td>
+            <td><input type="text" name="pageSize" value="3"></input>*</td>
+        </tr>
+        <tr>
+            <td>第几页</td>
+            <td><input type="text" name="pageNum" value="1"></input>*</td>
+        </tr>
+        <tr>
+            <td>登陆令牌</td>
+            <td><input type="text" name="tokenId" value="959l8nqlad2l4nqk9t5kaji98hfjkc9j70p36cpm6orj6cjs68o32e9h60pj0c1g65u32ctm12ef0f8q9vmleq70"></input>*</td>
+        </tr>
+        <tr>
+            <td>应用编号</td>
+            <td><input type="text" name="appId" value="20191030001"></input>*</td>
+        </tr>
+        <tr align="center">
+            <td colspan="2">
+                <input type="hidden" name="time" id="getCartProdListTime"></input>
+                <input type="hidden" name="sign" id="getCartProdListSign"></input>
+                <input type="button" name="提交" value="提交" onclick="getCartProdList();"></input>
+            </td>
+        </tr>
+    </table>
+</form>
+<br></br>
+<form th:action="@{/order/getOrderList}" method="post" name="getOrderListForm" id="getOrderListForm">
+    <table border="1">
+        <tr align="center">
+            <td colspan="2">获取用户订单列表</td>
+        </tr>
+        <tr>
+            <td>用户userId</td>
+            <td><input type="text" name="userId" value="1051000000006191208"></input>*</td>
+        </tr>
+        <tr>
+            <td>用户登陆账号</td>
+            <td><input type="text" name="loginName" value="13823366732"></input>*</td>
+        </tr>
+        <tr>
+            <td>订单状态</td>
+            <td><input type="text" name="status" value=""></input>*</td>
+        </tr>
+        <tr>
+            <td>每页大小</td>
+            <td><input type="text" name="pageSize" value="3"></input>*</td>
+        </tr>
+        <tr>
+            <td>第几页</td>
+            <td><input type="text" name="pageNum" value="1"></input>*</td>
+        </tr>
+        <tr>
+            <td>登陆令牌</td>
+            <td><input type="text" name="tokenId" value="959l8nqlad2l4nqk9t5kaji98hfjkc9j70p36cpm6orj6cjs68o32e9h60pj0c1g65u32ctm12ef0f8q9vmleq70"></input>*</td>
+        </tr>
+        <tr>
+            <td>应用编号</td>
+            <td><input type="text" name="appId" value="20191030001"></input>*</td>
+        </tr>
+        <tr align="center">
+            <td colspan="2">
+                <input type="hidden" name="time" id="getOrderListTime"></input>
+                <input type="hidden" name="sign" id="getOrderListSign"></input>
+                <input type="button" name="提交" value="提交" onclick="getOrderList();"></input>
+            </td>
+        </tr>
+    </table>
+</form>
+<br></br>
+<form th:action="@{/order/order}" method="post" name="orderForm" id="orderForm">
+    <table border="1">
+        <tr align="center">
+            <td colspan="2">用户下单</td>
+        </tr>
+        <tr>
+            <td>用户userId</td>
+            <td><input type="text" name="userId" value="1051000000006191208"></input>*</td>
+        </tr>
+        <tr>
+            <td>用户登陆账号</td>
+            <td><input type="text" name="loginName" value="13823366732"></input>*</td>
+        </tr>
+        <tr>
+            <td>addressId</td>
+            <td><input type="text" name="addressId" value=""></input>*</td>
+        </tr>
+        <tr>
+            <td>payFee</td>
+            <td><input type="text" name="payFee" value="" id="payFee"></input>*</td>
+        </tr>
+        <tr>
+            <td>登陆令牌</td>
+            <td><input type="text" name="tokenId" value="959l8nqlad2l4nqk9t5kaji98hfjkc9j70p36cpm6orj6cjs68o32e9h60pj0c1g65u32ctm12ef0f8q9vmleq70"></input>*</td>
+        </tr>
+        <tr>
+            <td>应用编号</td>
+            <td><input type="text" name="appId" value="20191030001" id="appId"></input>*</td>
+        </tr>
+        <tr>
+            <td>shopId</td>
+            <td><input type="text" name="orders[0].shopId" value="" id="shopId"></input>*</td>
+        </tr>
+        <tr>
+            <td>shopName</td>
+            <td><input type="text" name="orders[0].shopName" value="" id="shopName"></input>*</td>
+        </tr>
+        <tr>
+            <td>商品总价合计</td>
+            <td><input type="text" name="orders[0].sumFee" value="" id="sumFee"></input>*</td>
+        </tr>
+        <tr>
+            <td>优惠（合计）</td>
+            <td><input type="text" name="orders[0].discountFee" value="" id="discountFee"></input>*</td>
+        </tr>
+        <tr>
+            <td>券支付（合计）</td>
+            <td><input type="text" name="orders[0].couponFee" value="" id="couponFee"></input>*</td>
+        </tr>
+        <tr>
+            <td>积分抵扣</td>
+            <td><input type="text" name="orders[0].deductionFee" value="" id="deductionFee"></input>*</td>
+        </tr>
+        <tr>
+            <td>商品支付价（合计）</td>
+            <td><input type="text" name="orders[0].fee" value="" id="fee"></input>*</td>
+        </tr>
+        <tr>
+            <td>运费（合计）</td>
+            <td><input type="text" name="orders[0].freightFee" value="" id="freightFee"></input>*</td>
+        </tr>
+        <tr>
+<!--            <td>实际支付</td>-->
+            <input type="hidden" name="orders[0].payFee" value="12" ></input>
+        </tr>
+        <tr>
+<!--            <td>购买店铺id</td>-->
+           <input type="hidden" name="orders[0].details[0].shopId" value="" ></input>
+        </tr>
+        <tr>
+            <td>prodInfoId</td>
+            <td><input type="text" name="orders[0].details[0].prodInfoId" value="1" id="prodInfoId"></input>*</td>
+        </tr>
+        <tr>
+            <td>prodId</td>
+            <td><input type="text" name="orders[0].details[0].prodId" value="" id="prodId"></input>*</td>
+        </tr>
+        <tr>
+            <td>headImg</td>
+            <td><input type="text" name="orders[0].details[0].headImg" value="" id="headImg"></input>*</td>
+        </tr>
+        <tr>
+            <td>产品名称</td>
+            <td><input type="text" name="orders[0].details[0].name" value="" id="name"></input>*</td>
+        </tr>
+        <tr>
+            <td>商品售价</td>
+            <td><input type="text" name="orders[0].details[0].saleFee" value="" id="saleFee"></input>*</td>
+        </tr>
+        <tr>
+            <td>购买数量</td>
+            <td><input type="text" name="orders[0].details[0].amount" value="" id="amount"></input>*</td>
+        </tr>
+        <tr>
+<!--            <td>总价</td>-->
+            <input type="hidden" name="orders[0].details[0].sumFee" value="" ></input>
+        </tr>
+        <tr>
+<!--            <td>优惠（合计）</td>-->
+            <input type="hidden" name="orders[0].details[0].discountFee" value="" ></input>
+        </tr>
+        <tr>
+<!--            <td>券支付（合计）</td>-->
+            <input type="hidden" name="orders[0].details[0].couponFee" value="" ></input>
+        </tr>
+        <tr>
+<!--            <td>商品支付价</td>-->
+            <input type="hidden" name="orders[0].details[0].fee" value="" ></input>
+        </tr>
+        <tr>
+<!--            <td>运费</td>-->
+            <input type="hidden" name="orders[0].details[0].freightFee" value="" ></input>
+        </tr>
+        <tr>
+            <td>用户给商家备注</td>
+            <td><input type="text" name="orders[0].details[0].descr" value="" id="descr"></input>*</td>
+        </tr>
+        <tr align="center">
+            <td colspan="2">
+                <input type="hidden" name="time" id="orderTime"></input>
+                <input type="hidden" name="sign" id="orderSign"></input>
+                <input type="button" name="提交" value="提交" onclick="order();"></input>
+            </td>
+        </tr>
+    </table>
+</form>
+<br></br>
+<form th:action="@{/order/joinCart}" method="post" name="joinCartForm" id="joinCartForm">
+    <table border="1">
+        <tr align="center">
+            <td colspan="2">商品加入购物车</td>
+        </tr>
+        <tr>
+            <td>用户userId</td>
+            <td><input type="text" name="userId" value="1051000000006191208"></input>*</td>
+        </tr>
+        <tr>
+            <td>用户登陆账号</td>
+            <td><input type="text" name="loginName" value="13823366732"></input>*</td>
+        </tr>
+        <tr>
+            <td>产品id</td>
+            <td><input type="text" name="prodId" value=""></input>*</td>
+        </tr>
+        <tr>
+            <td>产品infoid</td>
+            <td><input type="text" name="prodInfoId" value=""></input>*</td>
+        </tr>
+        <tr>
+            <td>数量</td>
+            <td><input type="text" name="amount" value=""></input>*</td>
+        </tr>
+        <tr>
+            <td>加入购物车价格</td>
+            <td><input type="text" name="cartFee" value=""></input>*</td>
+        </tr>
+        <tr>
+            <td>是否选中</td>
+            <td><select name="selected">
+                <option value="1">选中</option>
+                <option value="0">未选中</option>
+            </select>*</td>
+        </tr>
+        <tr>
+            <td>登陆令牌</td>
+            <td><input type="text" name="tokenId" value="959l8nqlad2l4nqk9t5kaji98hfjkc9j70p36cpm6orj6cjs68o32e9h60pj0c1g65u32ctm12ef0f8q9vmleq70"></input>*</td>
+        </tr>
+        <tr>
+            <td>应用编号</td>
+            <td><input type="text" name="appId" value="20191030001"></input>*</td>
+        </tr>
+        <tr align="center">
+            <td colspan="2">
+                <input type="hidden" name="time" id="joinCartTime"></input>
+                <input type="hidden" name="sign" id="joinCartSign"></input>
+                <input type="button" name="提交" value="提交" onclick="joinCart();"></input>
+            </td>
+        </tr>
+    </table>
+</form>
+<br></br>
+<form th:action="@{/order/delCart}" method="post" name="delCartForm" id="delCartForm">
+    <table border="1">
+        <tr align="center">
+            <td colspan="2">商品从购物车删除</td>
+        </tr>
+        <tr>
+            <td>用户userId</td>
+            <td><input type="text" name="userId" value="1051000000006191208"></input>*</td>
+        </tr>
+        <tr>
+            <td>用户登陆账号</td>
+            <td><input type="text" name="loginName" value="13823366732"></input>*</td>
+        </tr>
+        <tr>
+            <td>购物车记录ids</td>
+            <td><input type="text" name="ids" value=""></input>*</td>
+        </tr>
+        <tr>
+            <td>登陆令牌</td>
+            <td><input type="text" name="tokenId" value="959l8nqlad2l4nqk9t5kaji98hfjkc9j70p36cpm6orj6cjs68o32e9h60pj0c1g65u32ctm12ef0f8q9vmleq70"></input>*</td>
+        </tr>
+        <tr>
+            <td>应用编号</td>
+            <td><input type="text" name="appId" value="20191030001"></input>*</td>
+        </tr>
+        <tr align="center">
+            <td colspan="2">
+                <input type="hidden" name="time" id="delCartTime"></input>
+                <input type="hidden" name="sign" id="delCartSign"></input>
+                <input type="button" name="提交" value="提交" onclick="delCart();"></input>
+            </td>
+        </tr>
+    </table>
+</form>
+<br></br>
+<form th:action="@{/upload/multi}" method="post" name="uploadForm" id="uploadForm" enctype="multipart/form-data">
+    <table border="1">
+        <tr align="center">
+            <td colspan="2">文件上传测试</td>
+        </tr>
+        <tr>
+            <td>文件</td>
+            <td><input type="file" name="file"></input>*</td>
+        </tr>
+        <tr>
+            <td>应用编号</td>
+            <td><input type="text" name="appId" value="20191030001"></input>*</td>
+        </tr>
+        <tr align="center">
+            <td colspan="2">
+                <input type="hidden" name="time" id="uploadTime"></input>
+                <input type="hidden" name="sign" id="uploadSign"></input>
+                <input type="button" name="提交" value="提交" onclick="upload();"></input>
+            </td>
+        </tr>
+    </table>
+</form>
+<br></br>
+<form th:action="@{/order/closeOrder}" method="post" name="closeOrderForm" id="closeOrderForm">
+    <table border="1">
+        <tr align="center">
+            <td colspan="2">用户订单关闭</td>
+        </tr>
+        <tr>
+            <td>用户userId</td>
+            <td><input type="text" name="userId" value="1051000000006191208"></input>*</td>
+        </tr>
+        <tr>
+            <td>用户登陆账号</td>
+            <td><input type="text" name="loginName" value="13823366732"></input>*</td>
+        </tr>
+        <tr>
+            <td>orderId</td>
+            <td><input type="text" name="orderId" value=""></input>*</td>
+        </tr>
+        <tr>
+            <td>descr</td>
+            <td><input type="text" name="descr" value=""></input>*</td>
+        </tr>
+        <tr>
+            <td>登陆令牌</td>
+            <td><input type="text" name="tokenId" value="959l8nqlad2l4nqk9t5kaji98hfjkc9j70p36cpm6orj6cjs68o32e9h60pj0c1g65u32ctm12ef0f8q9vmleq70"></input>*</td>
+        </tr>
+        <tr>
+            <td>应用编号</td>
+            <td><input type="text" name="appId" value="20191030001"></input>*</td>
+        </tr>
+        <tr align="center">
+            <td colspan="2">
+                <input type="hidden" name="time" id="closeOrderTime"></input>
+                <input type="hidden" name="sign" id="closeOrderSign"></input>
+                <input type="button" name="提交" value="提交" onclick="closeOrder();"></input>
+            </td>
+        </tr>
+    </table>
+</form>
+<br></br>
+<form th:action="@{/chat/sendMsg}" method="post" name="sendMsgForm" id="sendMsgForm">
+    <table border="1">
+        <tr align="center">
+            <td colspan="2">用户发送消息</td>
+        </tr>
+        <tr>
+            <td>用户userId</td>
+            <td><input type="text" name="userId" value="1051000000006191208"></input>*</td>
+        </tr>
+        <tr>
+            <td>用户登陆账号</td>
+            <td><input type="text" name="loginName" value="13823366732"></input>*</td>
+        </tr>
+        <tr>
+            <td>shopId</td>
+            <td><input type="text" name="shopId" value="1"></input>*</td>
+        </tr>
+        <tr>
+            <td>talker</td>
+            <td><input type="text" name="talker" value="1053000000005191208"></input>*</td>
+        </tr>
+        <tr>
+            <td>windowId</td>
+            <td><input type="text" name="windowId" value=""></input>*</td>
+        </tr>
+        <tr>
+            <td>windowType</td>
+            <td><select name="windowType"><option value="1">点对点消息</option>
+                <option value="2">群消息</option>
+            </select></td>
+        </tr>
+        <tr>
+            <td>发送者</td>
+            <td><input type="text" name="sender" value="1051000000006191208"></input>*</td>
+        </tr>
+        <tr>
+            <td>发送者名称</td>
+            <td><input type="text" name="senderName" value=""></input>*</td>
+        </tr>
+        <tr>
+            <td>消息类型</td>
+            <td><select name="msgType"><option value="1">文字（包括表情）</option>
+                <option value="3">图片</option>
+                <option value="4">音频</option>
+                <option value="5">视频</option>
+            </select></td>
+        </tr>
+        <tr>
+            <td>消息内容</td>
+            <td><input type="text" name="content" value=""></input>*</td>
+        </tr>
+        <tr>
+            <td>登陆令牌</td>
+            <td><input type="text" name="tokenId" value="959l8nqlad2l4nqk9t5kaji98hfjkc9j70p36cpm6orj6cjs68o32e9h60pj0c1g65u32ctm12ef0f8q9vmleq70"></input>*</td>
+        </tr>
+        <tr>
+            <td>应用编号</td>
+            <td><input type="text" name="appId" value="20191030001"></input>*</td>
+        </tr>
+        <tr align="center">
+            <td colspan="2">
+                <input type="hidden" name="time" id="sendMsgTime"></input>
+                <input type="hidden" name="sign" id="sendMsgSign"></input>
+                <input type="button" name="提交" value="提交" onclick="sendMsg();"></input>
+            </td>
+        </tr>
+    </table>
+</form>
+<br></br>
+<form th:action="@{/chat/queryWindowMsg}" method="post" name="queryWindowMsgForm" id="queryWindowMsgForm">
+    <table border="1">
+        <tr align="center">
+            <td colspan="2">查询窗口消息</td>
+        </tr>
+        <tr>
+            <td>用户userId</td>
+            <td><input type="text" name="userId" value="1051000000006191208"></input>*</td>
+        </tr>
+        <tr>
+            <td>用户登陆账号</td>
+            <td><input type="text" name="loginName" value="13823366732"></input>*</td>
+        </tr>
+        <tr>
+            <td>shopId</td>
+            <td><input type="text" name="shopId" value="1"></input>*</td>
+        </tr>
+        <tr>
+            <td>talker</td>
+            <td><input type="text" name="talker" value="1053000000005191208"></input>*</td>
+        </tr>
+<!--        <tr>-->
+<!--            <td>windowId</td>-->
+<!--            <td><input type="text" name="windowId" value=""></input>*</td>-->
+<!--        </tr>-->
+        <tr>
+            <td>创建时间</td>
+            <td><input type="text" name="createTime" value=""></input>*</td>
+        </tr>
+        <tr>
+            <td>登陆令牌</td>
+            <td><input type="text" name="tokenId" value="959l8nqlad2l4nqk9t5kaji98hfjkc9j70p36cpm6orj6cjs68o32e9h60pj0c1g65u32ctm12ef0f8q9vmleq70"></input>*</td>
+        </tr>
+        <tr>
+            <td>应用编号</td>
+            <td><input type="text" name="appId" value="20191030001"></input>*</td>
+        </tr>
+        <tr align="center">
+            <td colspan="2">
+                <input type="hidden" name="time" id="queryWindowMsgTime"></input>
+                <input type="hidden" name="sign" id="queryWindowMsgSign"></input>
+                <input type="button" name="提交" value="提交" onclick="queryWindowMsg();"></input>
+            </td>
+        </tr>
+    </table>
+</form>
+<br></br>
+<form th:action="@{/chat/queryMsgByWindowIds}" method="post" name="queryMsgByWindowIdsForm" id="queryMsgByWindowIdsForm">
+    <table border="1">
+        <tr align="center">
+            <td colspan="2">查询当前窗口消息</td>
+        </tr>
+        <tr>
+            <td>用户userId</td>
+            <td><input type="text" name="userId" value="1051000000006191208"></input>*</td>
+        </tr>
+        <tr>
+            <td>用户登陆账号</td>
+            <td><input type="text" name="loginName" value="13823366732"></input>*</td>
+        </tr>
+        <tr>
+            <td>每页大小</td>
+            <td><input type="text" name="pageSize" value="3"></input>*</td>
+        </tr>
+        <tr>
+            <td>第几页</td>
+            <td><input type="text" name="pageNum" value="1"></input>*</td>
+        </tr>
+        <tr>
+            <td>msgId</td>
+            <td><input type="text" name="msgId" value="1"></input>*</td>
+        </tr>
+        <tr>
+            <td>windowIds</td>
+            <td><input type="text" name="windowIds" value=""></input>*</td>
+        </tr>
+        <tr>
+            <td>创建时间</td>
+            <td><input type="text" name="createTime" value=""></input>*</td>
+        </tr>
+        <tr>
+            <td>登陆令牌</td>
+            <td><input type="text" name="tokenId" value="959l8nqlad2l4nqk9t5kaji98hfjkc9j70p36cpm6orj6cjs68o32e9h60pj0c1g65u32ctm12ef0f8q9vmleq70"></input>*</td>
+        </tr>
+        <tr>
+            <td>应用编号</td>
+            <td><input type="text" name="appId" value="20191030001"></input>*</td>
+        </tr>
+        <tr align="center">
+            <td colspan="2">
+                <input type="hidden" name="time" id="queryMsgByWindowIdsTime"></input>
+                <input type="hidden" name="sign" id="queryMsgByWindowIdsSign"></input>
+                <input type="button" name="提交" value="提交" onclick="queryMsgByWindowIds();"></input>
+            </td>
+        </tr>
+    </table>
+</form>
+<br></br>
+<form th:action="@{/chat/createWindow}" method="post" name="createWindowForm" id="createWindowForm">
+    <table border="1">
+        <tr align="center">
+            <td colspan="2">创建聊天窗口</td>
+        </tr>
+        <tr>
+            <td>用户userId</td>
+            <td><input type="text" name="userId" value="1051000000006191208"></input>*</td>
+        </tr>
+        <tr>
+            <td>用户登陆账号</td>
+            <td><input type="text" name="loginName" value="13823366732"></input>*</td>
+        </tr>
+        <tr>
+            <td>shopId</td>
+            <td><input type="text" name="shopId" value="1"></input>*</td>
+        </tr>
+        <tr>
+            <td>shopName</td>
+            <td><input type="text" name="shopName" value="1"></input>*</td>
+        </tr>
+        <tr>
+            <td>shopAvatarUrl</td>
+            <td><input type="text" name="shopAvatarUrl" value="1"></input>*</td>
+        </tr>
+        <tr>
+            <td>talker</td>
+            <td><input type="text" name="talker" value="1053000000005191208"></input>*</td>
+        </tr>
+        <tr>
+            <td>windowType</td>
+            <td><select name="windowType"><option value="1">点对点消息</option>
+                <option value="2">群消息</option>
+            </select></td>
+        </tr>
+        <tr>
+            <td>nickName</td>
+            <td><input type="text" name="nickName" value=""></input>*</td>
+        </tr>
+        <tr>
+            <td>avatarUrl</td>
+            <td><input type="text" name="avatarUrl" value=""></input>*</td>
+        </tr>
+        <tr>
+            <td>登陆令牌</td>
+            <td><input type="text" name="tokenId" value="959l8nqlad2l4nqk9t5kaji98hfjkc9j70p36cpm6orj6cjs68o32e9h60pj0c1g65u32ctm12ef0f8q9vmleq70"></input>*</td>
+        </tr>
+        <tr>
+            <td>应用编号</td>
+            <td><input type="text" name="appId" value="20191030001"></input>*</td>
+        </tr>
+        <tr align="center">
+            <td colspan="2">
+                <input type="hidden" name="time" id="createWindowTime"></input>
+                <input type="hidden" name="sign" id="createWindowSign"></input>
+                <input type="button" name="提交" value="提交" onclick="createWindow();"></input>
+            </td>
+        </tr>
+    </table>
+</form>
+<br></br>
+<form th:action="@{/chat/updateMsgStatus}" method="post" name="updateMsgStatusForm" id="updateMsgStatusForm">
+    <table border="1">
+        <tr align="center">
+            <td colspan="2">更新消息状态</td>
+        </tr>
+        <tr>
+            <td>用户userId</td>
+            <td><input type="text" name="userId" value="1051000000006191208"></input>*</td>
+        </tr>
+        <tr>
+            <td>用户登陆账号</td>
+            <td><input type="text" name="loginName" value="13823366732"></input>*</td>
+        </tr>
+        <tr>
+            <td>msgIds</td>
+            <td><input type="text" name="msgIds" value="1"></input>*</td>
+        </tr>
+        <tr>
+            <td>status</td>
+            <td><select name="status">
+                    <option value="1" selected="selected">已读</option>
+                    <option value="2" selected="selected">撤销</option>
+            </select>*</td>
+        </tr>
+        <tr>
+            <td>登陆令牌</td>
+            <td><input type="text" name="tokenId" value="959l8nqlad2l4nqk9t5kaji98hfjkc9j70p36cpm6orj6cjs68o32e9h60pj0c1g65u32ctm12ef0f8q9vmleq70"></input>*</td>
+        </tr>
+        <tr>
+            <td>应用编号</td>
+            <td><input type="text" name="appId" value="20191030001"></input>*</td>
+        </tr>
+        <tr align="center">
+            <td colspan="2">
+                <input type="hidden" name="time" id="updateMsgStatusTime"></input>
+                <input type="hidden" name="sign" id="updateMsgStatusSign"></input>
+                <input type="button" name="提交" value="提交" onclick="updateMsgStatus();"></input>
+            </td>
+        </tr>
+    </table>
+</form>
+<br></br>
+<form th:action="@{/shop/getShopsByShopIds}" method="post" name="getShopsByShopIdsForm" id="getShopsByShopIdsForm">
+    <table border="1">
+        <tr align="center">
+            <td colspan="2">商店信息查詢</td>
+        </tr>
+        <tr>
+            <td>用户userId</td>
+            <td><input type="text" name="userId" value="1051000000006191208"></input>*</td>
+        </tr>
+        <tr>
+            <td>用户登陆账号</td>
+            <td><input type="text" name="loginName" value="13823366732"></input>*</td>
+        </tr>
+        <tr>
+            <td>shopIds</td>
+            <td><input type="text" name="shopIds" value="1"></input>*</td>
+        </tr>
+        <tr>
+            <td>登陆令牌</td>
+            <td><input type="text" name="tokenId" value="959l8nqlad2l4nqk9t5kaji98hfjkc9j70p36cpm6orj6cjs68o32e9h60pj0c1g65u32ctm12ef0f8q9vmleq70"></input>*</td>
+        </tr>
+        <tr>
+            <td>应用编号</td>
+            <td><input type="text" name="appId" value="20191030001"></input>*</td>
+        </tr>
+        <tr align="center">
+            <td colspan="2">
+                <input type="hidden" name="time" id="getShopsByShopIdsTime"></input>
+                <input type="hidden" name="sign" id="getShopsByShopIdsSign"></input>
+                <input type="button" name="提交" value="提交" onclick="getShopsByShopIds();"></input>
+            </td>
+        </tr>
+    </table>
+</form>
+<br></br>
+<form th:action="@{/shop/getShopManager}" method="post" name="getShopManagerForm" id="getShopManagerForm">
+    <table border="1">
+        <tr align="center">
+            <td colspan="2">获取商家管理人员权限信息</td>
+        </tr>
+        <tr>
+            <td>用户userId</td>
+            <td><input type="text" name="userId" value="1051000000006191208"></input>*</td>
+        </tr>
+        <tr>
+            <td>用户登陆账号</td>
+            <td><input type="text" name="loginName" value="13823366732"></input>*</td>
+        </tr>
+        <tr>
+            <td>登陆令牌</td>
+            <td><input type="text" name="tokenId" value="959l8nqlad2l4nqk9t5kaji98hfjkc9j70p36cpm6orj6cjs68o32e9h60pj0c1g65u32ctm12ef0f8q9vmleq70"></input>*</td>
+        </tr>
+        <tr>
+            <td>应用编号</td>
+            <td><input type="text" name="appId" value="20191030001"></input>*</td>
+        </tr>
+        <tr align="center">
+            <td colspan="2">
+                <input type="hidden" name="time" id="getShopManagerTime"></input>
+                <input type="hidden" name="sign" id="getShopManagerSign"></input>
+                <input type="button" name="提交" value="提交" onclick="getShopManager();"></input>
+            </td>
+        </tr>
+    </table>
+</form>
+<br></br>
+<form th:action="@{/user/queryWindows}" method="post" name="queryWindowsForm" id="queryWindowsForm">
+    <table border="1">
+        <tr align="center">
+            <td colspan="2">聊天窗口查询</td>
+        </tr>
+        <tr>
+            <td>用户userId</td>
+            <td><input type="text" name="userId" value="1051000000006191208"></input>*</td>
+        </tr>
+        <tr>
+            <td>用户登陆账号</td>
+            <td><input type="text" name="loginName" value="13823366732"></input>*</td>
+        </tr>
+        <tr>
+            <td>windowIds</td>
+            <td><input type="text" name="windowIds" value=""></input>*</td>
+        </tr>
+        <tr>
+            <td>登陆令牌</td>
+            <td><input type="text" name="tokenId" value="959l8nqlad2l4nqk9t5kaji98hfjkc9j70p36cpm6orj6cjs68o32e9h60pj0c1g65u32ctm12ef0f8q9vmleq70"></input>*</td>
+        </tr>
+        <tr>
+            <td>应用编号</td>
+            <td><input type="text" name="appId" value="20191030001"></input>*</td>
+        </tr>
+        <tr align="center">
+            <td colspan="2">
+                <input type="hidden" name="time" id="queryWindowsTime"></input>
+                <input type="hidden" name="sign" id="queryWindowsSign"></input>
+                <input type="button" name="提交" value="提交" onclick="queryWindows();"></input>
+            </td>
+        </tr>
+    </table>
+</form>
+<br></br>
+<form th:action="@{/order/addAcctBook}" method="post" name="addAcctBookForm" id="addAcctBookForm">
+    <table border="1">
+        <tr align="center">
+            <td colspan="2">添加账本记录</td>
+        </tr>
+        <tr>
+            <td>用户userId</td>
+            <td><input type="text" name="userId" value="1051000000006191208"></input>*</td>
+        </tr>
+        <tr>
+            <td>用户登陆账号</td>
+            <td><input type="text" name="loginName" value="13823366732"></input>*</td>
+        </tr>
+        <tr>
+            <td>操作账号</td>
+            <td><input type="text" name="optUserId" value=""></input>*</td>
+        </tr>
+        <tr>
+            <td>账户类型</td>
+            <td>
+                <select name="acctType">
+                    <option value="1">现金</option>
+                    <option value="2">积分</option>
+                    <option value="3">保证金</option>
+                    <option value="99" selected>记账</option>
+                </select>*
+            </td>
+        </tr>
+        <tr>
+            <td>支付来源</td>
+            <td>
+                <select name="payType">
+                    <option value="0">内部</option>
+                    <option value="1" selected>微信</option>
+                    <option value="2">支付宝</option>
+                    <option value="3">银行转账</option>
+                </select>*
+            </td>
+        </tr>
+        <tr>
+            <td>资金方向</td>
+            <td>
+                <select name="direct">
+                    <option value="1">收入</option>
+                    <option value="2" selected>支出</option>
+                </select>*
+            </td>
+        </tr>
+        <tr>
+            <td>订单号,逗号分隔</td>
+            <td><input type="text" name="orderId" value=""></input>*</td>
+        </tr>
+        <tr>
+            <td>金额</td>
+            <td><input type="text" name="money" value=""></input>*</td>
+        </tr>
+        <tr>
+            <td>昵称</td>
+            <td><input type="text" name="name" value=""></input>*</td>
+        </tr>
+        <tr>
+            <td>状态</td>
+            <td>
+                <select name="status">
+                    <option value="0">发起支付</option>
+                    <option value="1" selected>完成支付</option>
+                </select>*
+            </td>
+        </tr>
+        <tr>
+            <td>登陆令牌</td>
+            <td><input type="text" name="tokenId" value="959l8nqlad2l4nqk9t5kaji98hfjkc9j70p36cpm6orj6cjs68o32e9h60pj0c1g65u32ctm12ef0f8q9vmleq70"></input>*</td>
+        </tr>
+        <tr>
+            <td>应用编号</td>
+            <td><input type="text" name="appId" value="20191030001"></input>*</td>
+        </tr>
+        <tr align="center">
+            <td colspan="2">
+                <input type="hidden" name="time" id="addAcctBookTime"></input>
+                <input type="hidden" name="sign" id="addAcctBookSign"></input>
+                <input type="button" name="提交" value="提交" onclick="addAcctBook();"></input>
+            </td>
+        </tr>
+    </table>
+</form>
+<br></br>
+<form th:action="@{/order/queryAcctBook}" method="post" name="queryAcctBookForm" id="queryAcctBookForm">
+    <table border="1">
+        <tr align="center">
+            <td colspan="2">查询账本记录</td>
+        </tr>
+        <tr>
+            <td>用户userId</td>
+            <td><input type="text" name="userId" value="1051000000006191208"></input>*</td>
+        </tr>
+        <tr>
+            <td>用户登陆账号</td>
+            <td><input type="text" name="loginName" value="13823366732"></input>*</td>
+        </tr>
+        <tr>
+            <td>流水号</td>
+            <td><input type="text" name="transId" value=""></input>*</td>
+        </tr>
+        <tr>
+            <td>子账户Id</td>
+            <td><input type="text" name="subAccountId" value=""></input>*</td>
+        </tr>
+        <tr>
+            <td>登陆令牌</td>
+            <td><input type="text" name="tokenId" value="959l8nqlad2l4nqk9t5kaji98hfjkc9j70p36cpm6orj6cjs68o32e9h60pj0c1g65u32ctm12ef0f8q9vmleq70"></input>*</td>
+        </tr>
+        <tr>
+            <td>应用编号</td>
+            <td><input type="text" name="appId" value="20191030001"></input>*</td>
+        </tr>
+        <tr align="center">
+            <td colspan="2">
+                <input type="hidden" name="time" id="queryAcctBookTime"></input>
+                <input type="hidden" name="sign" id="queryAcctBookSign"></input>
+                <input type="button" name="提交" value="提交" onclick="queryAcctBook();"></input>
+            </td>
+        </tr>
+    </table>
+</form>
+<br></br>
+<form th:action="@{/order/addAcct}" method="post" name="addAcctForm" id="addAcctForm">
+    <table border="1">
+        <tr align="center">
+            <td colspan="2">添加账本</td>
+        </tr>
+        <tr>
+            <td>用户userId</td>
+            <td><input type="text" name="userId" value="1051000000006191208"></input>*</td>
+        </tr>
+        <tr>
+            <td>用户登陆账号</td>
+            <td><input type="text" name="loginName" value="13823366732"></input>*</td>
+        </tr>
+        <tr>
+            <td>用户类型</td>
+            <td>
+                <select name="userType">
+                    <option value="0">用户id</option>
+                    <option value="1">商户</option>
+                </select>*</td>
+        </tr>
+        <tr>
+            <td>账户名称</td>
+            <td><input type="text" name="name" value=""></input>*</td>
+        </tr>
+        <tr>
+            <td>ownUserId</td>
+            <td><input type="text" name="ownUserId" value=""></input>*</td>
+        </tr>
+        <tr>
+            <td>登陆令牌</td>
+            <td><input type="text" name="tokenId" value="959l8nqlad2l4nqk9t5kaji98hfjkc9j70p36cpm6orj6cjs68o32e9h60pj0c1g65u32ctm12ef0f8q9vmleq70"></input>*</td>
+        </tr>
+        <tr>
+            <td>应用编号</td>
+            <td><input type="text" name="appId" value="20191030001"></input>*</td>
+        </tr>
+        <tr align="center">
+            <td colspan="2">
+                <input type="hidden" name="time" id="addAcctTime"></input>
+                <input type="hidden" name="sign" id="addAcctSign"></input>
+                <input type="button" name="提交" value="提交" onclick="addAcct();"></input>
+            </td>
+        </tr>
+    </table>
+</form>
+<br></br>
+<form th:action="@{/order/addSubAcct}" method="post" name="addSubAcctForm" id="addSubAcctForm">
+    <table border="1">
+        <tr align="center">
+            <td colspan="2">添加子账本</td>
+        </tr>
+        <tr>
+            <td>用户userId</td>
+            <td><input type="text" name="userId" value="1051000000006191208"></input>*</td>
+        </tr>
+        <tr>
+            <td>用户登陆账号</td>
+            <td><input type="text" name="loginName" value="13823366732"></input>*</td>
+        </tr>
+        <tr>
+            <td>账户类型</td>
+            <td>
+                <select name="acctType">
+                    <option value="1">现金</option>
+                    <option value="2">积分</option>
+                    <option value="3">保证金</option>
+                    <option value="99">记账</option>
+                </select>*</td>
+        </tr>
+        <tr>
+            <td>ownUserId</td>
+            <td><input type="text" name="ownUserId" value=""></input>*</td>
+        </tr>
+        <tr>
+            <td>登陆令牌</td>
+            <td><input type="text" name="tokenId" value="959l8nqlad2l4nqk9t5kaji98hfjkc9j70p36cpm6orj6cjs68o32e9h60pj0c1g65u32ctm12ef0f8q9vmleq70"></input>*</td>
+        </tr>
+        <tr>
+            <td>应用编号</td>
+            <td><input type="text" name="appId" value="20191030001"></input>*</td>
+        </tr>
+        <tr align="center">
+            <td colspan="2">
+                <input type="hidden" name="time" id="addSubAcctTime"></input>
+                <input type="hidden" name="sign" id="addSubAcctSign"></input>
+                <input type="button" name="提交" value="提交" onclick="addSubAcct();"></input>
+            </td>
+        </tr>
+    </table>
+</form>
+<br></br>
+<form th:action="@{/prod/1.0/searchProdLimit}" method="post" name="searchProdLimitForm" id="searchProdLimitForm">
+    <table border="1">
+        <tr align="center">
+            <td colspan="2">商品限制查询</td>
+        </tr>
+        <tr>
+            <td>用户userId</td>
+            <td><input type="text" name="userId" value="1051000000006191208"></input>*</td>
+        </tr>
+        <tr>
+            <td>用户登陆账号</td>
+            <td><input type="text" name="loginName" value="13823366732"></input>*</td>
+        </tr>
+        <tr>
+            <td>产品限制id</td>
+            <td><input type="text" name="prodLimitIds" value=""></input>*</td>
+        </tr>
+        <tr>
+            <td>登陆令牌</td>
+            <td><input type="text" name="tokenId" value="959l8nqlad2l4nqk9t5kaji98hfjkc9j70p36cpm6orj6cjs68o32e9h60pj0c1g65u32ctm12ef0f8q9vmleq70"></input>*</td>
+        </tr>
+        <tr>
+            <td>行业分类id</td>
+            <td><input type="text" name="tradeTypeId" value=""></input>*</td>
+        </tr>
+        <tr>
+            <td>产品类别id</td>
+            <td><input type="text" name="prodTypeId" value=""></input>*</td>
+        </tr>
+        <tr>
+            <td>商店id</td>
+            <td><input type="text" name="shopId" value=""></input>*</td>
+        </tr>
+        <tr>
+            <td>状态</td>
+            <td><select name="status">
+                <option value="1">正常</option>
+                <option value="2">失效</option>
+            </select>*</td>
+        </tr>
+        <tr>
+            <td>应用编号</td>
+            <td><input type="text" name="appId" value="20191030001"></input>*</td>
+        </tr>
+        <tr align="center">
+            <td colspan="2">
+                <input type="hidden" name="time" id="searchProdLimitTime"></input>
+                <input type="hidden" name="sign" id="searchProdLimitSign"></input>
+                <input type="button" name="提交" value="提交" onclick="searchProdLimit();"></input>
+            </td>
+        </tr>
+    </table>
+</form>
+<br></br>
+<form th:action="@{/prod/1.0/getProdListByProdIds}" method="post" name="getProdListByProdIdsForm" id="getProdListByProdIdsForm">
+    <table border="1">
+        <tr align="center">
+            <td colspan="2">商品概要信息查询</td>
+        </tr>
+        <tr>
+            <td>产品id</td>
+            <td><input type="text" name="prodIds" value=""></input>*</td>
+        </tr>
+        <tr>
+            <td>分页大小d</td>
+            <td><input type="text" name="pageSize" value=""></input>*</td>
+        </tr>
+        <tr>
+            <td>当前第几页</td>
+            <td><input type="text" name="currPage" value=""></input>*</td>
+        </tr>
+        <tr>
+            <td>应用编号</td>
+            <td><input type="text" name="appId" value="20191030001"></input>*</td>
+        </tr>
+        <tr align="center">
+            <td colspan="2">
+                <input type="hidden" name="time" id="getProdListByProdIdsTime"></input>
+                <input type="hidden" name="sign" id="getProdListByProdIdsSign"></input>
+                <input type="button" name="提交" value="提交" onclick="getProdListByProdIds();"></input>
+            </td>
+        </tr>
+    </table>
+</form>
+<br></br>
+<form name="socketSendMsgForm">
+    <p>【toUserId】：<div><input id="receiverId" name="receiverId" type="text" value="1053000000005191209"></div>
+    <p>【content】：<div><input id="contentText" name="contentText" type="text" value="hello websocket"></div>
+    <p>【msgType】：<div><input id="msgType" name="msgType" type="text" value="1"></div>
+    <p>【senderName】：<div><input id="senderName" name="senderName" type="text" value="世纪风"></div>
+    <p>【sender】：<div><input id="sendId" name="sendId" type="text" value="1051000000006191208"></div>
+    <p>【windowId】：<div><input id="windowId" name="windowId" type="text" value="2"></div>
+    <p>【操作】：<div><a onclick="openSocket()">开启socket</a></div>
+    <p>【操作】：<div><a onclick="sendMessage()">发送消息</a></div>
+</form>
+<br></br>
+<script type="text/javascript" th:inline="javascript">
+    function getAppIdSecret(appId){
+        var ser="sss";
+        $.ajax({
+            type: "POST",
+            url: ctxPath+"getAppIdSecret" ,
+            dataType:'text',
+            data: {appId:appId},
+            async:false,
+            success: function (result) {
+                ser = result;
+            },
+            error : function() {
+                alert("appId不存在");
+            }
+        });
+        return ser;
+    }
+    function prodQuery(){
+        /*<![CDATA[*/
+        var time = /*[[${#dates.format(new java.util.Date().getTime(), 'yyyyMMddHHmmss')}]]*/ '';
+        /*]]>*/
+        //var document.orderRelationReportForm = document.getElementById("orderRelationReportForm");
+        var str="pageNum="+document.prodQueryForm.pageNum.value+"&pageSize="+document.prodQueryForm.pageSize.value+"&prodInfoId="+document.prodQueryForm.prodInfoId.value+"&appId="+document.prodQueryForm.appId.value+"&time="+time;
+        var ser = getAppIdSecret($.trim(document.prodQueryForm.appId.value));
+        if(ser){
+            str=str+ser;
+        }else{
+            return;
+        }
+        var sign=hex_md5(str);
+        document.getElementById('prodQuerySign').value=sign;
+        document.getElementById('prodQueryTime').value=time;
+        document.prodQueryForm.submit();
+    }
+    function queryProdInfoByKey(){
+        /*<![CDATA[*/
+        var time = /*[[${#dates.format(new java.util.Date().getTime(), 'yyyyMMddHHmmss')}]]*/ '';
+        /*]]>*/
+        //var document.orderRelationReportForm = document.getElementById("orderRelationReportForm");
+        var str="key="+document.queryProdInfoByKeyForm.key.value+"&pageNum="+document.queryProdInfoByKeyForm.pageNum.value+"&pageSize="+document.queryProdInfoByKeyForm.pageSize.value+"&appId="+document.queryProdInfoByKeyForm.appId.value+"&time="+time;
+        var ser = getAppIdSecret($.trim(document.queryProdInfoByKeyForm.appId.value));
+        if(ser){
+            str=str+ser;
+        }else{
+            return;
+        }
+        var sign=hex_md5(str);
+        document.getElementById('queryProdInfoByKeySign').value=sign;
+        document.getElementById('queryProdInfoByKeyTime').value=time;
+        document.queryProdInfoByKeyForm.submit();
+    }
+    function queryProdInfoByShopId(){
+        /*<![CDATA[*/
+        var time = /*[[${#dates.format(new java.util.Date().getTime(), 'yyyyMMddHHmmss')}]]*/ '';
+        /*]]>*/
+        //var document.orderRelationReportForm = document.getElementById("orderRelationReportForm");
+        var str="pageNum="+document.queryProdInfoByShopIdForm.pageNum.value+"&pageSize="+document.queryProdInfoByShopIdForm.pageSize.value+"&shopId="+document.queryProdInfoByShopIdForm.shopId.value+"&appId="+document.queryProdInfoByShopIdForm.appId.value+"&time="+time;
+        var ser = getAppIdSecret($.trim(document.queryProdInfoByShopIdForm.appId.value));
+        if(ser){
+            str=str+ser;
+        }else{
+            return;
+        }
+        var sign=hex_md5(str);
+        document.getElementById('queryProdInfoByShopIdSign').value=sign;
+        document.getElementById('queryProdInfoByShopIdTime').value=time;
+        document.queryProdInfoByShopIdForm.submit();
+    }
+    function queryProdInfoByProdInfoIds(){
+        /*<![CDATA[*/
+        var time = /*[[${#dates.format(new java.util.Date().getTime(), 'yyyyMMddHHmmss')}]]*/ '';
+        /*]]>*/
+        //var document.orderRelationReportForm = document.getElementById("orderRelationReportForm");
+        var str="pageNum="+document.queryProdInfoByProdInfoIdsForm.pageNum.value+"&pageSize="+document.queryProdInfoByProdInfoIdsForm.pageSize.value+"&prodInfoIds="+document.queryProdInfoByProdInfoIdsForm.prodInfoIds.value+"&appId="+document.queryProdInfoByProdInfoIdsForm.appId.value+"&time="+time;
+        var ser = getAppIdSecret($.trim(document.queryProdInfoByProdInfoIdsForm.appId.value));
+        if(ser){
+            str=str+ser;
+        }else{
+            return;
+        }
+        var sign=hex_md5(str);
+        document.getElementById('queryProdInfoByProdInfoIdsSign').value=sign;
+        document.getElementById('queryProdInfoByProdInfoIdsTime').value=time;
+        document.queryProdInfoByProdInfoIdsForm.submit();
+    }
+    function queryProdInfoByProdType(){
+        /*<![CDATA[*/
+        var time = /*[[${#dates.format(new java.util.Date().getTime(), 'yyyyMMddHHmmss')}]]*/ '';
+        /*]]>*/
+        //var document.orderRelationReportForm = document.getElementById("orderRelationReportForm");
+        var str="pageNum="+document.queryProdInfoByProdTypeForm.pageNum.value+"&pageSize="+document.queryProdInfoByProdTypeForm.pageSize.value+"&prodType="+document.queryProdInfoByProdTypeForm.prodType.value+"&appId="+document.queryProdInfoByProdTypeForm.appId.value+"&time="+time;
+        var ser = getAppIdSecret($.trim(document.queryProdInfoByProdTypeForm.appId.value));
+        if(ser){
+            str=str+ser;
+        }else{
+            return;
+        }
+        var sign=hex_md5(str);
+        document.getElementById('queryProdInfoByProdTypeSign').value=sign;
+        document.getElementById('queryProdInfoByProdTypeTime').value=time;
+        document.queryProdInfoByProdTypeForm.submit();
+    }
+    function userRegister(){
+        /*<![CDATA[*/
+        var time = /*[[${#dates.format(new java.util.Date().getTime(), 'yyyyMMddHHmmss')}]]*/ '';
+        /*]]>*/
+        //var document.orderRelationReportForm = document.getElementById("orderRelationReportForm");
+        var str="age="+document.userRegisterForm.age.value+"&avatarUrl="+document.userRegisterForm.avatarUrl.value+"&birthday="+document.userRegisterForm.birthday.value+"&cityId="+document.userRegisterForm.cityId.value+"&home="+document.userRegisterForm.home.value+"&idCard="+document.userRegisterForm.idCard.value+"&loginName="+document.userRegisterForm.loginName.value+"&nickName="+document.userRegisterForm.nickName.value+"&password="+document.userRegisterForm.password.value+"&phone="+document.userRegisterForm.phone.value+"&sex="+document.userRegisterForm.sex.value+"&userType="+document.userRegisterForm.userType.value+"&wechat="+document.userRegisterForm.wechat.value+"&appId="+document.userRegisterForm.appId.value+"&time="+time;
+        var ser = getAppIdSecret($.trim(document.userRegisterForm.appId.value));
+        if(ser){
+            str=str+ser;
+        }else{
+            return;
+        }
+        var sign=hex_md5(str);
+        document.getElementById('userRegisterSign').value=sign;
+        document.getElementById('userRegisterTime').value=time;
+        document.userRegisterForm.submit();
+    }
+    function userLogin(){
+        //debugger;
+        /*<![CDATA[*/
+        var time = /*[[${#dates.format(new java.util.Date().getTime(), 'yyyyMMddHHmmss')}]]*/ '';
+        /*]]>*/
+        var str="loginName="+document.userLoginForm.loginName.value+"&loginType="+document.userLoginForm.loginType.value+"&password="+document.userLoginForm.password.value+"&smsCode="+document.userLoginForm.smsCode.value+"&wxCode="+document.userLoginForm.wxCode.value +"&appId="+document.userLoginForm.appId.value+"&time="+time;
+        var ser = getAppIdSecret($.trim(document.userLoginForm.appId.value));
+        if(ser){
+            str=str+ser;
+        }else{
+            return;
+        }
+        debugger;
+        console.log(str)
+        var sign=hex_md5(str);
+        document.getElementById('userLoginSign').value=sign;
+        document.getElementById('userLoginTime').value=time;
+        document.userLoginForm.submit();
+    }
+    function userVerifyToken(){
+        //debugger;
+        /*<![CDATA[*/
+        var time = /*[[${#dates.format(new java.util.Date().getTime(), 'yyyyMMddHHmmss')}]]*/ '';
+        /*]]>*/
+        var str="tokenId="+document.userVerifyTokenForm.tokenId.value+"&userId="+document.userVerifyTokenForm.userId.value+"&appId="+document.userVerifyTokenForm.appId.value+"&time="+time;
+        var ser = getAppIdSecret($.trim(document.userVerifyTokenForm.appId.value));
+        if(ser){
+            str=str+ser;
+        }else{
+            return;
+        }
+        debugger;
+        console.log(str)
+        var sign=hex_md5(str);
+        document.getElementById('userVerifyTokenSign').value=sign;
+        document.getElementById('userVerifyTokenTime').value=time;
+        document.userVerifyTokenForm.submit();
+    }
+    function queryUserInfo(){
+        //debugger;
+        /*<![CDATA[*/
+        var time = /*[[${#dates.format(new java.util.Date().getTime(), 'yyyyMMddHHmmss')}]]*/ '';
+        /*]]>*/
+        var str="loginName="+document.queryUserInfoForm.loginName.value+"&operType="+document.queryUserInfoForm.operType.value+"&userId="+document.queryUserInfoForm.userId.value+"&appId="+document.queryUserInfoForm.appId.value+"&time="+time;
+        var ser = getAppIdSecret($.trim(document.queryUserInfoForm.appId.value));
+        if(ser){
+            str=str+ser;
+        }else{
+            return;
+        }
+        debugger;
+        console.log(str)
+        var sign=hex_md5(str);
+        document.getElementById('queryUserInfoSign').value=sign;
+        document.getElementById('queryUserInfoTime').value=time;
+        document.queryUserInfoForm.submit();
+    }
+    function sendValidSms(){
+        //debugger;
+        /*<![CDATA[*/
+        var time = /*[[${#dates.format(new java.util.Date().getTime(), 'yyyyMMddHHmmss')}]]*/ '';
+        /*]]>*/
+        var str="phone="+document.sendValidSmsForm.phone.value+"&appId="+document.sendValidSmsForm.appId.value+"&time="+time;
+        var ser = getAppIdSecret($.trim(document.sendValidSmsForm.appId.value));
+        if(ser){
+            str=str+ser;
+        }else{
+            return;
+        }
+        debugger;
+        console.log(str)
+        var sign=hex_md5(str);
+        document.getElementById('sendValidSmsSign').value=sign;
+        document.getElementById('sendValidSmsTime').value=time;
+        document.sendValidSmsForm.submit();
+    }
+    function addUserAddress(){
+        //debugger;
+        /*<![CDATA[*/
+        var time = /*[[${#dates.format(new java.util.Date().getTime(), 'yyyyMMddHHmmss')}]]*/ '';
+        /*]]>*/
+        var str="address="+document.addUserAddressForm.address.value+"&areaId="+document.addUserAddressForm.areaId.value+"&isDefault="+document.addUserAddressForm.isDefault.value+"&loginName="+document.addUserAddressForm.loginName.value+"&name="+document.addUserAddressForm.name.value+"&oldAddressId="+document.addUserAddressForm.oldAddressId.value+"&optType="+document.addUserAddressForm.optType.value+"&phone="+document.addUserAddressForm.phone.value+"&tokenId="+document.addUserAddressForm.tokenId.value+"&userId="+document.addUserAddressForm.userId.value+"&appId="+document.addUserAddressForm.appId.value+"&time="+time;
+        var ser = getAppIdSecret($.trim(document.addUserAddressForm.appId.value));
+        if(ser){
+            str=str+ser;
+        }else{
+            return;
+        }
+        debugger;
+        console.log(str)
+        var sign=hex_md5(str);
+        document.getElementById('addUserAddressSign').value=sign;
+        document.getElementById('addUserAddressTime').value=time;
+        document.addUserAddressForm.submit();
+    }
+    function delUserAddress(){
+        //debugger;
+        /*<![CDATA[*/
+        var time = /*[[${#dates.format(new java.util.Date().getTime(), 'yyyyMMddHHmmss')}]]*/ '';
+        /*]]>*/
+        var str="addressId="+document.delUserAddressForm.addressId.value+"&loginName="+document.delUserAddressForm.loginName.value+"&tokenId="+document.delUserAddressForm.tokenId.value+"&userId="+document.delUserAddressForm.userId.value+"&appId="+document.delUserAddressForm.appId.value+"&time="+time;
+        var ser = getAppIdSecret($.trim(document.delUserAddressForm.appId.value));
+        if(ser){
+            str=str+ser;
+        }else{
+            return;
+        }
+        debugger;
+        console.log(str)
+        var sign=hex_md5(str);
+        document.getElementById('delUserAddressSign').value=sign;
+        document.getElementById('delUserAddressTime').value=time;
+        document.delUserAddressForm.submit();
+    }
+    function queryUserAddress(){
+        //debugger;
+        /*<![CDATA[*/
+        var time = /*[[${#dates.format(new java.util.Date().getTime(), 'yyyyMMddHHmmss')}]]*/ '';
+        /*]]>*/
+        var str="addressId=" + document.queryUserAddressForm.addressId.value +"&loginName=" + document.queryUserAddressForm.loginName.value+"&queryType=" + document.queryUserAddressForm.queryType.value+"&tokenId="+document.queryUserAddressForm.tokenId.value+"&userId="+document.queryUserAddressForm.userId.value+"&appId="+document.queryUserAddressForm.appId.value+"&time="+time;
+        var ser = getAppIdSecret($.trim(document.queryUserAddressForm.appId.value));
+        if(ser){
+            str=str+ser;
+        }else{
+            return;
+        }
+        debugger;
+        var sign=hex_md5(str);
+        document.getElementById('queryUserAddressSign').value=sign;
+        document.getElementById('queryUserAddressTime').value=time;
+        document.queryUserAddressForm.submit();
+    }
+    function getUserCoupon(){
+        //debugger;
+        /*<![CDATA[*/
+        var time = /*[[${#dates.format(new java.util.Date().getTime(), 'yyyyMMddHHmmss')}]]*/ '';
+        /*]]>*/
+        var str="loginName=" + document.getUserCouponForm.loginName.value+"&shopIds=" + document.getUserCouponForm.shopIds.value+"&status=" + document.getUserCouponForm.status.value+"&tokenId="+document.getUserCouponForm.tokenId.value+"&userId="+document.getUserCouponForm.userId.value+"&appId="+document.getUserCouponForm.appId.value+"&time="+time;
+        var ser = getAppIdSecret($.trim(document.getUserCouponForm.appId.value));
+        if(ser){
+            str=str+ser;
+        }else{
+            return;
+        }
+        debugger;
+        var sign=hex_md5(str);
+        document.getElementById('getUserCouponSign').value=sign;
+        document.getElementById('getUserCouponTime').value=time;
+        document.getUserCouponForm.submit();
+    }
+    function getShopCoupon(){
+        //debugger;
+        /*<![CDATA[*/
+        var time = /*[[${#dates.format(new java.util.Date().getTime(), 'yyyyMMddHHmmss')}]]*/ '';
+        /*]]>*/
+        var str="loginName=" + document.getShopCouponForm.loginName.value+"&prodId=" + document.getShopCouponForm.prodId.value+"&shopIds=" + document.getShopCouponForm.shopIds.value+"&status=" + document.getShopCouponForm.status.value+"&tokenId="+document.getShopCouponForm.tokenId.value+"&userId="+document.getShopCouponForm.userId.value+"&appId="+document.getShopCouponForm.appId.value+"&time="+time;
+        var ser = getAppIdSecret($.trim(document.getShopCouponForm.appId.value));
+        if(ser){
+            str=str+ser;
+        }else{
+            return;
+        }
+        debugger;
+        var sign=hex_md5(str);
+        document.getElementById('getShopCouponSign').value=sign;
+        document.getElementById('getShopCouponTime').value=time;
+        document.getShopCouponForm.submit();
+    }
+    function receiveCoupon(){
+        //debugger;
+        /*<![CDATA[*/
+        var time = /*[[${#dates.format(new java.util.Date().getTime(), 'yyyyMMddHHmmss')}]]*/ '';
+        /*]]>*/
+        var str="couponId=" + document.receiveCouponForm.couponId.value+"&loginName=" + document.receiveCouponForm.loginName.value+"&tokenId="+document.receiveCouponForm.tokenId.value+"&userId="+document.receiveCouponForm.userId.value+"&appId="+document.receiveCouponForm.appId.value+"&time="+time;
+        var ser = getAppIdSecret($.trim(document.receiveCouponForm.appId.value));
+        if(ser){
+            str=str+ser;
+        }else{
+            return;
+        }
+        debugger;
+        var sign=hex_md5(str);
+        document.getElementById('receiveCouponSign').value=sign;
+        document.getElementById('receiveCouponTime').value=time;
+        document.receiveCouponForm.submit();
+    }
+    function useCoupon(){
+        //debugger;
+        /*<![CDATA[*/
+        var time = /*[[${#dates.format(new java.util.Date().getTime(), 'yyyyMMddHHmmss')}]]*/ '';
+        /*]]>*/
+        var str="couponId=" + document.useCouponForm.couponId.value+"&loginName=" + document.useCouponForm.loginName.value+"&orderId=" + document.useCouponForm.orderId.value+"&tokenId="+document.useCouponForm.tokenId.value+"&userCouponId="+document.useCouponForm.userCouponId.value+"&userId="+document.useCouponForm.userId.value+"&appId="+document.useCouponForm.appId.value+"&time="+time;
+        var ser = getAppIdSecret($.trim(document.useCouponForm.appId.value));
+        if(ser){
+            str=str+ser;
+        }else{
+            return;
+        }
+        debugger;
+        var sign=hex_md5(str);
+        document.getElementById('useCouponSign').value=sign;
+        document.getElementById('useCouponTime').value=time;
+        document.useCouponForm.submit();
+    }
+    function getCartProdList(){
+        //debugger;
+        /*<![CDATA[*/
+        var time = /*[[${#dates.format(new java.util.Date().getTime(), 'yyyyMMddHHmmss')}]]*/ '';
+        /*]]>*/
+        var str="loginName=" + document.getCartProdListForm.loginName.value+"&pageNum=" + document.getCartProdListForm.pageNum.value+"&pageSize=" + document.getCartProdListForm.pageSize.value+"&tokenId="+document.getCartProdListForm.tokenId.value+"&userId="+document.getCartProdListForm.userId.value+"&appId="+document.getCartProdListForm.appId.value+"&time="+time;
+        var ser = getAppIdSecret($.trim(document.getCartProdListForm.appId.value));
+        if(ser){
+            str=str+ser;
+        }else{
+            return;
+        }
+        debugger;
+        var sign=hex_md5(str);
+        document.getElementById('getCartProdListSign').value=sign;
+        document.getElementById('getCartProdListTime').value=time;
+        document.getCartProdListForm.submit();
+    }
+    function getOrderList(){
+        //debugger;
+        /*<![CDATA[*/
+        var time = /*[[${#dates.format(new java.util.Date().getTime(), 'yyyyMMddHHmmss')}]]*/ '';
+        /*]]>*/
+        var str="loginName=" + document.getOrderListForm.loginName.value+"&pageNum=" + document.getOrderListForm.pageNum.value+"&pageSize=" + document.getOrderListForm.pageSize.value+"&status=" + document.getOrderListForm.status.value+"&tokenId="+document.getOrderListForm.tokenId.value+"&userId="+document.getOrderListForm.userId.value+"&appId="+document.getOrderListForm.appId.value+"&time="+time;
+        var ser = getAppIdSecret($.trim(document.getOrderListForm.appId.value));
+        if(ser){
+            str=str+ser;
+        }else{
+            return;
+        }
+        debugger;
+        var sign=hex_md5(str);
+        document.getElementById('getOrderListSign').value=sign;
+        document.getElementById('getOrderListTime').value=time;
+        document.getOrderListForm.submit();
+    }
+    function order(){
+        debugger;
+        /*<![CDATA[*/
+        var time = /*[[${#dates.format(new java.util.Date().getTime(), 'yyyyMMddHHmmss')}]]*/ '';
+        /*]]>*/
+        //var str="addressId=" + document.orderForm.addressId.value+"&loginName=" + document.orderForm.loginName.value+"&payFee="+document.orderForm.payFee.value+"&tokenId="+document.orderForm.tokenId.value+"&userId="+document.orderForm.userId.value+"&appId="+document.getElementById('appId').value+"&time="+time;
+        var str="addressId=" + document.orderForm.addressId.value+"&loginName=" + document.orderForm.loginName.value+"&orders[0].couponFee="+document.getElementById('couponFee').value+"&orders[0].deductionFee="+document.getElementById('deductionFee').value+"&orders[0].details[0].amount="+document.getElementById('amount').value+"&orders[0].details[0].couponFee="+document.getElementById('couponFee').value+"&orders[0].details[0].descr="+document.getElementById('descr').value+"&orders[0].details[0].discountFee="+document.getElementById('discountFee').value+"&orders[0].details[0].fee="+document.getElementById('fee').value+"&orders[0].details[0].freightFee="+document.getElementById('freightFee').value+"&orders[0].details[0].headImg="+document.getElementById('headImg').value+"&orders[0].details[0].name="+document.getElementById('name').value+"&orders[0].details[0].prodId="+document.getElementById('prodId').value+"&orders[0].details[0].prodInfoId="+document.getElementById('prodInfoId').value+"&orders[0].details[0].saleFee="+document.getElementById('saleFee').value+"&orders[0].details[0].shopId="+document.getElementById('shopId').value+"&orders[0].details[0].sumFee="+document.getElementById('sumFee').value+"&orders[0].discountFee="+document.getElementById('discountFee').value+"&orders[0].fee="+document.getElementById('fee').value+"&orders[0].freightFee="+document.getElementById('freightFee').value+"&orders[0].payFee="+document.getElementById('payFee').value+"&orders[0].shopId="+document.getElementById('shopId').value+"&orders[0].shopName="+document.getElementById('shopName').value+"&orders[0].sumFee="+document.getElementById('sumFee').value+"&payFee="+document.getElementById('payFee').value+"&tokenId="+document.orderForm.tokenId.value+"&userId="+document.orderForm.userId.value+"&appId="+document.orderForm.appId.value+"&time="+time;
+        var ser = getAppIdSecret($.trim(document.orderForm.appId.value));
+        if(ser){
+            str=str+ser;
+        }else{
+            return;
+        }
+        debugger;
+        var sign=hex_md5(str);
+        document.getElementById('orderSign').value=sign;
+        document.getElementById('orderTime').value=time;
+        document.orderForm.submit();
+    }
+    function joinCart(){
+        //debugger;
+        /*<![CDATA[*/
+        var time = /*[[${#dates.format(new java.util.Date().getTime(), 'yyyyMMddHHmmss')}]]*/ '';
+        /*]]>*/
+        var str="amount=" + document.joinCartForm.amount.value+"&cartFee=" + document.joinCartForm.cartFee.value+"&loginName=" + document.joinCartForm.loginName.value+"&prodId=" + document.joinCartForm.prodId.value+"&prodInfoId=" + document.joinCartForm.prodInfoId.value+"&selected=" + document.joinCartForm.selected.value+"&tokenId="+document.joinCartForm.tokenId.value+"&userId="+document.joinCartForm.userId.value+"&appId="+document.joinCartForm.appId.value+"&time="+time;
+        var ser = getAppIdSecret($.trim(document.joinCartForm.appId.value));
+        if(ser){
+            str=str+ser;
+        }else{
+            return;
+        }
+        debugger;
+        var sign=hex_md5(str);
+        document.getElementById('joinCartSign').value=sign;
+        document.getElementById('joinCartTime').value=time;
+        document.joinCartForm.submit();
+    }
+    function delCart(){
+        //debugger;
+        /*<![CDATA[*/
+        var time = /*[[${#dates.format(new java.util.Date().getTime(), 'yyyyMMddHHmmss')}]]*/ '';
+        /*]]>*/
+        var str="ids=" + document.delCartForm.ids.value+"&loginName=" + document.delCartForm.loginName.value+"&tokenId="+document.joinCartForm.tokenId.value+"&userId="+document.joinCartForm.userId.value+"&appId="+document.joinCartForm.appId.value+"&time="+time;
+        var ser = getAppIdSecret($.trim(document.delCartForm.appId.value));
+        if(ser){
+            str=str+ser;
+        }else{
+            return;
+        }
+        debugger;
+        var sign=hex_md5(str);
+        document.getElementById('delCartSign').value=sign;
+        document.getElementById('delCartTime').value=time;
+        document.delCartForm.submit();
+    }
+    function upload(){
+        //debugger;
+        /*<![CDATA[*/
+        var time = /*[[${#dates.format(new java.util.Date().getTime(), 'yyyyMMddHHmmss')}]]*/ '';
+        /*]]>*/
+        var str="appId="+document.uploadForm.appId.value+"&time="+time;
+        var ser = getAppIdSecret($.trim(document.uploadForm.appId.value));
+        if(ser){
+            str=str+ser;
+        }else{
+            return;
+        }
+        debugger;
+        var sign=hex_md5(str);
+        document.getElementById('uploadSign').value=sign;
+        document.getElementById('uploadTime').value=time;
+        document.uploadForm.submit();
+    }
+    function closeOrder(){
+        //debugger;
+        /*<![CDATA[*/
+        var time = /*[[${#dates.format(new java.util.Date().getTime(), 'yyyyMMddHHmmss')}]]*/ '';
+        /*]]>*/
+        var str="descr=" + document.closeOrderForm.descr.value+"&loginName=" + document.closeOrderForm.loginName.value+"&orderId=" + document.closeOrderForm.orderId.value+"&tokenId="+document.closeOrderForm.tokenId.value+"&userId="+document.closeOrderForm.userId.value+"&appId="+document.closeOrderForm.appId.value+"&time="+time;
+        var ser = getAppIdSecret($.trim(document.closeOrderForm.appId.value));
+        if(ser){
+            str=str+ser;
+        }else{
+            return;
+        }
+        debugger;
+        var sign=hex_md5(str);
+        document.getElementById('closeOrderSign').value=sign;
+        document.getElementById('closeOrderTime').value=time;
+        document.closeOrderForm.submit();
+    }
+    function sendMsg(){
+        //debugger;
+        /*<![CDATA[*/
+        var time = /*[[${#dates.format(new java.util.Date().getTime(), 'yyyyMMddHHmmss')}]]*/ '';
+        /*]]>*/
+        var str="content=" + document.sendMsgForm.content.value+"&loginName=" + document.sendMsgForm.loginName.value+"&msgType=" + document.sendMsgForm.msgType.value+"&sender=" + document.sendMsgForm.sender.value+"&senderName=" + document.sendMsgForm.senderName.value+"&shopId=" + document.sendMsgForm.shopId.value+"&talker=" + document.sendMsgForm.talker.value+"&tokenId="+document.sendMsgForm.tokenId.value+"&userId="+document.sendMsgForm.userId.value+"&windowId="+document.sendMsgForm.windowId.value+"&windowType="+document.sendMsgForm.windowType.value+"&appId="+document.sendMsgForm.appId.value+"&time="+time;
+        var ser = getAppIdSecret($.trim(document.sendMsgForm.appId.value));
+        if(ser){
+            str=str+ser;
+        }else{
+            return;
+        }
+        debugger;
+        var sign=hex_md5(str);
+        document.getElementById('sendMsgSign').value=sign;
+        document.getElementById('sendMsgTime').value=time;
+        document.sendMsgForm.submit();
+    }
+
+    function queryWindowMsg(){
+        //debugger;
+        /*<![CDATA[*/
+        var time = /*[[${#dates.format(new java.util.Date().getTime(), 'yyyyMMddHHmmss')}]]*/ '';
+        /*]]>*/
+        var str="createTime=" + document.queryWindowMsgForm.createTime.value+"&loginName=" + document.queryWindowMsgForm.loginName.value+"&shopId=" + document.queryWindowMsgForm.shopId.value+"&talker=" + document.queryWindowMsgForm.talker.value+"&tokenId="+document.queryWindowMsgForm.tokenId.value+"&userId="+document.queryWindowMsgForm.userId.value+"&appId="+document.queryWindowMsgForm.appId.value+"&time="+time;
+        var ser = getAppIdSecret($.trim(document.queryWindowMsgForm.appId.value));
+        if(ser){
+            str=str+ser;
+        }else{
+            return;
+        }
+        debugger;
+        var sign=hex_md5(str);
+        document.getElementById('queryWindowMsgSign').value=sign;
+        document.getElementById('queryWindowMsgTime').value=time;
+        document.queryWindowMsgForm.submit();
+    }
+    function queryMsgByWindowIds(){
+        //debugger;
+        /*<![CDATA[*/
+        var time = /*[[${#dates.format(new java.util.Date().getTime(), 'yyyyMMddHHmmss')}]]*/ '';
+        /*]]>*/
+        var str="createTime=" + document.queryMsgByWindowIdsForm.createTime.value+"&loginName=" + document.queryMsgByWindowIdsForm.loginName.value+"&msgId=" + document.queryMsgByWindowIdsForm.msgId.value+"&pageNum=" + document.queryMsgByWindowIdsForm.pageNum.value+"&pageSize=" + document.queryMsgByWindowIdsForm.pageSize.value+"&tokenId="+document.queryMsgByWindowIdsForm.tokenId.value+"&userId="+document.queryMsgByWindowIdsForm.userId.value+"&windowIds="+document.queryMsgByWindowIdsForm.windowIds.value+"&appId="+document.queryMsgByWindowIdsForm.appId.value+"&time="+time;
+        var ser = getAppIdSecret($.trim(document.queryMsgByWindowIdsForm.appId.value));
+        if(ser){
+            str=str+ser;
+        }else{
+            return;
+        }
+        debugger;
+        var sign=hex_md5(str);
+        document.getElementById('queryMsgByWindowIdsSign').value=sign;
+        document.getElementById('queryMsgByWindowIdsTime').value=time;
+        document.queryMsgByWindowIdsForm.submit();
+    }
+    function updateMsgStatus(){
+        //debugger;
+        /*<![CDATA[*/
+        var time = /*[[${#dates.format(new java.util.Date().getTime(), 'yyyyMMddHHmmss')}]]*/ '';
+        /*]]>*/
+        var str="loginName=" + document.updateMsgStatusForm.loginName.value+"&msgIds=" + document.updateMsgStatusForm.msgIds.value+"&status=" + document.updateMsgStatusForm.status.value+"&tokenId="+document.updateMsgStatusForm.tokenId.value+"&userId="+document.updateMsgStatusForm.userId.value+"&appId="+document.updateMsgStatusForm.appId.value+"&time="+time;
+        var ser = getAppIdSecret($.trim(document.updateMsgStatusForm.appId.value));
+        if(ser){
+            str=str+ser;
+        }else{
+            return;
+        }
+        debugger;
+        var sign=hex_md5(str);
+        document.getElementById('updateMsgStatusSign').value=sign;
+        document.getElementById('updateMsgStatusTime').value=time;
+        // $.ajax({
+        //     url: ctxPath+"chat/updateMsgStatus" ,
+        //     type:"POST",
+        //     data:JSON.stringify($('#updateMsgStatusForm').serializeObject()),
+        //     contentType:"application/json",  //缺失会出现URL编码，无法转成json对象
+        //     success:function(){
+        //         alert("成功");
+        //     }
+        // });
+
+        document.updateMsgStatusForm.submit();
+    }
+    /**
+     * 自动将form表单封装成json对象
+     */
+    $.fn.serializeObject = function() {
+        var o = {};
+        var a = this.serializeArray();
+        $.each(a, function() {
+            if (o[this.name]) {
+                if (!o[this.name].push) {
+                    o[this.name] = [ o[this.name] ];
+                }
+                o[this.name].push(this.value || '');
+            } else {
+                o[this.name] = this.value || '';
+            }
+        });
+        return o;
+    };
+    function createWindow(){
+        //debugger;
+        /*<![CDATA[*/
+        var time = /*[[${#dates.format(new java.util.Date().getTime(), 'yyyyMMddHHmmss')}]]*/ '';
+        /*]]>*/
+        var str="avatarUrl=" + document.createWindowForm.avatarUrl.value+"&loginName=" + document.createWindowForm.loginName.value+"&nickName=" + document.createWindowForm.nickName.value+"&shopAvatarUrl=" + document.createWindowForm.shopAvatarUrl.value+"&shopId=" + document.createWindowForm.shopId.value+"&shopName=" + document.createWindowForm.shopName.value+"&talker=" + document.createWindowForm.talker.value+"&tokenId=" + document.createWindowForm.tokenId.value+"&userId="+document.createWindowForm.userId.value+"&windowType="+document.createWindowForm.windowType.value+"&appId="+document.createWindowForm.appId.value+"&time="+time;
+        var ser = getAppIdSecret($.trim(document.createWindowForm.appId.value));
+        if(ser){
+            str=str+ser;
+        }else{
+            return;
+        }
+        debugger;
+        var sign=hex_md5(str);
+        document.getElementById('createWindowSign').value=sign;
+        document.getElementById('createWindowTime').value=time;
+        document.createWindowForm.submit();
+    }
+    function getUsersByUserIds(){
+        //debugger;
+        /*<![CDATA[*/
+        var time = /*[[${#dates.format(new java.util.Date().getTime(), 'yyyyMMddHHmmss')}]]*/ '';
+        /*]]>*/
+        var str="loginName="+document.getUsersByUserIdsForm.loginName.value+"&tokenId="+document.getUsersByUserIdsForm.tokenId.value+"&userId="+document.getUsersByUserIdsForm.userId.value+"&userIds="+document.getUsersByUserIdsForm.userIds.value+"&appId="+document.getUsersByUserIdsForm.appId.value+"&time="+time;
+        var ser = getAppIdSecret($.trim(document.getUsersByUserIdsForm.appId.value));
+        if(ser){
+            str=str+ser;
+        }else{
+            return;
+        }
+        debugger;
+        console.log(str)
+        var sign=hex_md5(str);
+        document.getElementById('getUsersByUserIdsSign').value=sign;
+        document.getElementById('getUsersByUserIdsTime').value=time;
+        document.getUsersByUserIdsForm.submit();
+    }
+    function getShopsByShopIds(){
+        //debugger;
+        /*<![CDATA[*/
+        var time = /*[[${#dates.format(new java.util.Date().getTime(), 'yyyyMMddHHmmss')}]]*/ '';
+        /*]]>*/
+        var str="loginName="+document.getShopsByShopIdsForm.loginName.value+"&shopIds="+document.getShopsByShopIdsForm.shopIds.value+"&tokenId="+document.getShopsByShopIdsForm.tokenId.value+"&userId="+document.getShopsByShopIdsForm.userId.value+"&appId="+document.getShopsByShopIdsForm.appId.value+"&time="+time;
+        var ser = getAppIdSecret($.trim(document.getShopsByShopIdsForm.appId.value));
+        if(ser){
+            str=str+ser;
+        }else{
+            return;
+        }
+        debugger;
+        console.log(str)
+        var sign=hex_md5(str);
+        document.getElementById('getShopsByShopIdsSign').value=sign;
+        document.getElementById('getShopsByShopIdsTime').value=time;
+        document.getShopsByShopIdsForm.submit();
+    }
+    function getShopManager(){
+        //debugger;
+        /*<![CDATA[*/
+        var time = /*[[${#dates.format(new java.util.Date().getTime(), 'yyyyMMddHHmmss')}]]*/ '';
+        /*]]>*/
+        var str="loginName="+document.getShopManagerForm.loginName.value+"&tokenId="+document.getShopManagerForm.tokenId.value+"&userId="+document.getShopManagerForm.userId.value+"&appId="+document.getShopManagerForm.appId.value+"&time="+time;
+        var ser = getAppIdSecret($.trim(document.getShopManagerForm.appId.value));
+        if(ser){
+            str=str+ser;
+        }else{
+            return;
+        }
+        debugger;
+        console.log(str)
+        var sign=hex_md5(str);
+        document.getElementById('getShopManagerSign').value=sign;
+        document.getElementById('getShopManagerTime').value=time;
+        document.getShopManagerForm.submit();
+    }
+    function addAcctBook(){
+        //debugger;
+        /*<![CDATA[*/
+        var time = /*[[${#dates.format(new java.util.Date().getTime(), 'yyyyMMddHHmmss')}]]*/ '';
+        /*]]>*/
+        var str="acctType="+document.addAcctBookForm.acctType.value+"&direct="+document.addAcctBookForm.direct.value+"&loginName="+document.addAcctBookForm.loginName.value+"&money="+document.addAcctBookForm.money.value+"&name="+document.addAcctBookForm.name.value+"&optUserId="+document.addAcctBookForm.optUserId.value+"&orderId="+document.addAcctBookForm.orderId.value+"&payType="+document.addAcctBookForm.payType.value+"&status="+document.addAcctBookForm.status.value+"&tokenId="+document.addAcctBookForm.tokenId.value+"&userId="+document.addAcctBookForm.userId.value+"&appId="+document.addAcctBookForm.appId.value+"&time="+time;
+        var ser = getAppIdSecret($.trim(document.addAcctBookForm.appId.value));
+        if(ser){
+            str=str+ser;
+        }else{
+            return;
+        }
+        debugger;
+        console.log(str)
+        var sign=hex_md5(str);
+        document.getElementById('addAcctBookSign').value=sign;
+        document.getElementById('addAcctBookTime').value=time;
+        document.addAcctBookForm.submit();
+    }
+    function queryAcctBook(){
+        //debugger;
+        /*<![CDATA[*/
+        var time = /*[[${#dates.format(new java.util.Date().getTime(), 'yyyyMMddHHmmss')}]]*/ '';
+        /*]]>*/
+        var str="loginName="+document.queryAcctBookForm.loginName.value+"&subAccountId="+document.queryAcctBookForm.subAccountId.value+"&tokenId="+document.queryAcctBookForm.tokenId.value+"&transId="+document.queryAcctBookForm.transId.value+"&userId="+document.queryAcctBookForm.userId.value+"&appId="+document.queryAcctBookForm.appId.value+"&time="+time;
+        var ser = getAppIdSecret($.trim(document.queryAcctBookForm.appId.value));
+        if(ser){
+            str=str+ser;
+        }else{
+            return;
+        }
+        debugger;
+        console.log(str)
+        var sign=hex_md5(str);
+        document.getElementById('queryAcctBookSign').value=sign;
+        document.getElementById('queryAcctBookTime').value=time;
+        document.queryAcctBookForm.submit();
+    }
+    function addAcct(){
+        //debugger;
+        /*<![CDATA[*/
+        var time = /*[[${#dates.format(new java.util.Date().getTime(), 'yyyyMMddHHmmss')}]]*/ '';
+        /*]]>*/
+        var str="loginName="+document.addAcctForm.loginName.value+"&name="+document.addAcctForm.name.value+"&ownUserId="+document.addAcctForm.ownUserId.value+"&tokenId="+document.addAcctForm.tokenId.value+"&userId="+document.addAcctForm.userId.value+"&userType="+document.addAcctForm.userType.value+"&appId="+document.addAcctForm.appId.value+"&time="+time;
+        var ser = getAppIdSecret($.trim(document.addAcctForm.appId.value));
+        if(ser){
+            str=str+ser;
+        }else{
+            return;
+        }
+        debugger;
+        console.log(str)
+        var sign=hex_md5(str);
+        document.getElementById('addAcctSign').value=sign;
+        document.getElementById('addAcctTime').value=time;
+        document.addAcctForm.submit();
+    }
+    function addSubAcct(){
+        //debugger;
+        /*<![CDATA[*/
+        var time = /*[[${#dates.format(new java.util.Date().getTime(), 'yyyyMMddHHmmss')}]]*/ '';
+        /*]]>*/
+        var str="acctType="+document.addSubAcctForm.acctType.value+"&loginName="+document.addSubAcctForm.loginName.value+"&ownUserId="+document.addSubAcctForm.ownUserId.value+"&tokenId="+document.addSubAcctForm.tokenId.value+"&userId="+document.addSubAcctForm.userId.value+"&appId="+document.addSubAcctForm.appId.value+"&time="+time;
+        var ser = getAppIdSecret($.trim(document.addSubAcctForm.appId.value));
+        if(ser){
+            str=str+ser;
+        }else{
+            return;
+        }
+        debugger;
+        console.log(str)
+        var sign=hex_md5(str);
+        document.getElementById('addSubAcctSign').value=sign;
+        document.getElementById('addSubAcctTime').value=time;
+        document.addSubAcctForm.submit();
+    }
+    function searchProdLimit(){
+        //debugger;
+        /*<![CDATA[*/
+        var time = /*[[${#dates.format(new java.util.Date().getTime(), 'yyyyMMddHHmmss')}]]*/ '';
+        /*]]>*/
+        var str="loginName="+document.searchProdLimitForm.loginName.value+"&prodLimitIds="+document.searchProdLimitForm.prodLimitIds.value+"&prodTypeId="+document.searchProdLimitForm.prodTypeId.value+"&shopId="+document.searchProdLimitForm.shopId.value+"&status="+document.searchProdLimitForm.status.value+"&tokenId="+document.searchProdLimitForm.tokenId.value+"&tradeTypeId="+document.searchProdLimitForm.tradeTypeId.value+"&userId="+document.searchProdLimitForm.userId.value+"&appId="+document.searchProdLimitForm.appId.value+"&time="+time;
+        var ser = getAppIdSecret($.trim(document.searchProdLimitForm.appId.value));
+        if(ser){
+            str=str+ser;
+        }else{
+            return;
+        }
+        debugger;
+        console.log(str);
+        var sign=hex_md5(str);
+        document.getElementById('searchProdLimitSign').value=sign;
+        document.getElementById('searchProdLimitTime').value=time;
+        document.searchProdLimitForm.submit();
+    }
+    function getProdListByProdIds(){
+        //debugger;
+        /*<![CDATA[*/
+        var time = /*[[${#dates.format(new java.util.Date().getTime(), 'yyyyMMddHHmmss')}]]*/ '';
+        /*]]>*/
+        var str="currPage="+document.getProdListByProdIdsForm.currPage.value+"&pageSize="+document.getProdListByProdIdsForm.pageSize.value+"&prodIds="+document.getProdListByProdIdsForm.prodIds.value+"&appId="+document.getProdListByProdIdsForm.appId.value+"&time="+time;
+        var ser = getAppIdSecret($.trim(document.getProdListByProdIdsForm.appId.value));
+        if(ser){
+            str=str+ser;
+        }else{
+            return;
+        }
+        debugger;
+        console.log(str);
+        var sign=hex_md5(str);
+        document.getElementById('getProdListByProdIdsSign').value=sign;
+        document.getElementById('getProdListByProdIdsTime').value=time;
+        document.getProdListByProdIdsForm.submit();
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,321 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ist.svc.dao.ShopInfoMapper">
+  <resultMap id="BaseResultMap" type="com.ist.svc.domain.ShopInfo">
+    <id column="shopid" jdbcType="INTEGER" property="shopid" />
+    <result column="fullname" jdbcType="VARCHAR" property="fullname" />
+    <result column="address" jdbcType="VARCHAR" property="address" />
+    <result column="idaddress" jdbcType="VARCHAR" property="idaddress" />
+    <result column="idcard" jdbcType="VARCHAR" property="idcard" />
+    <result column="boss" jdbcType="VARCHAR" property="boss" />
+    <result column="createtime" jdbcType="TIMESTAMP" property="createtime" />
+    <result column="updatetime" jdbcType="TIMESTAMP" property="updatetime" />
+    <result column="opentime" jdbcType="TIME" property="opentime" />
+    <result column="closetime" jdbcType="TIME" property="closetime" />
+    <result column="descr" jdbcType="VARCHAR" property="descr" />
+    <result column="accountid" jdbcType="INTEGER" property="accountid" />
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    shopid, fullname, address, idaddress, idcard, boss, createtime, updatetime, opentime, 
+    closetime, descr, accountid
+  </sql>
+  <select id="selectByExample" parameterType="com.ist.svc.domain.ShopInfoExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from shop_info
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from shop_info
+    where shopid = #{shopid,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from shop_info
+    where shopid = #{shopid,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.ist.svc.domain.ShopInfoExample">
+    delete from shop_info
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.ist.svc.domain.ShopInfo">
+    <selectKey keyProperty="shopid" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into shop_info (fullname, address, idaddress, 
+      idcard, boss, createtime, 
+      updatetime, opentime, closetime, 
+      descr, accountid)
+    values (#{fullname,jdbcType=VARCHAR}, #{address,jdbcType=VARCHAR}, #{idaddress,jdbcType=VARCHAR}, 
+      #{idcard,jdbcType=VARCHAR}, #{boss,jdbcType=VARCHAR}, #{createtime,jdbcType=TIMESTAMP}, 
+      #{updatetime,jdbcType=TIMESTAMP}, #{opentime,jdbcType=TIME}, #{closetime,jdbcType=TIME}, 
+      #{descr,jdbcType=VARCHAR}, #{accountid,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="com.ist.svc.domain.ShopInfo">
+    <selectKey keyProperty="shopid" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into shop_info
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="fullname != null">
+        fullname,
+      </if>
+      <if test="address != null">
+        address,
+      </if>
+      <if test="idaddress != null">
+        idaddress,
+      </if>
+      <if test="idcard != null">
+        idcard,
+      </if>
+      <if test="boss != null">
+        boss,
+      </if>
+      <if test="createtime != null">
+        createtime,
+      </if>
+      <if test="updatetime != null">
+        updatetime,
+      </if>
+      <if test="opentime != null">
+        opentime,
+      </if>
+      <if test="closetime != null">
+        closetime,
+      </if>
+      <if test="descr != null">
+        descr,
+      </if>
+      <if test="accountid != null">
+        accountid,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="fullname != null">
+        #{fullname,jdbcType=VARCHAR},
+      </if>
+      <if test="address != null">
+        #{address,jdbcType=VARCHAR},
+      </if>
+      <if test="idaddress != null">
+        #{idaddress,jdbcType=VARCHAR},
+      </if>
+      <if test="idcard != null">
+        #{idcard,jdbcType=VARCHAR},
+      </if>
+      <if test="boss != null">
+        #{boss,jdbcType=VARCHAR},
+      </if>
+      <if test="createtime != null">
+        #{createtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updatetime != null">
+        #{updatetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="opentime != null">
+        #{opentime,jdbcType=TIME},
+      </if>
+      <if test="closetime != null">
+        #{closetime,jdbcType=TIME},
+      </if>
+      <if test="descr != null">
+        #{descr,jdbcType=VARCHAR},
+      </if>
+      <if test="accountid != null">
+        #{accountid,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.ist.svc.domain.ShopInfoExample" resultType="java.lang.Long">
+    select count(*) from shop_info
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update shop_info
+    <set>
+      <if test="record.shopid != null">
+        shopid = #{record.shopid,jdbcType=INTEGER},
+      </if>
+      <if test="record.fullname != null">
+        fullname = #{record.fullname,jdbcType=VARCHAR},
+      </if>
+      <if test="record.address != null">
+        address = #{record.address,jdbcType=VARCHAR},
+      </if>
+      <if test="record.idaddress != null">
+        idaddress = #{record.idaddress,jdbcType=VARCHAR},
+      </if>
+      <if test="record.idcard != null">
+        idcard = #{record.idcard,jdbcType=VARCHAR},
+      </if>
+      <if test="record.boss != null">
+        boss = #{record.boss,jdbcType=VARCHAR},
+      </if>
+      <if test="record.createtime != null">
+        createtime = #{record.createtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.updatetime != null">
+        updatetime = #{record.updatetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.opentime != null">
+        opentime = #{record.opentime,jdbcType=TIME},
+      </if>
+      <if test="record.closetime != null">
+        closetime = #{record.closetime,jdbcType=TIME},
+      </if>
+      <if test="record.descr != null">
+        descr = #{record.descr,jdbcType=VARCHAR},
+      </if>
+      <if test="record.accountid != null">
+        accountid = #{record.accountid,jdbcType=INTEGER},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update shop_info
+    set shopid = #{record.shopid,jdbcType=INTEGER},
+      fullname = #{record.fullname,jdbcType=VARCHAR},
+      address = #{record.address,jdbcType=VARCHAR},
+      idaddress = #{record.idaddress,jdbcType=VARCHAR},
+      idcard = #{record.idcard,jdbcType=VARCHAR},
+      boss = #{record.boss,jdbcType=VARCHAR},
+      createtime = #{record.createtime,jdbcType=TIMESTAMP},
+      updatetime = #{record.updatetime,jdbcType=TIMESTAMP},
+      opentime = #{record.opentime,jdbcType=TIME},
+      closetime = #{record.closetime,jdbcType=TIME},
+      descr = #{record.descr,jdbcType=VARCHAR},
+      accountid = #{record.accountid,jdbcType=INTEGER}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.ist.svc.domain.ShopInfo">
+    update shop_info
+    <set>
+      <if test="fullname != null">
+        fullname = #{fullname,jdbcType=VARCHAR},
+      </if>
+      <if test="address != null">
+        address = #{address,jdbcType=VARCHAR},
+      </if>
+      <if test="idaddress != null">
+        idaddress = #{idaddress,jdbcType=VARCHAR},
+      </if>
+      <if test="idcard != null">
+        idcard = #{idcard,jdbcType=VARCHAR},
+      </if>
+      <if test="boss != null">
+        boss = #{boss,jdbcType=VARCHAR},
+      </if>
+      <if test="createtime != null">
+        createtime = #{createtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updatetime != null">
+        updatetime = #{updatetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="opentime != null">
+        opentime = #{opentime,jdbcType=TIME},
+      </if>
+      <if test="closetime != null">
+        closetime = #{closetime,jdbcType=TIME},
+      </if>
+      <if test="descr != null">
+        descr = #{descr,jdbcType=VARCHAR},
+      </if>
+      <if test="accountid != null">
+        accountid = #{accountid,jdbcType=INTEGER},
+      </if>
+    </set>
+    where shopid = #{shopid,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.ist.svc.domain.ShopInfo">
+    update shop_info
+    set fullname = #{fullname,jdbcType=VARCHAR},
+      address = #{address,jdbcType=VARCHAR},
+      idaddress = #{idaddress,jdbcType=VARCHAR},
+      idcard = #{idcard,jdbcType=VARCHAR},
+      boss = #{boss,jdbcType=VARCHAR},
+      createtime = #{createtime,jdbcType=TIMESTAMP},
+      updatetime = #{updatetime,jdbcType=TIMESTAMP},
+      opentime = #{opentime,jdbcType=TIME},
+      closetime = #{closetime,jdbcType=TIME},
+      descr = #{descr,jdbcType=VARCHAR},
+      accountid = #{accountid,jdbcType=INTEGER}
+    where shopid = #{shopid,jdbcType=INTEGER}
+  </update>
+</mapper>
