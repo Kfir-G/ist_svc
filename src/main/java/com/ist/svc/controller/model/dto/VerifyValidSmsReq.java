@@ -4,12 +4,14 @@ import com.ist.svc.controller.model.BaseReq;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
+import lombok.Setter;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
 import javax.validation.constraints.NotBlank;
 
 @Getter
+@Setter
 @ApiModel(description = "验证短信验证码请求对象")
 public class VerifyValidSmsReq extends BaseReq {
     @ApiModelProperty(value = "手机号")

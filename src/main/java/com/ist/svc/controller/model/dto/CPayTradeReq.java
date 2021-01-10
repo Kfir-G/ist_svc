@@ -39,7 +39,9 @@ public class CPayTradeReq extends BaseReq {
     @ApiModelProperty(value = "登陆令牌(tokenId)")
     private String tokenId;
     @ApiModelProperty(value = "微信code,微信jsapi支付必填")
-    private String wxCode; //微信code
+    private String wxCodeJson; //微信code
+    @ApiModelProperty(value = "openId")
+    private String openId;
     @Override
     public String toString() {
         return ToStringBuilder.reflectionToString(this, ToStringStyle.JSON_STYLE);

@@ -1,5 +1,7 @@
 package com.ist.svc.config;
 
+import io.swagger.models.auth.In;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,7 +40,7 @@ public interface IstEnum {
     enum UserType implements IstEnum {
         TYPE_PHONE(1,"手机号"),
         TYPE_ROMA(2,"漫游"),
-        TYPE_EMAIL(3,"邮箱");
+        TYPE_WEIXIN(3,"微信");
 
         private Integer type;
         private String typeDesc;
@@ -760,7 +762,10 @@ public interface IstEnum {
      */
     enum BookBizType implements IstEnum{
         ORDER((short)1,"订单"),
-        BAG((short)2,"红包");
+        BAG((short)2,"红包"),
+        TRANSFER_ACCOUNT((short)3,"转账"),
+        BALANCE_PAY((short)0,"余额支付"),
+        CASH_DOWN((short)9,"提现");
 
         private short code;
         private String desc;
@@ -1001,6 +1006,56 @@ public interface IstEnum {
             for (TradeType item : TradeType.values()) {
                 if (item.getCode().equals(c)) {
                     return item;
+                }
+            }
+            return null;
+        }
+    }
+
+    /**
+     * 提现账号配置状态
+     */
+    enum CashNoStatus implements IstEnum {
+        NORMAL(Short.valueOf("1"),"正常"),
+        DEL(Short.valueOf("2"),"刪除");
+
+        private short status;
+        private String statusDesc;
+        CashNoStatus(short status,String statusDesc){
+            this.status = status;
+            this.statusDesc = statusDesc;
+        }
+        public short getStatus(){return status;}
+        public String getStatusDesc(){return statusDesc;}
+        public static CashNoStatus getStatusType(short status) {
+            for (CashNoStatus userStatus : values()) {
+                if (userStatus.getStatus() == status) {
+                    return userStatus;
+                }
+            }
+            return null;
+        }
+    }
+
+    /**
+     * 绑定类型
+     */
+    enum BindType implements IstEnum {
+        FORWARD_BIND(1,"正向绑定"),
+        REVERSE_BIND(2,"反向绑定(手机号绑定微信)");
+
+        private Integer type;
+        private String typeDesc;
+        BindType(Integer type,String typeDesc){
+            this.type = type;
+            this.typeDesc = typeDesc;
+        }
+        public Integer geTtype(){return type;}
+        public String getTypeDesc(){return typeDesc;}
+        public static BindType getStatusType(Integer type) {
+            for (BindType bindType : values()) {
+                if (bindType.geTtype() == type) {
+                    return bindType;
                 }
             }
             return null;

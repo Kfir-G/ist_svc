@@ -3,9 +3,7 @@ import com.ist.svc.common.Exception.ServiceException;
 import com.ist.svc.common.ResultConstant;
 import com.ist.svc.config.annotation.TokenCheck;
 import com.ist.svc.controller.model.*;
-import com.ist.svc.controller.model.dto.ApiBaseResp;
-import com.ist.svc.controller.model.dto.CPayTradeReq;
-import com.ist.svc.controller.model.dto.QuerySubAcctReq;
+import com.ist.svc.controller.model.dto.*;
 import com.ist.svc.service.OrderService;
 import com.ist.svc.service.newversion.PayService;
 import io.swagger.annotations.Api;
@@ -391,6 +389,80 @@ public class OrderController extends BaseController {
         return resp;
     }
 
+    //提现
+    @RequestMapping(value = "cashDown", method = RequestMethod.POST, produces = "application/json;charset=UTF-8", consumes = "application/json;charset=UTF-8")
+    @ApiOperation(value = "提现")
+    @TokenCheck
+    public BaseResp cashDown(@Valid @RequestBody CashDownReq req, BindingResult bindingResult) {
+        BaseResp resp = new BaseResp();
+        try {
+            if (bindingResult.hasErrors()) {
+                String msg = bindingResult.getFieldError().getDefaultMessage();
+                resp.setCode(ResultConstant.PARAM_ERROR_CODE);
+                resp.setMsg(msg);
+                return resp;
+            }
+            if (vaildAppSign(req)) {
+                resp = payService.cashDown(req);
+            } else {
+                resp.setCode(ResultConstant.SIGN_ERROR_CODE);
+                resp.setMsg(ResultConstant.SIGN_ERROR_MSG);
+            }
+        } catch (Exception e) {
+            logger.error("OrderController.cashDown", e);
+        }
+        return resp;
+    }
+
+    //提现
+    @RequestMapping(value = "cashNoBind", method = RequestMethod.POST, produces = "application/json;charset=UTF-8", consumes = "application/json;charset=UTF-8")
+    @ApiOperation(value = "提现账号绑定")
+    @TokenCheck
+    public BaseResp cashNoBind(@Valid @RequestBody CashNoBindReq req, BindingResult bindingResult) {
+        BaseResp resp = new BaseResp();
+        try {
+            if (bindingResult.hasErrors()) {
+                String msg = bindingResult.getFieldError().getDefaultMessage();
+                resp.setCode(ResultConstant.PARAM_ERROR_CODE);
+                resp.setMsg(msg);
+                return resp;
+            }
+            if (vaildAppSign(req)) {
+                resp = payService.cashNoBind(req);
+            } else {
+                resp.setCode(ResultConstant.SIGN_ERROR_CODE);
+                resp.setMsg(ResultConstant.SIGN_ERROR_MSG);
+            }
+        } catch (Exception e) {
+            logger.error("OrderController.cashNoBind", e);
+        }
+        return resp;
+    }
+
+    //查询提现配置
+    @RequestMapping(value = "queryCashdownInfo", method = RequestMethod.POST, produces = "application/json;charset=UTF-8", consumes = "application/json;charset=UTF-8")
+    @ApiOperation(value = "查询提现配置")
+    @TokenCheck
+    public ApiBaseResp queryCashdownInfo(@Valid @RequestBody QueryCashdownInfoReq req, BindingResult bindingResult) {
+        ApiBaseResp resp = new ApiBaseResp();
+        try {
+            if (bindingResult.hasErrors()) {
+                String msg = bindingResult.getFieldError().getDefaultMessage();
+                resp.setCode(ResultConstant.PARAM_ERROR_CODE);
+                resp.setMsg(msg);
+                return resp;
+            }
+            if (vaildAppSign(req)) {
+                resp = payService.queryCashdownInfo(req);
+            } else {
+                resp.setCode(ResultConstant.SIGN_ERROR_CODE);
+                resp.setMsg(ResultConstant.SIGN_ERROR_MSG);
+            }
+        } catch (Exception e) {
+            logger.error("OrderController.queryCashdownInfo", e);
+        }
+        return resp;
+    }
     @RequestMapping(value = "aliPayNotify")
     public String aliPayNotify(HttpServletRequest request) {
         String result = "";

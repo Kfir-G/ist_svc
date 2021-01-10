@@ -15,9 +15,9 @@
         </commentGenerator>
         <jdbcConnection
                 driverClass="com.mysql.cj.jdbc.Driver"
-                connectionURL="jdbc:mysql://101.132.114.214:3306/card"
+                connectionURL="jdbc:mysql://211.159.215.250:60606/card"
                 userId="root"
-                password="uAiqwVwjJ8-i">
+                password="uAiqwVLg1875">
         </jdbcConnection>
         <javaTypeResolver>
             <property name="forceBigDecimals" value="false"/>
@@ -156,10 +156,10 @@
 <!--        <table tableName="Grade_proc" domainObjectName="GradeProc">-->
 <!--            <generatedKey column="gradeid" sqlStatement="MySQL" type="post" identity="true"/>-->
 <!--        </table>-->
-        <table tableName="bag" domainObjectName="Bag">
+        <!--<table tableName="bag" domainObjectName="Bag">
             <generatedKey column="id" sqlStatement="MySQL" type="post" identity="true"/>
-        </table>
-        <table tableName="bag_draw" domainObjectName="BagDraw">
+        </table>-->
+        <table tableName="user_acct_cashdown" domainObjectName="UserAcctCashdown">
             <generatedKey column="id" sqlStatement="MySQL" type="post" identity="true"/>
         </table>
     </context>

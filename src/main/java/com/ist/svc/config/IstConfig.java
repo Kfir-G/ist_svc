@@ -19,6 +19,20 @@ public class IstConfig {
     @Value("${weixin.sns.grantType}")
     private String weixinSnsGrantType;
 
+    //微信app支付
+    @Value("${weixin.pay.appId}")
+    private String weiXinPayAppId;
+    @Value("${weixin.pay.appSecret}")
+    private String weiXinPayAppSecret;
+    @Value("${weixin.pay.access_url}")
+    private String weiXinPayAccessUrl;
+    @Value("${weixin.pay.prepay_url}")
+    private String weiXinPayPrepayUrl;
+    @Value("${weixin.pay.notify_url}")
+    private String weiXinPayNotifyUrl;
+    @Value("${weixin.pay.mchId}")
+    private String weiXinPayMchId;
+
     @Value("${nginx.public.uri}")
     private String nginxPublicUri;
     @Value("${spring.profiles.active}")

@@ -183,7 +183,7 @@ public class UserController extends BaseController{
     @ApiOperation(value = "校验短信验证码")
     @RequestMapping(value = "verifyValidSmsCode", method = RequestMethod.POST, produces = "application/json;charset=UTF-8", consumes = "application/json;charset=UTF-8")
     public BaseResp verifyValidSmsCode(@RequestBody @Valid VerifyValidSmsReq req, BindingResult bindingResult){
-        SendValidSmsResp resp = new SendValidSmsResp();
+        BaseResp resp = new BaseResp();
         resp.setCode(ResultConstant.VERIFY_VALID_SMS_CODE_SUCC_CODE);
         resp.setMsg(ResultConstant.VERIFY_VALID_SMS_CODE_SUCC_MSG);
         try {

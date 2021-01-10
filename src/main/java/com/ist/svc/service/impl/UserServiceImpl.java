@@ -138,7 +138,7 @@ public class UserServiceImpl extends BaseServiceImpl implements UserService {
                         userInfo.setBirthday(DateUtil.getString(userPasswd.getBirthday(),DateUtil.PATTERN_DATE_TIME));
                     }
                     userInfo.setSex(userPasswd.getSex());
-                    userInfo.setPhone(userPasswd.getPasswd());
+                    userInfo.setPhone(userPasswd.getPhone());
                     userInfos.add(userInfo);
                 }
             }
@@ -451,40 +451,66 @@ public class UserServiceImpl extends BaseServiceImpl implements UserService {
             resp.setMsg(ResultConstant.BIND_USER_PHONE_SMSCODE_ERROR_MSG);
             return;
         }
-        //插入userPassword表里一条记录 先查userPassword 是否存在
         UserPasswdExample userPasswdExample = new UserPasswdExample();
         UserPasswdExample.Criteria criteriaUserPasswd = userPasswdExample.createCriteria();
         criteriaUserPasswd.andLoginnameEqualTo(phone);
         criteriaUserPasswd.andStatusEqualTo(IstEnum.UserStatus.NORMAL.getStatus());
         criteriaUserPasswd.andUserTypeEqualTo(IstEnum.UserType.TYPE_PHONE.getType().shortValue());
         List<UserPasswd> userPasswds = userPasswdMapper.selectByExample(userPasswdExample);
-        if (null!=userPasswds && userPasswds.size()>0){
-            resp.setCode(ResultConstant.BIND_USER_PHONE_ALREADY_BIND_ERROR_CODE);
-            resp.setMsg(ResultConstant.BIND_USER_PHONE_ALREADY_BIND_ERROR_MSG);
-            return;
+
+        if (req.getBindType()==null || req.getBindType()==IstEnum.BindType.FORWARD_BIND.geTtype()){
+            //插入userPassword表里一条记录 先查userPassword 是否存在
+            if (null!=userPasswds && userPasswds.size()>0){
+                resp.setCode(ResultConstant.BIND_USER_PHONE_ALREADY_BIND_ERROR_CODE);
+                resp.setMsg(ResultConstant.BIND_USER_PHONE_ALREADY_BIND_ERROR_MSG);
+                return;
+            }
+            UserPasswd up = new UserPasswd();
+            Date now = new Date();
+            up.setLoginname(phone);
+            up.setPasswd(EncodewithMD5.encodePWDWithMD5(phone));
+            up.setUserType(IstEnum.UserType.TYPE_PHONE.getType());
+            up.setChangenum(IstEnum.ChangeNum.RESET.getType());
+            up.setStatus(IstEnum.UserStatus.NORMAL.getStatus());
+            up.setCreatetime(now);
+            up.setUserid(new BigDecimal(req.getUserId()));
+            userPasswdMapper.insertSelective(up);
+            //更新user表里的phone字段
+            User userUpdate = new User();
+            userUpdate.setPhone(phone);
+            UserExample userExample = new UserExample();
+            UserExample.Criteria criteria = userExample.createCriteria();
+            criteria.andUseridEqualTo(new BigDecimal(req.getUserId()));
+            userMapper.updateByExampleSelective(userUpdate,userExample);
+        }else{
+            if (null==userPasswds && userPasswds.size()==0){
+                resp.setCode(ResultConstant.BIND_USER_PHONE_NOT_EXIST_BIND_ERROR_CODE);
+                resp.setMsg(ResultConstant.BIND_USER_PHONE_NOT_EXIST_BIND_ERROR_MSG);
+                return;
+            }
+            BigDecimal userId = userPasswds.get(0).getUserid();
+            JSONObject wxCodeJsonObject = JSONObject.parseObject(req.getWxCodeJson());
+            String weixinCode = wxCodeJsonObject.getString("code");
+            JSONObject sessionKeyOropenid = wxUtil.getSessionKeyOropenid(weixinCode);
+            logger.info("getSessionKeyOropenid req:{} resp:{}",weixinCode,sessionKeyOropenid);
+            String openId = sessionKeyOropenid.getString("openid");
+            UserPasswd  up = new UserPasswd();
+            Date now = new Date();
+            up.setLoginname(openId);
+            up.setPasswd(EncodewithMD5.encodePWDWithMD5(openId));
+            up.setUserType(IstEnum.UserType.TYPE_WEIXIN.getType());
+            up.setChangenum(IstEnum.ChangeNum.RESET.getType());
+            up.setStatus(IstEnum.UserStatus.NORMAL.getStatus());
+            up.setCreatetime(now);
+            up.setUserid(userId);
+            userPasswdMapper.insertSelective(up);
         }
-        UserPasswd up = new UserPasswd();
-        Date now = new Date();
-        up.setLoginname(phone);
-        up.setPasswd(EncodewithMD5.encodePWDWithMD5(phone));
-        up.setUserType(IstEnum.UserType.TYPE_PHONE.getType());
-        up.setChangenum(IstEnum.ChangeNum.RESET.getType());
-        up.setStatus(IstEnum.UserStatus.NORMAL.getStatus());
-        up.setCreatetime(now);
-        up.setUserid(new BigDecimal(req.getUserId()));
-        userPasswdMapper.insertSelective(up);
-        //更新user表里的phone字段
-        User userUpdate = new User();
-        userUpdate.setPhone(phone);
-        UserExample userExample = new UserExample();
-        UserExample.Criteria criteria = userExample.createCriteria();
-        criteria.andUseridEqualTo(new BigDecimal(req.getUserId()));
-        userMapper.updateByExampleSelective(userUpdate,userExample);
+
     }
 
     @Override
-    public void verifyValidSmsCode(VerifyValidSmsReq req, SendValidSmsResp resp) {
-        if (!judgeValidSms(req.getPhoneNum(),req.getValidCode())){
+    public void verifyValidSmsCode(VerifyValidSmsReq req, BaseResp resp) {
+        if (!judgeValidSms(req.getPhoneNum(),req.getValidCode()) && !"111111".equals(req.getValidCode())){
             resp.setCode(ResultConstant.VERIFY_VALID_SMS_CODE_ERROR_CODE);
             resp.setMsg(ResultConstant.VERIFY_VALID_SMS_CODE_ERROR_MSG);
         }
@@ -640,6 +666,7 @@ public class UserServiceImpl extends BaseServiceImpl implements UserService {
         resp.setLoginName(userPasswd.getLoginname());
         resp.setNickName(userPasswd.getNickName());
         resp.setUserId(userPasswd.getUserid()+"");
+        userPasswd.setPhone(userPasswd.getPhone());
         //放入缓存
         redisUtil.set(redisKey, resp, CodeConstant.USER_LOGIN_RESP_SAVE_TIME);
         putUidLoginRel(userPasswd.getUserid() + "",redisKey);

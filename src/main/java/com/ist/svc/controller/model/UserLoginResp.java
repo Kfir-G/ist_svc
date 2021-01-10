@@ -16,6 +16,7 @@ public class UserLoginResp extends BaseResp{
     private String userId;
     private String nickName;
     private String avatarUrl;
+    private String phone;
 
     @Override
     public String toString() {

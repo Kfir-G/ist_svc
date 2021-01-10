@@ -37,7 +37,7 @@ public interface UserService {
 
     void userBindPhone(UserBindPhoneReq req, BaseResp resp);
 
-    void verifyValidSmsCode(VerifyValidSmsReq req, SendValidSmsResp resp);
+    void verifyValidSmsCode(VerifyValidSmsReq req, BaseResp resp);
 
     void modifyUserInfo(ModifyUserInfoReq req, BaseResp resp);
 }

@@ -13,6 +13,7 @@ public class ResultConstant {
     public static String SIGN_ERROR_CODE = "903";
     public static String SIGN_ERROR_MSG = "签名校验失败";
     public static String APP_ERROR_CODE = "999";
+
     public static String APP_ERROR_MSG = "服务暂时不可用,请稍后再试";
 
     /**
@@ -452,6 +453,8 @@ public class ResultConstant {
     public static String BIND_USER_PHONE_ALREADY_BIND_ERROR_MSG = "该手机号已被绑定,不能再次绑定.";
     public static String BIND_USER_PHONE_SMSCODE_ERROR_CODE = "12702";
     public static String BIND_USER_PHONE_SMSCODE_ERROR_MSG = "短信验证码错误,手机号绑定失败";
+    public static String BIND_USER_PHONE_NOT_EXIST_BIND_ERROR_CODE = "12703";
+    public static String BIND_USER_PHONE_NOT_EXIST_BIND_ERROR_MSG = "该手机号不存在，绑定失败";
 
     public static String SEND_SMS_VALID_CODE_ERROR_CODE = "12801";
     public static String SEND_SMS_VALID_CODE_ERROR_MSG = "短信验证码发送失败,稍后再试";
@@ -472,5 +475,15 @@ public class ResultConstant {
      */
     public static String PRE_PAY_WX_CODE_EMPTY_ERROR_CODE = "13101";
     public static String PRE_PAY_WX_CODE_EMPTY_ERROR_MSG = "微信code为空,jspapi支付失败";
+    public static final String PRE_PAY_WEIXIN_ACCESS_TOKEN_FAILD_ERROR_CODE = "13102";
+    public static final String PRE_PAY_WEIXIN_ACCESS_TOKEN_FAILD_ERROR_MSG = "微信支付,获取access_token失败";
 
+    public static final String PRE_PAY_WEIXIN_PREPAYID_FAILD_ERROR_CODE = "13103";
+    public static final String PRE_PAY_WEIXIN_PREPAYID_FAILD_ERROR_MSG = "微信支付,获取prepayid失败";
+
+    /**
+     * 账号绑定
+     */
+    public static String USER_CASH_ACCT_BIND_EXIST_ERROR_CODE = "13201";
+    public static String USER_CASH_ACCT_BIND_EXIST_ERROR_MSG = "账号已存在,绑定失败";
 }

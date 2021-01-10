@@ -185,6 +185,9 @@ public class AccountServiceImpl extends BaseServiceImpl implements AccountServic
         userAccountBook.setPaytype(req.getPayType().shortValue());
         userAccountBook.setStatus(req.getStatus().shortValue());
         userAccountBook.setSubaccountid(subAcctId);
+        if (StringUtils.isNoneBlank(req.getDescr())){
+            userAccountBook.setDescr(req.getDescr());
+        }
         if (req.getBizType()!=null){
             userAccountBook.setBiztype(req.getBizType().shortValue());
         }

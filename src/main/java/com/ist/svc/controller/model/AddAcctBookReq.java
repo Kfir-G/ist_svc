@@ -36,6 +36,7 @@ public class AddAcctBookReq extends BaseReq {
     @NotBlank(message = "昵称(name)不能为空")
     private String name;
     private Integer bizType;
+    private String descr;
     @Override
     public String toString() {
         return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);

@@ -1,0 +1,309 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ist.svc.dao.UserAcctCashdownMapper">
+  <resultMap id="BaseResultMap" type="com.ist.svc.domain.UserAcctCashdown">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="own_user_id" jdbcType="BIGINT" property="ownUserId" />
+    <result column="type" jdbcType="SMALLINT" property="type" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="cash_no" jdbcType="VARCHAR" property="cashNo" />
+    <result column="sum_money" jdbcType="REAL" property="sumMoney" />
+    <result column="rate" jdbcType="REAL" property="rate" />
+    <result column="free_money" jdbcType="REAL" property="freeMoney" />
+    <result column="status" jdbcType="SMALLINT" property="status" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    id, own_user_id, `type`, `name`, cash_no, sum_money, rate, free_money, `status`, 
+    create_time, update_time
+  </sql>
+  <select id="selectByExample" parameterType="com.ist.svc.domain.UserAcctCashdownExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from user_acct_cashdown
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from user_acct_cashdown
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from user_acct_cashdown
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.ist.svc.domain.UserAcctCashdownExample">
+    delete from user_acct_cashdown
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.ist.svc.domain.UserAcctCashdown">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into user_acct_cashdown (own_user_id, `type`, `name`, 
+      cash_no, sum_money, rate, free_money, 
+      `status`, create_time, update_time
+      )
+    values (#{ownUserId,jdbcType=BIGINT}, #{type,jdbcType=SMALLINT}, #{name,jdbcType=VARCHAR}, 
+      #{cashNo,jdbcType=VARCHAR}, #{sumMoney,jdbcType=REAL}, #{rate,jdbcType=REAL}, #{freeMoney,jdbcType=REAL}, 
+      #{status,jdbcType=SMALLINT}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}
+      )
+    ON DUPLICATE KEY UPDATE
+    name = values(name) ,status = values(status) ,
+    cash_no = values(cash_no),sum_money = values(sum_money),rate = values(rate),free_money = values(free_money),update_time = values(update_time)
+  </insert>
+  <insert id="insertSelective" parameterType="com.ist.svc.domain.UserAcctCashdown">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into user_acct_cashdown
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="ownUserId != null">
+        own_user_id,
+      </if>
+      <if test="type != null">
+        `type`,
+      </if>
+      <if test="name != null">
+        `name`,
+      </if>
+      <if test="cashNo != null">
+        cash_no,
+      </if>
+      <if test="sumMoney != null">
+        sum_money,
+      </if>
+      <if test="rate != null">
+        rate,
+      </if>
+      <if test="freeMoney != null">
+        free_money,
+      </if>
+      <if test="status != null">
+        `status`,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="updateTime != null">
+        update_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="ownUserId != null">
+        #{ownUserId,jdbcType=BIGINT},
+      </if>
+      <if test="type != null">
+        #{type,jdbcType=SMALLINT},
+      </if>
+      <if test="name != null">
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="cashNo != null">
+        #{cashNo,jdbcType=VARCHAR},
+      </if>
+      <if test="sumMoney != null">
+        #{sumMoney,jdbcType=REAL},
+      </if>
+      <if test="rate != null">
+        #{rate,jdbcType=REAL},
+      </if>
+      <if test="freeMoney != null">
+        #{freeMoney,jdbcType=REAL},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=SMALLINT},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null">
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.ist.svc.domain.UserAcctCashdownExample" resultType="java.lang.Long">
+    select count(*) from user_acct_cashdown
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update user_acct_cashdown
+    <set>
+      <if test="record.id != null">
+        id = #{record.id,jdbcType=BIGINT},
+      </if>
+      <if test="record.ownUserId != null">
+        own_user_id = #{record.ownUserId,jdbcType=BIGINT},
+      </if>
+      <if test="record.type != null">
+        `type` = #{record.type,jdbcType=SMALLINT},
+      </if>
+      <if test="record.name != null">
+        `name` = #{record.name,jdbcType=VARCHAR},
+      </if>
+      <if test="record.cashNo != null">
+        cash_no = #{record.cashNo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.sumMoney != null">
+        sum_money = #{record.sumMoney,jdbcType=REAL},
+      </if>
+      <if test="record.rate != null">
+        rate = #{record.rate,jdbcType=REAL},
+      </if>
+      <if test="record.freeMoney != null">
+        free_money = #{record.freeMoney,jdbcType=REAL},
+      </if>
+      <if test="record.status != null">
+        `status` = #{record.status,jdbcType=SMALLINT},
+      </if>
+      <if test="record.createTime != null">
+        create_time = #{record.createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.updateTime != null">
+        update_time = #{record.updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update user_acct_cashdown
+    set id = #{record.id,jdbcType=BIGINT},
+      own_user_id = #{record.ownUserId,jdbcType=BIGINT},
+      `type` = #{record.type,jdbcType=SMALLINT},
+      `name` = #{record.name,jdbcType=VARCHAR},
+      cash_no = #{record.cashNo,jdbcType=VARCHAR},
+      sum_money = #{record.sumMoney,jdbcType=REAL},
+      rate = #{record.rate,jdbcType=REAL},
+      free_money = #{record.freeMoney,jdbcType=REAL},
+      `status` = #{record.status,jdbcType=SMALLINT},
+      create_time = #{record.createTime,jdbcType=TIMESTAMP},
+      update_time = #{record.updateTime,jdbcType=TIMESTAMP}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.ist.svc.domain.UserAcctCashdown">
+    update user_acct_cashdown
+    <set>
+      <if test="ownUserId != null">
+        own_user_id = #{ownUserId,jdbcType=BIGINT},
+      </if>
+      <if test="type != null">
+        `type` = #{type,jdbcType=SMALLINT},
+      </if>
+      <if test="name != null">
+        `name` = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="cashNo != null">
+        cash_no = #{cashNo,jdbcType=VARCHAR},
+      </if>
+      <if test="sumMoney != null">
+        sum_money = #{sumMoney,jdbcType=REAL},
+      </if>
+      <if test="rate != null">
+        rate = #{rate,jdbcType=REAL},
+      </if>
+      <if test="freeMoney != null">
+        free_money = #{freeMoney,jdbcType=REAL},
+      </if>
+      <if test="status != null">
+        `status` = #{status,jdbcType=SMALLINT},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null">
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.ist.svc.domain.UserAcctCashdown">
+    update user_acct_cashdown
+    set own_user_id = #{ownUserId,jdbcType=BIGINT},
+      `type` = #{type,jdbcType=SMALLINT},
+      `name` = #{name,jdbcType=VARCHAR},
+      cash_no = #{cashNo,jdbcType=VARCHAR},
+      sum_money = #{sumMoney,jdbcType=REAL},
+      rate = #{rate,jdbcType=REAL},
+      free_money = #{freeMoney,jdbcType=REAL},
+      `status` = #{status,jdbcType=SMALLINT},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      update_time = #{updateTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

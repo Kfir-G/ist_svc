@@ -312,6 +312,15 @@ public class BagServiceImpl extends BaseServiceImpl implements BagService {
             if (answer==userAnswer){
                 return ApiBaseResp.result(ResultConstant.DRAW_BAG_RECORD_GUESS_SUCC_CODE,ResultConstant.DRAW_BAG_RECORD_GUESS_SUCC_MSG,bagDraw);
             }
+            if(bag.getStatus()!=IstEnum.BagStatus.PROVIDEING.getCode()){
+                //更新为发放中
+                BagExample bagExample = new BagExample();
+                BagExample.Criteria criteriaBag = bagExample.createCriteria();
+                criteriaBag.andBagNoEqualTo(bag.getBagNo());
+                Bag updateBag = new Bag();
+                updateBag.setStatus(IstEnum.BagStatus.PROVIDEING.getCode());
+                bagMapper.updateByExampleSelective(updateBag,bagExample);
+            }
         }
         return ApiBaseResp.succ(bagDraw);
     }
@@ -424,6 +433,15 @@ public class BagServiceImpl extends BaseServiceImpl implements BagService {
                         //如果是有效竞猜则插入
                         bagDraw = getMinAndMaxByBagNo(bag.getBagNo(),userAnswer,answer,req.getUserId());
                         if (answer==userAnswer){
+                            //先更新红包状态为已发放完
+                            //更新bag状态为发放完
+                            Bag bagUpdate = new Bag();
+                            bagUpdate.setStatus(IstEnum.BagStatus.PROVIDE_FINISH.getCode());
+                            BagExample example = new BagExample();
+                            BagExample.Criteria criteria = example.createCriteria();
+                            criteria.andBagNoEqualTo(bag.getBagNo());
+                            criteria.andUpdatetimeEqualTo(new Date());
+                            bagMapper.updateByExample(bagUpdate,example);
                             dealAllocation(bag.getBagNo(),bag.getSumMoney(),answer);
                         }
                     }
@@ -551,14 +569,6 @@ public class BagServiceImpl extends BaseServiceImpl implements BagService {
         }
         //批量入库
         bagDrawMapper.batchInsert(bagDrawsRedis);
-        //更新bag状态为发放完
-        Bag bagUpdate = new Bag();
-        bagUpdate.setStatus(IstEnum.BagStatus.PROVIDE_FINISH.getCode());
-        BagExample example = new BagExample();
-        BagExample.Criteria criteria = example.createCriteria();
-        criteria.andBagNoEqualTo(bagNo);
-        criteria.andUpdatetimeEqualTo(new Date());
-        bagMapper.updateByExample(bagUpdate,example);
     }
 
     //获取有效范围
@@ -666,6 +676,7 @@ public class BagServiceImpl extends BaseServiceImpl implements BagService {
         addAcctBookReq.setOrderId("0");
         addAcctBookReq.setStatus(1);
         addAcctBookReq.setBizType((int) IstEnum.BookBizType.BAG.getCode());
+        addAcctBookReq.setDescr("红包");
         QueryBaseResp queryBaseResp = new QueryBaseResp();
         accountService.recordAcctBook(addAcctBookReq,queryBaseResp);
         if (redisAmount==bagAmount && bagAmount!=-1){
