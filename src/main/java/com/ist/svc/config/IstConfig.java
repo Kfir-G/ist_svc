@@ -32,6 +32,14 @@ public class IstConfig {
     private String weiXinPayNotifyUrl;
     @Value("${weixin.pay.mchId}")
     private String weiXinPayMchId;
+    @Value("${weixin.app.appId}")
+    private String weiXinAppId;
+    @Value("${weixin.app.appSecret}")
+    private String weiXinAppSecret;
+    @Value("${weixin.app.access_url}")
+    private String weiXinAppAccessUrl;
+    @Value("${weixin.app.userInfo_url}")
+    private String weiXinAppUserInfoUrl;
 
     @Value("${nginx.public.uri}")
     private String nginxPublicUri;

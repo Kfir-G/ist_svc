@@ -1,10 +1,7 @@
 package com.ist.svc.service;
 
 import com.ist.svc.controller.model.*;
-import com.ist.svc.controller.model.dto.ModifyUserInfoReq;
-import com.ist.svc.controller.model.dto.SendValidSmsReq;
-import com.ist.svc.controller.model.dto.UserBindPhoneReq;
-import com.ist.svc.controller.model.dto.VerifyValidSmsReq;
+import com.ist.svc.controller.model.dto.*;
 import com.ist.svc.domain.UserPasswd;
 
 /**
@@ -13,7 +10,7 @@ import com.ist.svc.domain.UserPasswd;
 public interface UserService {
     void userRegister(UserRegisterReq req, UserRegisterResp resp) throws Exception; //用户注册
 
-    void userLogin(UserLoginReq req, UserLoginResp resp) throws Exception; //用户登陆
+    void userLogin(UserLoginReq req, ApiBaseResp resp) throws Exception; //用户登陆
 
     UserPasswd getUserPasswdByLoginName(String loginName);
 
@@ -35,9 +32,11 @@ public interface UserService {
 
     void delRedisByLoginName(String userId);
 
-    void userBindPhone(UserBindPhoneReq req, BaseResp resp);
+    void userBindPhone(UserBindPhoneReq req, ApiBaseResp resp);
 
     void verifyValidSmsCode(VerifyValidSmsReq req, BaseResp resp);
 
     void modifyUserInfo(ModifyUserInfoReq req, BaseResp resp);
+
+    void queryAddress(QueryUserAddressDto req, ApiBaseResp resp);
 }

@@ -159,7 +159,7 @@
         <!--<table tableName="bag" domainObjectName="Bag">
             <generatedKey column="id" sqlStatement="MySQL" type="post" identity="true"/>
         </table>-->
-        <table tableName="user_acct_cashdown" domainObjectName="UserAcctCashdown">
+        <table tableName="info_village" domainObjectName="InfoVillage">
             <generatedKey column="id" sqlStatement="MySQL" type="post" identity="true"/>
         </table>
     </context>

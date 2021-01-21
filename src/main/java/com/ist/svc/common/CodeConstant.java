@@ -28,8 +28,9 @@ public class CodeConstant {
     public static final long USER_TOKEN_ID_SAVE_TIME = 365*24*60*60;
     public static final long USER_LOGIN_RESP_SAVE_TIME = 3*24*60*60;
     public static final long REDIS_USERID_LOGIN_REL_SAVE_TIME = 3*24*60*60;
-    public static final long REDIS_SAVE_TIME_5S = 5;
+    public static final long REDIS_SAVE_TIME_5S = 2;
     public static final long REDIS_SAVE_TIME_5M = 5*60;
+    public static final long REDIS_SAVE_TIME_30M = 30*60;
 
     public static final String ENVIRONMENT_NO="3";
 

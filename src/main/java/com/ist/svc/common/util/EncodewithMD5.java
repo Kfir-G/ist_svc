@@ -14,7 +14,7 @@ public class EncodewithMD5 {
 	 *
 	 * 方法描述：将指定的字符串进行MD5加密
 	 *
-	 * @param String source
+	 * @param  s
 	 * @return String destString
 	 */
     public static String encodeWithMD5(String s) {   

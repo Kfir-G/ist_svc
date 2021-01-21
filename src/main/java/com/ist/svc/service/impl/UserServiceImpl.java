@@ -1,8 +1,10 @@
 package com.ist.svc.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.ist.svc.config.IstConfig;
 import com.ist.svc.controller.model.dto.*;
+import com.ist.svc.domain.UserAddress;
 import com.ist.svc.service.newversion.SmsService;
 import com.sun.org.apache.xerces.internal.impl.dv.util.Base64;
 import com.ist.svc.common.CodeConstant;
@@ -18,6 +20,7 @@ import com.ist.svc.domain.*;
 import com.ist.svc.service.UserAddressService;
 import com.ist.svc.service.UserService;
 import com.ist.svc.service.UserTokenService;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +31,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.crypto.Cipher;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
+import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.security.spec.AlgorithmParameterSpec;
 import java.util.*;
@@ -200,7 +204,7 @@ public class UserServiceImpl extends BaseServiceImpl implements UserService {
             smsValid.setNumber(phoneNum);
             smsValid.setCode(validCode);
             smsValid.setValidTime(new Date());
-            redisUtil.set(redisKey,smsValid,CodeConstant.REDIS_SAVE_TIME_5M);
+            redisUtil.set(redisKey,smsValid,CodeConstant.REDIS_SAVE_TIME_30M);
         }catch (Exception e){
             logger.error("saveValidCode.err:",e);
             return false;
@@ -443,24 +447,23 @@ public class UserServiceImpl extends BaseServiceImpl implements UserService {
     }
 
     @Override
-    public void userBindPhone(UserBindPhoneReq req, BaseResp resp) {
+    public void userBindPhone(UserBindPhoneReq req, ApiBaseResp resp) {
         String phone = req.getPhone();
-
         if (!judgeValidSms(req.getPhone(),req.getSmsCode())){
             resp.setCode(ResultConstant.BIND_USER_PHONE_SMSCODE_ERROR_CODE);
             resp.setMsg(ResultConstant.BIND_USER_PHONE_SMSCODE_ERROR_MSG);
             return;
         }
-        UserPasswdExample userPasswdExample = new UserPasswdExample();
-        UserPasswdExample.Criteria criteriaUserPasswd = userPasswdExample.createCriteria();
-        criteriaUserPasswd.andLoginnameEqualTo(phone);
-        criteriaUserPasswd.andStatusEqualTo(IstEnum.UserStatus.NORMAL.getStatus());
-        criteriaUserPasswd.andUserTypeEqualTo(IstEnum.UserType.TYPE_PHONE.getType().shortValue());
-        List<UserPasswd> userPasswds = userPasswdMapper.selectByExample(userPasswdExample);
-
+//        UserPasswdExample userPasswdExample = new UserPasswdExample();
+//        UserPasswdExample.Criteria criteriaUserPasswd = userPasswdExample.createCriteria();
+//        criteriaUserPasswd.andLoginnameEqualTo(phone);
+//        criteriaUserPasswd.andStatusEqualTo(IstEnum.UserStatus.NORMAL.getStatus());
+//        criteriaUserPasswd.andUserTypeEqualTo(IstEnum.UserType.TYPE_PHONE.getType().shortValue());
+//        List<UserPasswd> userPasswds = userPasswdMapper.selectByExample(userPasswdExample);
+        UserPasswd upDb = getUserPasswdByLoginName(phone);
         if (req.getBindType()==null || req.getBindType()==IstEnum.BindType.FORWARD_BIND.geTtype()){
             //插入userPassword表里一条记录 先查userPassword 是否存在
-            if (null!=userPasswds && userPasswds.size()>0){
+            if (null!=upDb && upDb.getUserType() == IstEnum.UserType.TYPE_PHONE.getType().intValue()){
                 resp.setCode(ResultConstant.BIND_USER_PHONE_ALREADY_BIND_ERROR_CODE);
                 resp.setMsg(ResultConstant.BIND_USER_PHONE_ALREADY_BIND_ERROR_MSG);
                 return;
@@ -483,21 +486,42 @@ public class UserServiceImpl extends BaseServiceImpl implements UserService {
             criteria.andUseridEqualTo(new BigDecimal(req.getUserId()));
             userMapper.updateByExampleSelective(userUpdate,userExample);
         }else{
-            if (null==userPasswds && userPasswds.size()==0){
+            BindDataVo bindDataVo = new BindDataVo();
+            if (null==upDb){
                 resp.setCode(ResultConstant.BIND_USER_PHONE_NOT_EXIST_BIND_ERROR_CODE);
                 resp.setMsg(ResultConstant.BIND_USER_PHONE_NOT_EXIST_BIND_ERROR_MSG);
                 return;
             }
-            BigDecimal userId = userPasswds.get(0).getUserid();
-            JSONObject wxCodeJsonObject = JSONObject.parseObject(req.getWxCodeJson());
-            String weixinCode = wxCodeJsonObject.getString("code");
-            JSONObject sessionKeyOropenid = wxUtil.getSessionKeyOropenid(weixinCode);
-            logger.info("getSessionKeyOropenid req:{} resp:{}",weixinCode,sessionKeyOropenid);
-            String openId = sessionKeyOropenid.getString("openid");
+            BigDecimal userId = upDb.getUserid();
+            UserExample userExample = new UserExample();
+            UserExample.Criteria criteria = userExample.createCriteria();
+            criteria.andUseridEqualTo(new BigDecimal(req.getUserId()));
+            User updateUser = new User();
+            JSONObject jsonData = JSONObject.parseObject(req.getJsonData());
+            String nickName = jsonData.getString("nickName");
+            String avatarUrl = jsonData.getString("avatarUrl");
+            String loginName = jsonData.getString("loginName");
+            boolean isUpdate = false; //是否更新定时器
+            if (upDb.getNickName().startsWith("用户") && upDb.getNickName().endsWith(upDb.getPhone().substring(7))){
+                updateUser.setNickname(nickName);
+                bindDataVo.setLoginName(nickName);
+                isUpdate = true;
+            }
+            if (upDb.getAvatarUrl().endsWith("missing-face.png")){
+                updateUser.setAvatarUrl(avatarUrl);
+                bindDataVo.setAvatarUrl(avatarUrl);
+                isUpdate = true;
+            }
+            if (isUpdate){
+                resp.setCode(ResultConstant.SUCCESS_CODE);
+                resp.setMsg(ResultConstant.SUCCESS_CODE_MSG);
+                resp.setData(bindDataVo);
+                userMapper.updateByExampleSelective(updateUser, userExample);
+            }
             UserPasswd  up = new UserPasswd();
             Date now = new Date();
-            up.setLoginname(openId);
-            up.setPasswd(EncodewithMD5.encodePWDWithMD5(openId));
+            up.setLoginname(loginName);
+            up.setPasswd(EncodewithMD5.encodePWDWithMD5(loginName));
             up.setUserType(IstEnum.UserType.TYPE_WEIXIN.getType());
             up.setChangenum(IstEnum.ChangeNum.RESET.getType());
             up.setStatus(IstEnum.UserStatus.NORMAL.getStatus());
@@ -505,7 +529,7 @@ public class UserServiceImpl extends BaseServiceImpl implements UserService {
             up.setUserid(userId);
             userPasswdMapper.insertSelective(up);
         }
-
+        deleteUserMemByUserId(req.getUserId());
     }
 
     @Override
@@ -539,6 +563,42 @@ public class UserServiceImpl extends BaseServiceImpl implements UserService {
 
     }
 
+    @Override
+    public void queryAddress(QueryUserAddressDto req, ApiBaseResp resp) {
+        if(StringUtils.isBlank(req.getAddress()) && StringUtils.isBlank(req.getAreaId())){
+            resp.setCode(ResultConstant.QUERY_USER_ADDRESS_PARAM_ERROR_CODE);
+            resp.setCode(ResultConstant.QUERY_USER_ADDRESS_PARAM_ERROR_MSG);
+            return;
+        }
+        UserAddressExample example = new UserAddressExample();
+        UserAddressExample.Criteria criteria = example.createCriteria();
+        if (StringUtils.isNoneBlank(req.getAreaId())){
+            criteria.andAreaidEqualTo(Integer.parseInt(req.getAreaId()));
+        }
+        if (StringUtils.isNoneBlank(req.getAddress())){
+            criteria.andAddressLike("%" + req.getAddress() + "%");
+        }
+        List<UserAddress> userAddresses = userAddressService.queryByExample(example);
+        List<UserAddressVo> list = new ArrayList<>();
+        if (CollectionUtils.isNotEmpty(userAddresses)){
+            for (UserAddress userAddress :userAddresses){
+                UserAddressVo uAddress = new UserAddressVo();
+                uAddress.setAddress(userAddress.getAddress());
+                uAddress.setAreaId(userAddress.getAreaid());
+                uAddress.setIsDefault(userAddress.getIsdefault().intValue());
+                uAddress.setName(userAddress.getName());
+                uAddress.setAddressId(userAddress.getAddressid().toString());
+                uAddress.setPhone(userAddress.getPhone());
+                uAddress.setUserId(userAddress.getUserid().toString());
+                list.add(uAddress);
+            }
+        }
+
+        resp.setData(list);
+        resp.setCode(ResultConstant.QUERY_USER_ADDRESS_SUCC_CODE);
+        resp.setMsg(ResultConstant.QUERY_USER_ADDRESS_SUCC_MSG);
+    }
+
     private List<UserPasswd> getUserPasswdByUid(String userId) {
         Map<String,Object> params = new HashMap<>();
         params.put("userId",userId);
@@ -548,7 +608,8 @@ public class UserServiceImpl extends BaseServiceImpl implements UserService {
 
     @Override
 //    @Transactional
-    public void userLogin(UserLoginReq req, UserLoginResp resp) throws Exception {
+    public void userLogin(UserLoginReq req, ApiBaseResp resp) throws Exception {
+        UserLoginResp userLoginResp = new UserLoginResp();
         //参数基本校验
         if(req.getLoginType() == IstEnum.LoginType.TYPE_WEIXIN.getType() && StringUtils.isBlank(req.getWxCode())){
             resp.setCode(ResultConstant.USER_LOGIN_WEIXIN_CODE_ERROR_CODE);
@@ -572,21 +633,46 @@ public class UserServiceImpl extends BaseServiceImpl implements UserService {
             String wxCode = req.getWxCode();
             JSONObject wxCodeJsonObject = JSONObject.parseObject(wxCode);
             String weixinCode = wxCodeJsonObject.getString("code");
-            JSONObject sessionKeyOropenid = wxUtil.getSessionKeyOropenid(weixinCode);
-            logger.info("getSessionKeyOropenid req:{} resp:{}",weixinCode,sessionKeyOropenid);
-            openId = sessionKeyOropenid.getString("openid");
+
+            String type = wxCodeJsonObject.getString("type");
+            if (StringUtils.isNoneBlank(type)&&"APP".equalsIgnoreCase(type)){
+                //微信APP登录
+                JSONObject jsonObject = getAccessToken(weixinCode);
+                String accessToken = jsonObject.getString("access_token");
+                openId = jsonObject.getString("openid");
+                //通过openId获取 userInfo信息
+                String url = String.format(istConfig.getWeiXinAppUserInfoUrl(),accessToken,openId,"zh_CN");
+                String resultUserInfo = HttpUtil.doGet(url,null);
+                JSONObject resultUserInfoJson = JSON.parseObject(resultUserInfo);
+                unionId = resultUserInfoJson.getString("unionid");
+                userLoginResp.setNickName(resultUserInfoJson.getString("nickname"));
+                userLoginResp.setAvatarUrl(resultUserInfoJson.getString("headimgurl"));
+                userLoginResp.setSex(resultUserInfoJson.getInteger("sex"));
+                userLoginResp.setAddress(resultUserInfoJson.getString("city"));
+            }else {
+                //微信小程序登录
+                JSONObject sessionKeyOropenid = wxUtil.getSessionKeyOropenid(weixinCode);
+                logger.info("getSessionKeyOropenid req:{} resp:{}",weixinCode,sessionKeyOropenid);
+                openId = sessionKeyOropenid.getString("openid");
 //            openId = "oAbP74kN4xZz1Wud-LCjVw4t9SPA";
-            if (StringUtils.isBlank(openId)){
-                resp.setCode(ResultConstant.USER_LOGIN_WEIXIN_OPEN_CODE_GET_ERROR_CODE);
-                resp.setMsg(ResultConstant.USER_LOGIN_WEIXIN_OPEN_CODE_GET_ERROR_MSG);
-                return;
-            }else{
-                String sessionKey = sessionKeyOropenid.getString("session_key");
-                Map<String, Object> stringObjectMap = decryptData(wxCodeJsonObject.getString("encryptedData"), wxCodeJsonObject.getString("iv"), sessionKey);
-                unionId = (String) stringObjectMap.get("unionId");
+                if (StringUtils.isBlank(openId)){
+                    resp.setCode(ResultConstant.USER_LOGIN_WEIXIN_OPEN_CODE_GET_ERROR_CODE);
+                    resp.setMsg(ResultConstant.USER_LOGIN_WEIXIN_OPEN_CODE_GET_ERROR_MSG);
+                    return;
+                }else{
+                    String sessionKey = sessionKeyOropenid.getString("session_key");
+                    Map<String, Object> stringObjectMap = decryptData(wxCodeJsonObject.getString("encryptedData"), wxCodeJsonObject.getString("iv"), sessionKey);
+                    logger.info("stringObjectMap:{}",stringObjectMap);
+                    unionId = (String) stringObjectMap.get("unionId");
+                    userLoginResp.setNickName((String) stringObjectMap.get("nickName"));
+                    userLoginResp.setSex((Integer) stringObjectMap.get("gender"));
+                    userLoginResp.setAddress((String) stringObjectMap.get("city"));
+                    userLoginResp.setAvatarUrl((String) stringObjectMap.get("avatarUrl"));
+                }
             }
+
             req.setNeedPwd(false);//不需要校验密码
-            req.setLoginName(openId);
+            req.setLoginName(unionId);
 //            else {
 //                //通过openid获取userinfo {"openid":"oAbP74kN4xZz1Wud-LCjVw4t9SPY","session_key":"Lx78a2jDGx2cUE6/2tZx6g=="}
 //                //查询用户信息是否存在
@@ -624,7 +710,7 @@ public class UserServiceImpl extends BaseServiceImpl implements UserService {
         String redisKey = "";
         long s = System.currentTimeMillis();
         if (req.getLoginType() == IstEnum.LoginType.TYPE_WEIXIN.getType()){
-            redisKey = RedisKeyUtil.getLoginRespKey(openId,"",req.getAppId());
+            redisKey = RedisKeyUtil.getLoginRespKey(unionId,"",req.getAppId());
         }else if (req.getLoginType() == IstEnum.LoginType.TYPE_SMS.getType()){
             if (!judgeValidSms(req.getLoginName(),req.getSmsCode()) && !"111111".equals(req.getSmsCode())){
                 resp.setCode(ResultConstant.USER_LOGIN_SMS_CODE_ERROR_CODE);
@@ -648,7 +734,8 @@ public class UserServiceImpl extends BaseServiceImpl implements UserService {
         if (userPasswd == null){
             resp.setCode(ResultConstant.USER_LOGIN_USER_IS_NULL_ERROR_CODE);
             resp.setMsg(ResultConstant.USER_LOGIN_USER_IS_NULL_ERROR_MSG);
-            resp.setLoginName(req.getLoginName());
+            userLoginResp.setLoginName(req.getLoginName());
+            resp.setData(userLoginResp);
             return;
         }
         //密码校验
@@ -661,17 +748,26 @@ public class UserServiceImpl extends BaseServiceImpl implements UserService {
             }
         }
         String tokenId = userTokenService.genTokenId(req.getLoginName(),req.getAppId());
-        resp.setTokenId(tokenId);
-        resp.setAvatarUrl(userPasswd.getAvatarUrl());
-        resp.setLoginName(userPasswd.getLoginname());
-        resp.setNickName(userPasswd.getNickName());
-        resp.setUserId(userPasswd.getUserid()+"");
-        userPasswd.setPhone(userPasswd.getPhone());
+        userLoginResp.setTokenId(tokenId);
+        userLoginResp.setAvatarUrl(userPasswd.getAvatarUrl());
+        userLoginResp.setLoginName(userPasswd.getLoginname());
+        userLoginResp.setNickName(userPasswd.getNickName());
+        userLoginResp.setUserId(userPasswd.getUserid()+"");
+        userLoginResp.setPhone(userPasswd.getPhone());
+        userLoginResp.setSex(userPasswd.getSex());
         //放入缓存
         redisUtil.set(redisKey, resp, CodeConstant.USER_LOGIN_RESP_SAVE_TIME);
         putUidLoginRel(userPasswd.getUserid() + "",redisKey);
+        resp.setData(userLoginResp);
     }
+    private JSONObject getAccessToken(String weixinCode) throws UnsupportedEncodingException {
 
+        String url = String.format(istConfig.getWeiXinAppAccessUrl(),istConfig.getWeiXinAppId(),istConfig.getWeiXinAppSecret(),weixinCode);
+        String result = HttpUtil.doGet(url,null);
+        JSONObject jsonObject = JSON.parseObject(result);
+        logger.info("result:{}",result);
+        return jsonObject;
+    }
     /**
      * 根据encryptedData，iv，sessionKey解密获取用户信息
      * @param encryptedData
@@ -715,6 +811,8 @@ public class UserServiceImpl extends BaseServiceImpl implements UserService {
                     wres.put("gender", userInfo.getString("gender"));
                     wres.put("avatarUrl", userInfo.getString("avatarUrl"));
                     wres.put("unionId",userInfo.getString("unionId"));
+                    wres.put("gender",userInfo.getIntValue("gender"));
+                    wres.put("city",userInfo.getString("city"));
                     return wres;
                 }
             }
@@ -778,6 +876,7 @@ public class UserServiceImpl extends BaseServiceImpl implements UserService {
     }
 
     private UserLoginResp checkRedisLoginResp(String redisKey, String accountNo, String appId) {
+        redisUtil.del(redisKey);
         UserLoginResp userLoginResp = (UserLoginResp) redisUtil.get(redisKey);
         long end = System.currentTimeMillis();
         if (null != userLoginResp) {

@@ -7,6 +7,7 @@ import com.ist.svc.config.IstEnum;
 import com.ist.svc.controller.BaseController;
 import com.ist.svc.controller.model.UserLoginReq;
 import com.ist.svc.controller.model.UserLoginResp;
+import com.ist.svc.controller.model.dto.ApiBaseResp;
 import com.ist.svc.service.UserService;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +30,7 @@ public class FUserController extends BaseController {
     @PostMapping("/login")
     public ResultVO login(HttpServletRequest request, @Valid UserLoginReq req, BindingResult bindingResult,
                           HttpSession session) {
-        UserLoginResp resp = new UserLoginResp();
+        ApiBaseResp resp = new ApiBaseResp();
         try {
             resp.setCode(ResultConstant.USER_LOGIN_SUCC_CODE);
             resp.setMsg(ResultConstant.USER_LOGIN_SUCC_MSG);

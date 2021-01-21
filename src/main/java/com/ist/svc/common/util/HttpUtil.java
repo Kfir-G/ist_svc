@@ -186,7 +186,7 @@ public class HttpUtil {
 			int statusCode = response.getStatusLine().getStatusCode();
 			if (statusCode == HttpStatus.SC_OK) {
 				HttpEntity resEntity = response.getEntity();
-				result = EntityUtils.toString(resEntity);
+				result = EntityUtils.toString(resEntity,"UTF-8");
 				logger.info("Http响应码:" +statusCode + "|" + result);
 				// 消耗掉response
 				EntityUtils.consume(resEntity);

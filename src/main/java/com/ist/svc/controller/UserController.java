@@ -6,15 +6,13 @@ import com.ist.svc.common.util.DateUtil;
 import com.ist.svc.config.IstEnum;
 import com.ist.svc.config.annotation.TokenCheck;
 import com.ist.svc.controller.model.*;
-import com.ist.svc.controller.model.dto.ModifyUserInfoReq;
-import com.ist.svc.controller.model.dto.SendValidSmsReq;
-import com.ist.svc.controller.model.dto.UserBindPhoneReq;
-import com.ist.svc.controller.model.dto.VerifyValidSmsReq;
+import com.ist.svc.controller.model.dto.*;
 import com.ist.svc.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -64,8 +62,9 @@ public class UserController extends BaseController{
     }
 
     @RequestMapping(value = "userLogin")
-    public UserLoginResp userLogin(HttpServletRequest request, @Valid UserLoginReq req,BindingResult bindingResult){
-        UserLoginResp resp = new UserLoginResp();
+    public ApiBaseResp userLogin(HttpServletRequest request, @Valid UserLoginReq req, BindingResult bindingResult){
+        ApiBaseResp resp = new ApiBaseResp();
+//        UserLoginResp resp = new UserLoginResp();
         resp.setCode(ResultConstant.USER_LOGIN_SUCC_CODE);
         resp.setMsg(ResultConstant.USER_LOGIN_SUCC_MSG);
         try {
@@ -326,8 +325,9 @@ public class UserController extends BaseController{
     @RequestMapping(value = "userBindPhone", method = RequestMethod.POST, produces = "application/json;charset=UTF-8", consumes = "application/json;charset=UTF-8")
     @ApiOperation(value = "绑定手机号")
     @TokenCheck
-    public BaseResp userBindPhone(@Valid @RequestBody UserBindPhoneReq req,BindingResult bindingResult){
-        BaseResp resp = BaseResp.ok();
+    @Transactional(rollbackFor = Exception.class)
+    public ApiBaseResp userBindPhone(@Valid @RequestBody UserBindPhoneReq req,BindingResult bindingResult){
+        ApiBaseResp resp = new ApiBaseResp();
         try {
             if (bindingResult.hasErrors()) {
                 String msg = bindingResult.getFieldError().getDefaultMessage();
@@ -342,7 +342,9 @@ public class UserController extends BaseController{
                 resp.setMsg(ResultConstant.SIGN_ERROR_MSG);
             }
         }catch (Exception e){
-            logger.error("OrderController.userBindPhone", e);
+            resp.setMsg(ResultConstant.APP_ERROR_MSG);
+            resp.setCode(ResultConstant.APP_ERROR_CODE);
+            logger.error("UserController.userBindPhone", e);
         }
         return resp;
     }
@@ -367,7 +369,31 @@ public class UserController extends BaseController{
                 resp.setMsg(ResultConstant.SIGN_ERROR_MSG);
             }
         }catch (Exception e){
-            logger.error("OrderController.modifyUserInfo", e);
+            logger.error("UserController.modifyUserInfo", e);
+        }
+        return resp;
+    }
+    //修改用户信息
+    @RequestMapping(value = "queryAddress", method = RequestMethod.POST, produces = "application/json;charset=UTF-8", consumes = "application/json;charset=UTF-8")
+    @ApiOperation(value = "查询地址")
+    @TokenCheck
+    public ApiBaseResp queryAddress(@Valid @RequestBody QueryUserAddressDto req, BindingResult bindingResult){
+        ApiBaseResp resp = new ApiBaseResp();
+        try {
+            if (bindingResult.hasErrors()) {
+                String msg = bindingResult.getFieldError().getDefaultMessage();
+                resp.setCode(ResultConstant.PARAM_ERROR_CODE);
+                resp.setMsg(msg);
+                return resp;
+            }
+            if (vaildAppSign(req)) {
+                userService.queryAddress(req,resp);
+            }else {
+                resp.setCode(ResultConstant.SIGN_ERROR_CODE);
+                resp.setMsg(ResultConstant.SIGN_ERROR_MSG);
+            }
+        }catch (Exception e){
+            logger.error("UserController.queryAddress", e);
         }
         return resp;
     }

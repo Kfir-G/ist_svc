@@ -119,6 +119,8 @@ public class ResultConstant {
     public static String QUERY_USER_ADDRESS_ADDRESSID_EMPTY_ERROR_MSG = "地址id为空";
     public static String QUERY_USER_ADDRESS_QUERY_TYPE_ERROR_CODE = "8004";
     public static String QUERY_USER_ADDRESS_QUERY_TYPE_ERROR_MSG = "查询类型暂不支持";
+    public static String QUERY_USER_ADDRESS_PARAM_ERROR_CODE = "8005";
+    public static String QUERY_USER_ADDRESS_PARAM_ERROR_MSG = "areaId和address不能同时为空";
 
     /**
      * 获取用户已领取的优惠券返回码

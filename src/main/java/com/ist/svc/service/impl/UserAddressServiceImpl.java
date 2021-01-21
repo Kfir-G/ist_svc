@@ -68,6 +68,7 @@ public class UserAddressServiceImpl extends BaseServiceImpl implements UserAddre
             uAddress.setCity(userAddress.getCity());
             uAddress.setArea(userAddress.getArea());
             uAddress.setPicker(userAddress.getPicker());
+            uAddress.setUserId(userAddress.getUserid().toString());
             list.add(uAddress);
         }
         return list;

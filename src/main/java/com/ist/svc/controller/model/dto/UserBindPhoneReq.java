@@ -30,8 +30,15 @@ public class UserBindPhoneReq extends BaseReq {
     @ApiModelProperty(value = "绑定类型(1:正向绑定,2: 反向绑定(手机号绑定微信))",notes = "1:正向绑定,2: 反向绑定(手机号绑定微信)")
     @NotNull(message = "绑定类型不能为空")
     private Integer bindType;
-    @ApiModelProperty(value = "微信code json(反向绑定(手机号绑定微信)时不能为空)",notes = "反向绑定(手机号绑定微信)时不能为空")
-    private String wxCodeJson;
+    @ApiModelProperty(value = "jsonData (反向绑定(可传入loginName，nickName avatarUrl)",notes = "反向绑定(可传入loginName，nickName avatarUrl)时不能为空")
+    private String jsonData;
+    @NotBlank(message = "unionId 不能为空")
+//    @ApiModelProperty(value = "unionId")
+//    private String unionId;
+//    @ApiModelProperty(value = "昵称")
+//    private String nickName;
+//    @ApiModelProperty(value = "头像")
+//    private String avatarUrl;
     @Override
     public String toString() {
         return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);

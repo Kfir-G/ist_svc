@@ -6,7 +6,7 @@ import lombok.Data;
  * @Author: sunhaitao
  */
 @Data
-public class UserAddress {
+public class UserAddressVo {
     private String name;
     private String phone;
     private Integer areaId;
@@ -14,9 +14,4 @@ public class UserAddress {
     private String address;
     private Integer isDefault;
     private String userId;
-
-    private String province;
-    private String city;
-    private String area;
-    private String picker;//选择器序号
 }

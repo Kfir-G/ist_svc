@@ -123,6 +123,12 @@
        <if test="isDefault!=null">
          and A.isdefault = #{isDefault,jdbcType=SMALLINT}
        </if>
+       <if test="address!=null">
+         and A.address like concat('%',#{address},'%')
+       </if>
+       <if test="areaId!=null">
+         and A.areaid = #{areaId,jdbcType=INTEGER}
+       </if>
        <if test="status!=null">
          and A.status = #{status,jdbcType=SMALLINT}
        </if>

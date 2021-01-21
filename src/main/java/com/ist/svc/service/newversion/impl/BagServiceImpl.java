@@ -17,12 +17,9 @@ import com.ist.svc.domain.*;
 import com.ist.svc.service.AccountService;
 import com.ist.svc.service.impl.BaseServiceImpl;
 import com.ist.svc.service.newversion.BagService;
-import io.swagger.models.auth.In;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import javax.validation.constraints.NotBlank;
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -245,6 +242,7 @@ public class BagServiceImpl extends BaseServiceImpl implements BagService {
             BagDrawExample.Criteria criteria = bagDrawExample.createCriteria();
             criteria.andBagNoEqualTo(req.getBagNo());
             bagDraws = bagDrawMapper.selectByExample(bagDrawExample);
+            List<BagDraw> collectUser = bagDraws.stream().filter(s -> s.getDrawUser().longValue() == Long.valueOf(req.getUserId()).longValue()).collect(Collectors.toList());
             if (bag.getOnceType()!=-1 &&  bagDraws!=null && bagDraws.size()>0){
                 redisUtil.set(RedisKeyUtil.getBagDrawRecordsFromRedis(req.getBagNo() + ""),bagDraws,CodeConstant.REDIS_SAVE_TIME_24h);
 //                List<BagDraw> collectUser = bagDraws.stream().filter(item -> item.getDrawUser().longValue() == Long.valueOf(req.getUserId()).longValue()).collect(Collectors.toList());
@@ -272,13 +270,14 @@ public class BagServiceImpl extends BaseServiceImpl implements BagService {
                         if (bag.getOnceType()==1 && bagDrawTemp.getStatus()!=IstEnum.BagDrawStatus.DRAW_SUCC.getCode()){
                             return ApiBaseResp.result(ResultConstant.DRAW_BAG_RECORD_IS_EXIST_ERROR_CODE,ResultConstant.DRAW_BAG_RECORD_IS_EXIST_ERROR_MSG,bagDrawTemp);
                         }
-                        if (bag.getOnceType()>1 && bagDrawTemp.getStatus()!=IstEnum.BagDrawStatus.DRAW_SUCC.getCode() && bagDraws.size() >= bag.getOnceType()){
+                        if (bag.getOnceType()>1 && bagDrawTemp.getStatus()!=IstEnum.BagDrawStatus.DRAW_SUCC.getCode() && collectUser.size() >= bag.getOnceType()){
                             return ApiBaseResp.result(ResultConstant.DRAW_BAG_RECORD_ONECE_TYPE_LIMIT_ERROR_CODE,ResultConstant.DRAW_BAG_RECORD_ONECE_TYPE_LIMIT_ERROR_MSG,bagDrawTemp);
                         }
                     }
                 }
             }
         }else{
+            List<BagDraw> collectUser = bagDraws.stream().filter(s -> s.getDrawUser().longValue() == Long.valueOf(req.getUserId()).longValue()).collect(Collectors.toList());
             for (BagDraw bagDrawTemp : bagDraws){
                 if (bagDrawTemp.getStatus()==IstEnum.BagDrawStatus.DRAW_SUCC.getCode()){
                     redisAmount++;
@@ -294,7 +293,7 @@ public class BagServiceImpl extends BaseServiceImpl implements BagService {
                     if (bag.getOnceType()==1 && bagDrawTemp.getStatus()!=IstEnum.BagDrawStatus.DRAW_SUCC.getCode()){
                         return ApiBaseResp.result(ResultConstant.DRAW_BAG_RECORD_IS_EXIST_ERROR_CODE,ResultConstant.DRAW_BAG_RECORD_IS_EXIST_ERROR_MSG,bagDrawTemp);
                     }
-                    if (bag.getOnceType()>1 && bagDrawTemp.getStatus()!=IstEnum.BagDrawStatus.DRAW_SUCC.getCode() && bagDraws.size() >= bag.getOnceType()){
+                    if (bag.getOnceType()>1 && bagDrawTemp.getStatus()!=IstEnum.BagDrawStatus.DRAW_SUCC.getCode() && collectUser.size() >= bag.getOnceType()){
                         return ApiBaseResp.result(ResultConstant.DRAW_BAG_RECORD_ONECE_TYPE_LIMIT_ERROR_CODE,ResultConstant.DRAW_BAG_RECORD_ONECE_TYPE_LIMIT_ERROR_MSG,bagDrawTemp);
                     }
                 }
@@ -431,7 +430,7 @@ public class BagServiceImpl extends BaseServiceImpl implements BagService {
                         long answer = Float.valueOf(bag.getAnswer()).longValue();
                         long userAnswer = Float.valueOf(req.getAnswer()).longValue();
                         //如果是有效竞猜则插入
-                        bagDraw = getMinAndMaxByBagNo(bag.getBagNo(),userAnswer,answer,req.getUserId());
+                        bagDraw = getMinAndMaxByBagNo(bag.getBagNo(),userAnswer,answer,req.getUserId(),bag.getGetType().intValue());
                         if (answer==userAnswer){
                             //先更新红包状态为已发放完
                             //更新bag状态为发放完
@@ -440,9 +439,19 @@ public class BagServiceImpl extends BaseServiceImpl implements BagService {
                             BagExample example = new BagExample();
                             BagExample.Criteria criteria = example.createCriteria();
                             criteria.andBagNoEqualTo(bag.getBagNo());
-                            criteria.andUpdatetimeEqualTo(new Date());
-                            bagMapper.updateByExample(bagUpdate,example);
-                            dealAllocation(bag.getBagNo(),bag.getSumMoney(),answer);
+                            bagUpdate.setUpdatetime(new Date());
+                            bagMapper.updateByExampleSelective(bagUpdate,example);
+                            redisUtil.del(RedisKeyUtil.getBagRedisKey(req.getBagNo()+""));
+                            //判断是否是独得
+                            logger.info("getGetType{}",bag.getGetType());
+                            if (bag.getGetType().intValue() == 2){
+                                //竞猜类独得
+                                logger.info("dealAllocationOneself..");
+                                dealAllocationOneself(bag.getBagNo(),bag.getSumMoney());
+                            }else {
+                                dealAllocation(bag.getBagNo(),bag.getSumMoney(),answer);
+                            }
+
                         }
                     }
                     else if (bag.getType()==IstEnum.BagType.ANSWER.getCode()){
@@ -571,12 +580,35 @@ public class BagServiceImpl extends BaseServiceImpl implements BagService {
         bagDrawMapper.batchInsert(bagDrawsRedis);
     }
 
+    private void dealAllocationOneself(BigDecimal bagNo, Float sumMoney) {
+        String bagEffectDrawByBagNo = RedisKeyUtil.getBagEffectDrawByBagNo(bagNo.toString());
+        List<BagDraw> bagDrawsRedis = (List<BagDraw>) redisUtil.get(bagEffectDrawByBagNo);
+        if (null==bagDrawsRedis){
+            BagDrawExample example = new BagDrawExample();
+            BagDrawExample.Criteria criteria = example.createCriteria();
+            criteria.andBagNoEqualTo(bagNo);
+            criteria.andStatusEqualTo(IstEnum.BagDrawStatus.NO_SUCC_DRAW.getCode());
+            example.setOrderByClause(" id ase");
+            bagDrawsRedis = bagDrawMapper.selectByExample(example);
+        }
+
+        BagDraw bagDraw = bagDrawsRedis.get(bagDrawsRedis.size()-1);
+        bagDraw.setStatus(IstEnum.BagDrawStatus.DRAW_SUCC.getCode());
+        bagDraw.setDrawMoney(sumMoney);
+        bagDrawsRedis.set(bagDrawsRedis.size()-1,bagDraw);
+        //批量入库
+        bagDrawMapper.batchInsert(bagDrawsRedis);
+    }
+
     //获取有效范围
-    private BagDraw getMinAndMaxByBagNo(BigDecimal bagNo, long userAnswer, long answer, String userId) {
+    private BagDraw getMinAndMaxByBagNo(BigDecimal bagNo, long userAnswer, long answer, String userId, int getType) {
         List<BagDraw> bagDraws = null;
         BagDraw bagDraw;
         String bagSectionMinMaxBagNoKey = RedisKeyUtil.getBagSectionMinMaxBagNo(bagNo.toString());
         String result = (String) redisUtil.get(bagSectionMinMaxBagNoKey);
+        if (getType==2){
+            result =answer + "," + answer;
+        }
         if (result==null){
             BagDrawExample example = new BagDrawExample();
             BagDrawExample.Criteria criteria = example.createCriteria();
@@ -588,7 +620,7 @@ public class BagServiceImpl extends BaseServiceImpl implements BagService {
             }else if (bagDraws.size()==1){
                 Long dbAnswer = Long.valueOf(bagDraws.get(0).getAnswer()); //30
                 if (dbAnswer>answer){
-                    result = "1,"  + "," + dbAnswer;
+                    result = "1"  + "," + dbAnswer;
                 }else{
                     result = dbAnswer + "," + BAG_MAX_AMOUNT;
                 }

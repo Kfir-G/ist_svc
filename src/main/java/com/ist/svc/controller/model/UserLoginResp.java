@@ -10,13 +10,15 @@ import org.apache.commons.lang3.builder.ToStringStyle;
  */
 @Setter
 @Getter
-public class UserLoginResp extends BaseResp{
+public class UserLoginResp {
     private String tokenId;
     private String loginName;
     private String userId;
     private String nickName;
     private String avatarUrl;
     private String phone;
+    private Integer sex;
+    private String address;
 
     @Override
     public String toString() {
