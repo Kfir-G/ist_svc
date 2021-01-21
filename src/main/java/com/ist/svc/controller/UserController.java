@@ -325,7 +325,6 @@ public class UserController extends BaseController{
     @RequestMapping(value = "userBindPhone", method = RequestMethod.POST, produces = "application/json;charset=UTF-8", consumes = "application/json;charset=UTF-8")
     @ApiOperation(value = "绑定手机号")
     @TokenCheck
-    @Transactional(rollbackFor = Exception.class)
     public ApiBaseResp userBindPhone(@Valid @RequestBody UserBindPhoneReq req,BindingResult bindingResult){
         ApiBaseResp resp = new ApiBaseResp();
         try {

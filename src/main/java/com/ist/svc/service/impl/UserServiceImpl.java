@@ -447,7 +447,10 @@ public class UserServiceImpl extends BaseServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void userBindPhone(UserBindPhoneReq req, ApiBaseResp resp) {
+        resp.setCode(ResultConstant.SUCCESS_CODE);
+        resp.setMsg(ResultConstant.SUCCESS_CODE_MSG);
         String phone = req.getPhone();
         if (!judgeValidSms(req.getPhone(),req.getSmsCode())){
             resp.setCode(ResultConstant.BIND_USER_PHONE_SMSCODE_ERROR_CODE);
