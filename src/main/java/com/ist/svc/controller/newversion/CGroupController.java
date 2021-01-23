@@ -73,7 +73,7 @@ public class CGroupController extends BaseController {
     @RequestMapping(value = "modifyGroupInfoById",produces="application/json;charset=UTF-8",method = RequestMethod.POST,consumes="application/json;charset=UTF-8")
     @ApiOperation(value = "修改群组", notes = "群状态群名称进群方式不能同时为空")
     @TokenCheck
-    public BaseResp modifyGroupInfoById(HttpServletRequest request, @Valid @RequestBody ModifyGroupInfoByIdReq req, BindingResult bindingResult){
+    public BaseResp modifyGroupInfoById(@Valid @RequestBody ModifyGroupInfoByIdReq req, BindingResult bindingResult){
         BaseResp resp = new BaseResp();
         try {
             if (bindingResult.hasErrors()){
@@ -96,7 +96,7 @@ public class CGroupController extends BaseController {
     @RequestMapping(value = "modifyGroupMemInfobyId",produces="application/json;charset=UTF-8",method = RequestMethod.POST,consumes="application/json;charset=UTF-8")
     @ApiOperation(value = "修改群成员", notes = "昵称和角色不能同时为空")
     @TokenCheck
-    public BaseResp modifyGroupMemInfobyId(HttpServletRequest request, @Valid @RequestBody ModifyGroupMemInfobyIdReq req, BindingResult bindingResult){
+    public BaseResp modifyGroupMemInfobyId(@Valid @RequestBody ModifyGroupMemInfobyIdReq req, BindingResult bindingResult){
         BaseResp resp = new BaseResp();
         try {
             if (bindingResult.hasErrors()){

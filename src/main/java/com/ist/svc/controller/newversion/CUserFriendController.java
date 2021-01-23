@@ -4,7 +4,6 @@ import com.ist.svc.common.ResultConstant;
 import com.ist.svc.config.annotation.TokenCheck;
 import com.ist.svc.controller.BaseController;
 import com.ist.svc.controller.model.BaseResp;
-import com.ist.svc.controller.model.CreateGroupReq;
 import com.ist.svc.controller.model.dto.*;
 import com.ist.svc.service.newversion.UserFriendService;
 import io.swagger.annotations.Api;
@@ -15,9 +14,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-
-import javax.management.Query;
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 /**

@@ -13,6 +13,7 @@ import com.ist.svc.domain.MsgMemberExample;
 import com.ist.svc.domain.vo.*;
 import com.ist.svc.service.impl.BaseServiceImpl;
 import com.ist.svc.service.newversion.GroupService;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -91,7 +92,26 @@ public class GroupServiceImpl extends BaseServiceImpl implements GroupService {
                 msgMember.setStatus(IstEnum.GroupStatus.NORMAL.getCode());
                 try {
                     memberVo.setTalker(talker);
-                    msgMemberMapper.insertSelective(msgMember);
+                    MsgMemberExample msgMemberExample = new MsgMemberExample();
+                    MsgMemberExample.Criteria criteria = msgMemberExample.createCriteria();
+                    criteria.andGroupidEqualTo(Long.parseLong(req.getGroupId()));
+                    criteria.andTalkerEqualTo(temp);
+                    List<MsgMember> msgMembers = msgMemberMapper.selectByExample(msgMemberExample);
+                    if (CollectionUtils.isNotEmpty(msgMembers)){
+                        //更新
+                        MsgMember msgMemberDb = msgMembers.get(0);
+                        msgMemberDb.setSeq(msgMember.getSeq());
+                        msgMemberDb.setStatus(msgMember.getStatus());
+                        msgMemberDb.setUpdatetime(msgMember.getUpdatetime());
+                        msgMemberDb.setStatus(msgMember.getStatus());
+                        msgMemberDb.setRole(msgMember.getRole());
+                        msgMemberDb.setInviteuserid(msgMember.getInviteuserid());
+                        msgMemberDb.setOptuserid(msgMember.getOptuserid());
+                        msgMember.setMemberid(msgMemberDb.getMemberid());
+                        msgMemberMapper.updateByPrimaryKeySelective(msgMemberDb);
+                    }else {
+                        msgMemberMapper.insertSelective(msgMember);
+                    }
                     memberVo.setSeq(msgMember.getSeq().toString());
                     memberVo.setMemberId(msgMember.getMemberid().toString());
                     listMemerVo.add(memberVo);
