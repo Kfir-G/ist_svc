@@ -3,7 +3,9 @@ package com.ist.svc.controller.newversion;
 import com.ist.svc.common.ResultConstant;
 import com.ist.svc.config.annotation.TokenCheck;
 import com.ist.svc.controller.BaseController;
+import com.ist.svc.controller.model.dto.AddInfoOrgDto;
 import com.ist.svc.controller.model.dto.ApiBaseResp;
+import com.ist.svc.controller.model.dto.QueryInfoOrgDto;
 import com.ist.svc.controller.model.dto.QueryInfoVillageDto;
 import com.ist.svc.service.newversion.IOrganizationService;
 import io.swagger.annotations.Api;
@@ -51,6 +53,58 @@ public class COrganizationController extends BaseController {
             }
         }catch (Exception e){
             logger.error("COrganizationController.queryInfoVillage",e);
+        }
+        return resp;
+    }
+
+    @RequestMapping(value = "addInfoOrg",produces="application/json;charset=UTF-8",method = RequestMethod.POST,consumes="application/json;charset=UTF-8")
+    @ApiOperation(value = "添加组织")
+    @TokenCheck
+    public ApiBaseResp addInfoOrg(@Valid @RequestBody AddInfoOrgDto addInfoOrgDto, BindingResult bindingResult){
+        ApiBaseResp resp = new ApiBaseResp();
+        try {
+            if (bindingResult.hasErrors()){
+                String msg = bindingResult.getFieldError().getDefaultMessage();
+                resp.setCode(ResultConstant.PARAM_ERROR_CODE);
+                resp.setMsg(msg);
+                return resp;
+            }
+            if (vaildAppSign(addInfoOrgDto)){
+                resp = organizationService.addInfoOrg(addInfoOrgDto);
+            }else {
+                resp.setCode(ResultConstant.SIGN_ERROR_CODE);
+                resp.setMsg(ResultConstant.SIGN_ERROR_MSG);
+            }
+        }catch (Exception e){
+            logger.error("COrganizationController.addInfoOrg",e);
+            resp.setCode(ResultConstant.APP_ERROR_CODE);
+            resp.setMsg(ResultConstant.APP_ERROR_MSG);
+        }
+        return resp;
+    }
+
+    @RequestMapping(value = "queryInfoOrg",produces="application/json;charset=UTF-8",method = RequestMethod.POST,consumes="application/json;charset=UTF-8")
+    @ApiOperation(value = "查询组织")
+    @TokenCheck
+    public ApiBaseResp queryInfoOrg(@Valid @RequestBody QueryInfoOrgDto queryInfoOrgDto, BindingResult bindingResult){
+        ApiBaseResp resp = new ApiBaseResp();
+        try {
+            if (bindingResult.hasErrors()){
+                String msg = bindingResult.getFieldError().getDefaultMessage();
+                resp.setCode(ResultConstant.PARAM_ERROR_CODE);
+                resp.setMsg(msg);
+                return resp;
+            }
+            if (vaildAppSign(queryInfoOrgDto)){
+                resp = organizationService.queryInfoOrg(queryInfoOrgDto);
+            }else {
+                resp.setCode(ResultConstant.SIGN_ERROR_CODE);
+                resp.setMsg(ResultConstant.SIGN_ERROR_MSG);
+            }
+        }catch (Exception e){
+            logger.error("COrganizationController.queryInfoOrg",e);
+            resp.setCode(ResultConstant.APP_ERROR_CODE);
+            resp.setMsg(ResultConstant.APP_ERROR_MSG);
         }
         return resp;
     }
