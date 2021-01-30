@@ -58,6 +58,7 @@ public class UserServiceImpl extends BaseServiceImpl implements UserService {
     private SmsService smsService;
     @Autowired
     private IstConfig istConfig;
+    @Autowired
     private UserLoginHisMapper userLoginHisMapper;
     public int NEXT_SEND_INTERVAL = 50;
 
@@ -628,7 +629,7 @@ public class UserServiceImpl extends BaseServiceImpl implements UserService {
         String clientId = userLoginHisMapper.selectClientIDByUserId(queryUserClientIdDto.getUserId());
         resp.setData(clientId);
         resp.setCode(ResultConstant.SUCCESS_CODE);
-        resp.setMsg(ResultConstant.APP_ERROR_MSG);
+        resp.setMsg(ResultConstant.SUCCESS_CODE_MSG);
     }
 
     private List<UserPasswd> getUserPasswdByUid(String userId) {

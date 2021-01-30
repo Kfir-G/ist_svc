@@ -369,6 +369,8 @@ public class UserController extends BaseController{
             }
         }catch (Exception e){
             logger.error("UserController.modifyUserInfo", e);
+            resp.setCode(ResultConstant.APP_ERROR_CODE);
+            resp.setMsg(ResultConstant.APP_ERROR_MSG);
         }
         return resp;
     }
@@ -393,6 +395,8 @@ public class UserController extends BaseController{
             }
         }catch (Exception e){
             logger.error("UserController.queryAddress", e);
+            resp.setCode(ResultConstant.APP_ERROR_CODE);
+            resp.setMsg(ResultConstant.APP_ERROR_MSG);
         }
         return resp;
     }
@@ -412,6 +416,8 @@ public class UserController extends BaseController{
             userService.queryUserClientIdByUserId(queryUserClientIdDto,resp);
         }catch (Exception e){
             logger.error("UserController.queryUserClientIdByUserId", e);
+            resp.setCode(ResultConstant.APP_ERROR_CODE);
+            resp.setMsg(ResultConstant.APP_ERROR_MSG);
         }
         return resp;
     }
