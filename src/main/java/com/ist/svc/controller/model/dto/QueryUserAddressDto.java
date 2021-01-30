@@ -27,6 +27,8 @@ public class QueryUserAddressDto extends BaseReq {
     private String areaId;
     @ApiModelProperty(value = "地址")
     private String address;
+    @ApiModelProperty(value = "orgId")
+    private String orgId;
     @Override
     public String toString() {
         return ToStringBuilder.reflectionToString(this, ToStringStyle.JSON_STYLE);

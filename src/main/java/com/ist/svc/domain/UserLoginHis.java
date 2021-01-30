@@ -6,6 +6,8 @@ import java.util.Date;
 public class UserLoginHis {
     private Long id;
 
+    private String appId;
+
     private Long userid;
 
     private Date createtime;
@@ -16,7 +18,23 @@ public class UserLoginHis {
 
     private BigDecimal latitude;
 
-    private String device;
+    private Short loginType;
+
+    private String loginName;
+
+    private String clientId;
+
+    private String deviceVendor;
+
+    private String deviceModel;
+
+    private String osName;
+
+    private String osVersion;
+
+    private String deviceImei;
+
+    private String descr;
 
     public Long getId() {
         return id;
@@ -24,6 +42,14 @@ public class UserLoginHis {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getAppId() {
+        return appId;
+    }
+
+    public void setAppId(String appId) {
+        this.appId = appId == null ? null : appId.trim();
     }
 
     public Long getUserid() {
@@ -66,11 +92,75 @@ public class UserLoginHis {
         this.latitude = latitude;
     }
 
-    public String getDevice() {
-        return device;
+    public Short getLoginType() {
+        return loginType;
     }
 
-    public void setDevice(String device) {
-        this.device = device == null ? null : device.trim();
+    public void setLoginType(Short loginType) {
+        this.loginType = loginType;
+    }
+
+    public String getLoginName() {
+        return loginName;
+    }
+
+    public void setLoginName(String loginName) {
+        this.loginName = loginName == null ? null : loginName.trim();
+    }
+
+    public String getClientId() {
+        return clientId;
+    }
+
+    public void setClientId(String clientId) {
+        this.clientId = clientId == null ? null : clientId.trim();
+    }
+
+    public String getDeviceVendor() {
+        return deviceVendor;
+    }
+
+    public void setDeviceVendor(String deviceVendor) {
+        this.deviceVendor = deviceVendor == null ? null : deviceVendor.trim();
+    }
+
+    public String getDeviceModel() {
+        return deviceModel;
+    }
+
+    public void setDeviceModel(String deviceModel) {
+        this.deviceModel = deviceModel == null ? null : deviceModel.trim();
+    }
+
+    public String getOsName() {
+        return osName;
+    }
+
+    public void setOsName(String osName) {
+        this.osName = osName == null ? null : osName.trim();
+    }
+
+    public String getOsVersion() {
+        return osVersion;
+    }
+
+    public void setOsVersion(String osVersion) {
+        this.osVersion = osVersion == null ? null : osVersion.trim();
+    }
+
+    public String getDeviceImei() {
+        return deviceImei;
+    }
+
+    public void setDeviceImei(String deviceImei) {
+        this.deviceImei = deviceImei == null ? null : deviceImei.trim();
+    }
+
+    public String getDescr() {
+        return descr;
+    }
+
+    public void setDescr(String descr) {
+        this.descr = descr == null ? null : descr.trim();
     }
 }

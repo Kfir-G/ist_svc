@@ -488,4 +488,7 @@ public class ResultConstant {
      */
     public static String USER_CASH_ACCT_BIND_EXIST_ERROR_CODE = "13201";
     public static String USER_CASH_ACCT_BIND_EXIST_ERROR_MSG = "账号已存在,绑定失败";
+
+    public static String ADD_INFO_PUBLIC_KEY_EXIST_ERROR_CODE = "13301";
+    public static String ADD_INFO_PUBLIC_KEY_EXIST_ERROR_MSG = "KEY已存在,添加失败";
 }

@@ -485,7 +485,65 @@ public class UserAddressExample {
             addCriterion("areaid not between", value1, value2, "areaid");
             return (Criteria) this;
         }
+        public Criteria andOrgidIsNull() {
+            addCriterion("Orgid is null");
+            return (Criteria) this;
+        }
 
+        public Criteria andOrgidIsNotNull() {
+            addCriterion("Orgid is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andOrgidEqualTo(Integer value) {
+            addCriterion("Orgid =", value, "Orgid");
+            return (Criteria) this;
+        }
+
+        public Criteria andOrgidNotEqualTo(Integer value) {
+            addCriterion("Orgid <>", value, "Orgid");
+            return (Criteria) this;
+        }
+
+        public Criteria andOrgidGreaterThan(Integer value) {
+            addCriterion("Orgid >", value, "Orgid");
+            return (Criteria) this;
+        }
+
+        public Criteria andOrgidGreaterThanOrEqualTo(Integer value) {
+            addCriterion("Orgid >=", value, "Orgid");
+            return (Criteria) this;
+        }
+
+        public Criteria andOrgidLessThan(Integer value) {
+            addCriterion("Orgid <", value, "Orgid");
+            return (Criteria) this;
+        }
+
+        public Criteria andOrgidLessThanOrEqualTo(Integer value) {
+            addCriterion("Orgid <=", value, "Orgid");
+            return (Criteria) this;
+        }
+
+        public Criteria andOrgidIn(List<Integer> values) {
+            addCriterion("Orgid in", values, "Orgid");
+            return (Criteria) this;
+        }
+
+        public Criteria andOrgidNotIn(List<Integer> values) {
+            addCriterion("Orgid not in", values, "Orgid");
+            return (Criteria) this;
+        }
+
+        public Criteria andOrgidBetween(Integer value1, Integer value2) {
+            addCriterion("Orgid between", value1, value2, "Orgid");
+            return (Criteria) this;
+        }
+
+        public Criteria andOrgidNotBetween(Integer value1, Integer value2) {
+            addCriterion("Orgid not between", value1, value2, "Orgid");
+            return (Criteria) this;
+        }
         public Criteria andAddressIsNull() {
             addCriterion("address is null");
             return (Criteria) this;

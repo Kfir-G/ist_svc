@@ -12,7 +12,6 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -62,7 +61,8 @@ public class UserController extends BaseController{
     }
 
     @RequestMapping(value = "userLogin")
-    public ApiBaseResp userLogin(HttpServletRequest request, @Valid UserLoginReq req, BindingResult bindingResult){
+    @ApiOperation(value = "用户登录")
+    public ApiBaseResp userLogin(HttpServletRequest request, @Valid @RequestBody UserLoginReq req, BindingResult bindingResult){
         ApiBaseResp resp = new ApiBaseResp();
 //        UserLoginResp resp = new UserLoginResp();
         resp.setCode(ResultConstant.USER_LOGIN_SUCC_CODE);
@@ -75,7 +75,7 @@ public class UserController extends BaseController{
                 return resp;
             }
 
-            if(vaildAppSign(request.getParameterMap())){
+            if(vaildAppSign(req)){
                 userService.userLogin(req,resp);
             }else {
                 resp.setCode(ResultConstant.SIGN_ERROR_CODE);
@@ -393,6 +393,25 @@ public class UserController extends BaseController{
             }
         }catch (Exception e){
             logger.error("UserController.queryAddress", e);
+        }
+        return resp;
+    }
+
+    //查询用户客户端id
+    @RequestMapping(value = "queryUserClientIdByUserId", method = RequestMethod.POST, produces = "application/json;charset=UTF-8", consumes = "application/json;charset=UTF-8")
+    @ApiOperation(value = "查询用户客户端id")
+    public ApiBaseResp queryUserClientIdByUserId(@Valid @RequestBody QueryUserClientIdDto queryUserClientIdDto, BindingResult bindingResult){
+        ApiBaseResp resp = new ApiBaseResp();
+        try {
+            if (bindingResult.hasErrors()) {
+                String msg = bindingResult.getFieldError().getDefaultMessage();
+                resp.setCode(ResultConstant.PARAM_ERROR_CODE);
+                resp.setMsg(msg);
+                return resp;
+            }
+            userService.queryUserClientIdByUserId(queryUserClientIdDto,resp);
+        }catch (Exception e){
+            logger.error("UserController.queryUserClientIdByUserId", e);
         }
         return resp;
     }

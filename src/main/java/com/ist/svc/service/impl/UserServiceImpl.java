@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.ist.svc.config.IstConfig;
 import com.ist.svc.controller.model.dto.*;
+import com.ist.svc.dao.UserLoginHisMapper;
 import com.ist.svc.domain.UserAddress;
 import com.ist.svc.service.newversion.SmsService;
 import com.sun.org.apache.xerces.internal.impl.dv.util.Base64;
@@ -24,6 +25,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -56,7 +58,9 @@ public class UserServiceImpl extends BaseServiceImpl implements UserService {
     private SmsService smsService;
     @Autowired
     private IstConfig istConfig;
+    private UserLoginHisMapper userLoginHisMapper;
     public int NEXT_SEND_INTERVAL = 50;
+
 
     // hash方法
     /** BKDR算法 */
@@ -590,9 +594,10 @@ public class UserServiceImpl extends BaseServiceImpl implements UserService {
         if (StringUtils.isNoneBlank(req.getAreaId())){
             criteria.andAreaidEqualTo(Integer.parseInt(req.getAreaId()));
         }
-        if (StringUtils.isNoneBlank(req.getAddress())){
-            criteria.andAddressLike("%" + req.getAddress() + "%");
+        if (StringUtils.isNoneBlank(req.getOrgId())){
+            criteria.andOrgidEqualTo(Integer.parseInt(req.getOrgId()));
         }
+        criteria.andAddressLike("%" + req.getAddress() + "%");
         List<UserAddress> userAddresses = userAddressService.queryByExample(example);
         List<UserAddressVo> list = new ArrayList<>();
         if (CollectionUtils.isNotEmpty(userAddresses)){
@@ -616,6 +621,14 @@ public class UserServiceImpl extends BaseServiceImpl implements UserService {
         resp.setData(list);
         resp.setCode(ResultConstant.QUERY_USER_ADDRESS_SUCC_CODE);
         resp.setMsg(ResultConstant.QUERY_USER_ADDRESS_SUCC_MSG);
+    }
+
+    @Override
+    public void queryUserClientIdByUserId(QueryUserClientIdDto queryUserClientIdDto, ApiBaseResp resp) {
+        String clientId = userLoginHisMapper.selectClientIDByUserId(queryUserClientIdDto.getUserId());
+        resp.setData(clientId);
+        resp.setCode(ResultConstant.SUCCESS_CODE);
+        resp.setMsg(ResultConstant.APP_ERROR_MSG);
     }
 
     private List<UserPasswd> getUserPasswdByUid(String userId) {
@@ -774,10 +787,38 @@ public class UserServiceImpl extends BaseServiceImpl implements UserService {
         userLoginResp.setUserId(userPasswd.getUserid()+"");
         userLoginResp.setPhone(userPasswd.getPhone());
         userLoginResp.setSex(userPasswd.getSex());
+        req.setLoginName(userLoginResp.getLoginName());
         //放入缓存
         redisUtil.set(redisKey, resp, CodeConstant.USER_LOGIN_RESP_SAVE_TIME);
         putUidLoginRel(userPasswd.getUserid() + "",redisKey);
         resp.setData(userLoginResp);
+        //记录登陆历史日志
+        recordUserLoginHis(req,userLoginResp.getUserId());
+    }
+    @Async("asyncServiceExecutor")
+    public void recordUserLoginHis(UserLoginReq userLoginReq,String userId){
+        String appId = userLoginReq.getAppId();
+        String deviceInfoJsonStr = userLoginReq.getDeviceInfo();
+        JSONObject jsonObject = JSONObject.parseObject(deviceInfoJsonStr);
+        String deviceImei = jsonObject.getString("deviceImei");
+        String deviceVendor = jsonObject.getString("deviceVendor");
+        String deviceModel = jsonObject.getString("deviceModel");
+        String osVersion = jsonObject.getString("osVersion");
+        String osName = jsonObject.getString("osName");
+        String clientId = jsonObject.getString("clientId");
+        UserLoginHis userLoginHis = new UserLoginHis();
+        userLoginHis.setUserid(Long.valueOf(userId));
+        userLoginHis.setLoginName(userLoginReq.getLoginName());
+        userLoginHis.setLoginType(userLoginReq.getLoginType().shortValue());
+        userLoginHis.setClientId(clientId);
+        userLoginHis.setDeviceImei(deviceImei);
+        userLoginHis.setDeviceModel(deviceModel);
+        userLoginHis.setDeviceVendor(deviceVendor);
+        userLoginHis.setOsName(osName);
+        userLoginHis.setOsVersion(osVersion);
+        userLoginHis.setAppId(appId);
+        userLoginHisMapper.insertSelective(userLoginHis);
+
     }
     private JSONObject getAccessToken(String weixinCode) throws UnsupportedEncodingException {
 

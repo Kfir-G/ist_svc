@@ -39,4 +39,6 @@ public interface UserService {
     void modifyUserInfo(ModifyUserInfoReq req, BaseResp resp);
 
     void queryAddress(QueryUserAddressDto req, ApiBaseResp resp);
+
+    void queryUserClientIdByUserId(QueryUserClientIdDto queryUserClientIdDto, ApiBaseResp resp);
 }

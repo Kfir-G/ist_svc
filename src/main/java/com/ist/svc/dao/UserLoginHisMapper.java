@@ -27,4 +27,6 @@ public interface UserLoginHisMapper {
     int updateByPrimaryKeySelective(UserLoginHis record);
 
     int updateByPrimaryKey(UserLoginHis record);
+
+    String selectClientIDByUserId(String userId);
 }
