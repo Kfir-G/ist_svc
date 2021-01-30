@@ -1,5 +1,6 @@
 package com.ist.svc.domain;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -555,12 +556,12 @@ public class GradeProcExample {
             return (Criteria) this;
         }
 
-        public Criteria andProdinfoidEqualTo(Integer value) {
+        public Criteria andProdinfoidEqualTo(BigDecimal value) {
             addCriterion("prodinfoid =", value, "prodinfoid");
             return (Criteria) this;
         }
 
-        public Criteria andProdinfoidNotEqualTo(Integer value) {
+        public Criteria andProdinfoidNotEqualTo(BigDecimal value) {
             addCriterion("prodinfoid <>", value, "prodinfoid");
             return (Criteria) this;
         }

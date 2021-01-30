@@ -283,6 +283,18 @@ public class UserServiceImpl extends BaseServiceImpl implements UserService {
         userAddress.setName(req.getName());
         userAddress.setPhone(req.getPhone());
         userAddress.setUserid(new BigDecimal(req.getUserId()));
+        if (req.getOrgId()!=null){
+            userAddress.setOrgId(req.getOrgId());
+        }
+        if (req.getType()!=null){
+            userAddress.setType(req.getType());
+        }
+        if (StringUtils.isNotBlank(req.getV1())){
+            userAddress.setV1(req.getV1());
+        }
+        if (StringUtils.isNotBlank(req.getV2())){
+            userAddress.setV2(req.getV2());
+        }
         if (IstEnum.UserAddressOptType.TYPE_MODIFY.getType()==req.getOptType()){
             //先查老地址是否存在
             UserAddressExample example = new UserAddressExample();
@@ -593,6 +605,10 @@ public class UserServiceImpl extends BaseServiceImpl implements UserService {
                 uAddress.setAddressId(userAddress.getAddressid().toString());
                 uAddress.setPhone(userAddress.getPhone());
                 uAddress.setUserId(userAddress.getUserid().toString());
+                uAddress.setOrgId(userAddress.getOrgId());
+                uAddress.setType(userAddress.getType());
+                uAddress.setV1(userAddress.getV1());
+                uAddress.setV2(userAddress.getV2());
                 list.add(uAddress);
             }
         }

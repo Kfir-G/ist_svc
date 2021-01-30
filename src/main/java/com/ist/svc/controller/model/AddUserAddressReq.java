@@ -32,6 +32,10 @@ public class AddUserAddressReq extends BaseReq{
     private String address;
     @NotNull(message = "是否是默认地址(isDefault)不能为空")
     private Integer isDefault;
+    private Long orgId;
+    private Integer type;
+    private String v1;
+    private String v2;
     @Override
     public String toString() {
         return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);

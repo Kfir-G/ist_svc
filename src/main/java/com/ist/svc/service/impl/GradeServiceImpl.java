@@ -13,6 +13,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -83,13 +84,32 @@ public class GradeServiceImpl extends BaseServiceImpl implements GradeService {
 
     @Override
     public void getProdGradeList(GetProdGradeReq req, QueryBaseResp resp) throws Exception {
+        if (StringUtils.isBlank(req.getOrderId()) && StringUtils.isBlank(req.getUserId()) && StringUtils.isBlank(req.getProdInfoId()) || StringUtils.isBlank(req.getGradeId())){
+            resp.setCode(ResultConstant.PARAM_ERROR_CODE);
+            resp.setMsg(ResultConstant.PARAM_ERROR_MSG + "[orderId|userId|prodInfoId]");
+        }
         GradeProcExample example = new GradeProcExample();
         GradeProcExample.Criteria criteria = example.createCriteria();
         if (StringUtils.isNoneBlank(req.getProdInfoId())){
-            criteria.andProdinfoidEqualTo(Integer.valueOf(req.getProdInfoId()));
+            criteria.andProdinfoidEqualTo(new BigDecimal(req.getProdInfoId()));
+        }
+        if (StringUtils.isNotBlank(req.getUserId())){
+            criteria.andUseridEqualTo(Long.valueOf(req.getUserId()));
+        }
+        if (StringUtils.isNotBlank(req.getOrderId())){
+            criteria.andOrderidEqualTo(Long.valueOf(req.getOrderId()));
+        }
+        if (StringUtils.isNotBlank(req.getGradeId())){
+            criteria.andGradeidEqualTo(Long.valueOf(req.getGradeId()));
         }
         if (req.getGrade()!=null){
             criteria.andGradeEqualTo(req.getGrade().shortValue());
+        }
+        if (StringUtils.isNotBlank(req.getStartTime())){
+            criteria.andCreatetimeGreaterThanOrEqualTo(DateUtil.formatDateStr(req.getStartTime(),DateUtil.PATTERN_DATE_TIME));
+        }
+        if (StringUtils.isNotBlank(req.getEndTime())){
+            criteria.andCreatetimeLessThanOrEqualTo(DateUtil.formatDateStr(req.getEndTime(),DateUtil.PATTERN_DATE_TIME));
         }
         if (req.getIsHaveImg()==1){
             criteria.andImgsIsNotNull();

@@ -12,6 +12,10 @@
     <result column="isdefault" jdbcType="SMALLINT" property="isdefault" />
     <result column="createtime" jdbcType="TIMESTAMP" property="createtime" />
     <result column="updatetime" jdbcType="TIMESTAMP" property="updatetime" />
+    <result column="orgid" jdbcType="BIGINT" property="orgId" />
+    <result column="type" jdbcType="SMALLINT" property="type" />
+    <result column="v1" jdbcType="VARCHAR" property="v1" />
+    <result column="v2" jdbcType="VARCHAR" property="v2" />
   </resultMap>
   <resultMap id="BaseResultMapDetail" type="com.ist.svc.domain.UserAddress">
     <id column="addressid" jdbcType="BIGINT" property="addressid" />
@@ -24,6 +28,10 @@
     <result column="isdefault" jdbcType="SMALLINT" property="isdefault" />
     <result column="createtime" jdbcType="TIMESTAMP" property="createtime" />
     <result column="updatetime" jdbcType="TIMESTAMP" property="updatetime" />
+    <result column="orgid" jdbcType="BIGINT" property="orgId" />
+    <result column="type" jdbcType="SMALLINT" property="type" />
+    <result column="v1" jdbcType="VARCHAR" property="v1" />
+    <result column="v2" jdbcType="VARCHAR" property="v2" />
     <result column="province" jdbcType="VARCHAR" property="province" />
     <result column="city" jdbcType="VARCHAR" property="city" />
     <result column="area" jdbcType="VARCHAR" property="area" />
@@ -89,7 +97,7 @@
   </sql>
   <sql id="Base_Column_List_Detail">
     A.addressid, A.userid, A.`status`, A.`name`, A.phone, A.areaid, A.address, A.isdefault, A.createtime,
-    A.updatetime,B.province,B.city,B.area,B.picker
+    A.updatetime,A.orgid,A.type,A.v1,A.v2, B.province,B.city,B.area,B.picker
   </sql>
   <sql id="Base_Column_List">
     addressid, userid, `status`, `name`, phone, areaid, address, isdefault, createtime,
@@ -197,6 +205,18 @@
       <if test="updatetime != null">
         updatetime,
       </if>
+      <if test="orgId != null">
+        orgid,
+      </if>
+      <if test="type != null">
+        type,
+      </if>
+      <if test="v1 != null">
+        v1,
+      </if>
+      <if test="v2 != null">
+        v2,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="userid != null">
@@ -225,6 +245,18 @@
       </if>
       <if test="updatetime != null">
         #{updatetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="orgId != null">
+        #{orgId,jdbcType=BIGINT},
+      </if>
+      <if test="type != null">
+        #{type,jdbcType=SMALLINT},
+      </if>
+      <if test="v1 != null">
+        #{v1,jdbcType=VARCHAR},
+      </if>
+      <if test="v2 != null">
+        #{v2,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>

@@ -372,7 +372,7 @@ public class UserController extends BaseController{
         }
         return resp;
     }
-    //修改用户信息
+    //查询地址
     @RequestMapping(value = "queryAddress", method = RequestMethod.POST, produces = "application/json;charset=UTF-8", consumes = "application/json;charset=UTF-8")
     @ApiOperation(value = "查询地址")
     @TokenCheck

@@ -14,4 +14,8 @@ public class UserAddressVo {
     private String address;
     private Integer isDefault;
     private String userId;
+    private Long orgId;
+    private Integer type;
+    private String v1;
+    private String v2;
 }

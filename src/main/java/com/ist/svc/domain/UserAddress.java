@@ -27,6 +27,14 @@ public class UserAddress {
 
     private Date updatetime;
 
+    private Long orgId;
+
+    private Integer type;
+
+    private String v1;
+
+    private String v2;
+
     //info_area
     private String province;
     private String city;
