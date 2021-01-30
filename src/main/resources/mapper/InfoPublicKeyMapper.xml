@@ -106,6 +106,9 @@
       <if test="value != null">
         `value`,
       </if>
+      <if test="key != null">
+        `key`,
+      </if>
       <if test="updatetime != null">
         updatetime,
       </if>
@@ -116,6 +119,9 @@
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="value != null">
         #{value,jdbcType=VARCHAR},
+      </if>
+      <if test="key != null">
+        #{key,jdbcType=VARCHAR},
       </if>
       <if test="updatetime != null">
         #{updatetime,jdbcType=TIMESTAMP},
