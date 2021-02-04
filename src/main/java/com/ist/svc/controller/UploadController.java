@@ -74,7 +74,9 @@ public class UploadController {
 
         if (successNum == uploadNum) {
             System.out.println("response >>> "+ JSON.toJSONString(fileDTOList));
-            return ResultUtil.okResultVO(fileDTOList);
+            ResultVO resultVO = ResultUtil.okResultVO(fileDTOList);
+            resultVO.setCode("-1");
+            return resultVO;
         }
         return ResultUtil.errorResultVO(IstEnum.ResultEnum.OPERATE_FAIL, "上传["+uploadNum+"]个文件，成功["+successNum+"]个。");
     }

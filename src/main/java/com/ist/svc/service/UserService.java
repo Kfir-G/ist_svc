@@ -41,4 +41,6 @@ public interface UserService {
     void queryAddress(QueryUserAddressDto req, ApiBaseResp resp);
 
     void queryUserClientIdByUserId(QueryUserClientIdDto queryUserClientIdDto, ApiBaseResp resp);
+
+    void recordUserLoginHis(UserLoginReq userLoginReq,String userId);
 }

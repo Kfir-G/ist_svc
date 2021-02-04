@@ -794,32 +794,34 @@ public class UserServiceImpl extends BaseServiceImpl implements UserService {
         putUidLoginRel(userPasswd.getUserid() + "",redisKey);
         resp.setData(userLoginResp);
         //记录登陆历史日志
-        recordUserLoginHis(req,userLoginResp.getUserId());
+        SpringContextUtil.getBean(UserService.class).recordUserLoginHis(req,userLoginResp.getUserId());
     }
+    @Override
     @Async("asyncServiceExecutor")
     public void recordUserLoginHis(UserLoginReq userLoginReq,String userId){
         String appId = userLoginReq.getAppId();
         String deviceInfoJsonStr = userLoginReq.getDeviceInfo();
-        JSONObject jsonObject = JSONObject.parseObject(deviceInfoJsonStr);
-        String deviceImei = jsonObject.getString("deviceImei");
-        String deviceVendor = jsonObject.getString("deviceVendor");
-        String deviceModel = jsonObject.getString("deviceModel");
-        String osVersion = jsonObject.getString("osVersion");
-        String osName = jsonObject.getString("osName");
-        String clientId = jsonObject.getString("clientId");
-        UserLoginHis userLoginHis = new UserLoginHis();
-        userLoginHis.setUserid(Long.valueOf(userId));
-        userLoginHis.setLoginName(userLoginReq.getLoginName());
-        userLoginHis.setLoginType(userLoginReq.getLoginType().shortValue());
-        userLoginHis.setClientId(clientId);
-        userLoginHis.setDeviceImei(deviceImei);
-        userLoginHis.setDeviceModel(deviceModel);
-        userLoginHis.setDeviceVendor(deviceVendor);
-        userLoginHis.setOsName(osName);
-        userLoginHis.setOsVersion(osVersion);
-        userLoginHis.setAppId(appId);
-        userLoginHisMapper.insertSelective(userLoginHis);
-
+        if (StringUtils.isNotBlank(deviceInfoJsonStr)){
+            JSONObject jsonObject = JSONObject.parseObject(deviceInfoJsonStr);
+            String deviceImei = jsonObject.getString("deviceImei");
+            String deviceVendor = jsonObject.getString("deviceVendor");
+            String deviceModel = jsonObject.getString("deviceModel");
+            String osVersion = jsonObject.getString("osVersion");
+            String osName = jsonObject.getString("osName");
+            String clientId = jsonObject.getString("clientId");
+            UserLoginHis userLoginHis = new UserLoginHis();
+            userLoginHis.setUserid(Long.valueOf(userId));
+            userLoginHis.setLoginName(userLoginReq.getLoginName());
+            userLoginHis.setLoginType(userLoginReq.getLoginType().shortValue());
+            userLoginHis.setClientId(clientId);
+            userLoginHis.setDeviceImei(deviceImei);
+            userLoginHis.setDeviceModel(deviceModel);
+            userLoginHis.setDeviceVendor(deviceVendor);
+            userLoginHis.setOsName(osName);
+            userLoginHis.setOsVersion(osVersion);
+            userLoginHis.setAppId(appId);
+            userLoginHisMapper.insertSelective(userLoginHis);
+        }
     }
     private JSONObject getAccessToken(String weixinCode) throws UnsupportedEncodingException {
 
