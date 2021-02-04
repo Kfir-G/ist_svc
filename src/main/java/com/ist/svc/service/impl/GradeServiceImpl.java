@@ -1,5 +1,6 @@
 package com.ist.svc.service.impl;
 
+import com.github.pagehelper.PageHelper;
 import com.ist.svc.common.ResultConstant;
 import com.ist.svc.common.util.DateUtil;
 import com.ist.svc.config.IstEnum;
@@ -106,10 +107,10 @@ public class GradeServiceImpl extends BaseServiceImpl implements GradeService {
             criteria.andGradeEqualTo(req.getGrade().shortValue());
         }
         if (StringUtils.isNotBlank(req.getStartTime())){
-            criteria.andCreatetimeGreaterThanOrEqualTo(DateUtil.formatDateStr(req.getStartTime(),DateUtil.PATTERN_DATE_TIME));
+            criteria.andStarttimeGreaterThanOrEqualTo(DateUtil.formatDateStr(req.getStartTime(),DateUtil.PATTERN_DATE_TIME));
         }
         if (StringUtils.isNotBlank(req.getEndTime())){
-            criteria.andCreatetimeLessThanOrEqualTo(DateUtil.formatDateStr(req.getEndTime(),DateUtil.PATTERN_DATE_TIME));
+            criteria.andStarttimeLessThanOrEqualTo(DateUtil.formatDateStr(req.getEndTime(),DateUtil.PATTERN_DATE_TIME));
         }
         if (req.getIsHaveImg()==1){
             criteria.andImgsIsNotNull();
@@ -121,6 +122,7 @@ public class GradeServiceImpl extends BaseServiceImpl implements GradeService {
             criteria.andVideoIsNotNull();
         }
         List<ProdGrade> data = new ArrayList<>();
+        PageHelper.startPage(req.getPageNum(),req.getPageSize());
         List<GradeProc> gradeProcs = gradeProcMapper.selectByExample(example);
         for (GradeProc gp : gradeProcs){
             ProdGrade prodGrade = new ProdGrade();

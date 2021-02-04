@@ -167,7 +167,7 @@ public class GroupServiceImpl extends BaseServiceImpl implements GroupService {
                 GetGroupMemInfobyIdsVo getGroupMemInfobyIdsVo = new GetGroupMemInfobyIdsVo();
                 getGroupMemInfobyIdsVo.setGroupId(groupId);
                 MsgMemberExample example = new MsgMemberExample();
-                example.createCriteria().andGroupidEqualTo(Long.valueOf(groupId)).andStatusNotEqualTo(IstEnum.GroupStatus.DISMISS.getCode());;
+                example.createCriteria().andGroupidEqualTo(Long.valueOf(groupId)).andStatusEqualTo(IstEnum.GroupStatus.NORMAL.getCode());
                 List<MemberVo> memberVos = new ArrayList<>();
                 List<MsgMember> msgMembers = msgMemberMapper.selectByExample(example);
                 for (MsgMember msgMember : msgMembers){

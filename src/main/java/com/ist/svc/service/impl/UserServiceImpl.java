@@ -596,7 +596,7 @@ public class UserServiceImpl extends BaseServiceImpl implements UserService {
             criteria.andAreaidEqualTo(Integer.parseInt(req.getAreaId()));
         }
         if (StringUtils.isNoneBlank(req.getOrgId())){
-            criteria.andOrgidEqualTo(Integer.parseInt(req.getOrgId()));
+            criteria.andOrgidEqualTo(Long.valueOf(req.getOrgId()));
         }
         criteria.andAddressLike("%" + req.getAddress() + "%");
         List<UserAddress> userAddresses = userAddressService.queryByExample(example);

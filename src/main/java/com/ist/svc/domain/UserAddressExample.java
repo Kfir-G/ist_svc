@@ -495,52 +495,52 @@ public class UserAddressExample {
             return (Criteria) this;
         }
 
-        public Criteria andOrgidEqualTo(Integer value) {
+        public Criteria andOrgidEqualTo(Long value) {
             addCriterion("Orgid =", value, "Orgid");
             return (Criteria) this;
         }
 
-        public Criteria andOrgidNotEqualTo(Integer value) {
+        public Criteria andOrgidNotEqualTo(Long value) {
             addCriterion("Orgid <>", value, "Orgid");
             return (Criteria) this;
         }
 
-        public Criteria andOrgidGreaterThan(Integer value) {
+        public Criteria andOrgidGreaterThan(Long value) {
             addCriterion("Orgid >", value, "Orgid");
             return (Criteria) this;
         }
 
-        public Criteria andOrgidGreaterThanOrEqualTo(Integer value) {
+        public Criteria andOrgidGreaterThanOrEqualTo(Long value) {
             addCriterion("Orgid >=", value, "Orgid");
             return (Criteria) this;
         }
 
-        public Criteria andOrgidLessThan(Integer value) {
+        public Criteria andOrgidLessThan(Long value) {
             addCriterion("Orgid <", value, "Orgid");
             return (Criteria) this;
         }
 
-        public Criteria andOrgidLessThanOrEqualTo(Integer value) {
+        public Criteria andOrgidLessThanOrEqualTo(Long value) {
             addCriterion("Orgid <=", value, "Orgid");
             return (Criteria) this;
         }
 
-        public Criteria andOrgidIn(List<Integer> values) {
+        public Criteria andOrgidIn(List<Long> values) {
             addCriterion("Orgid in", values, "Orgid");
             return (Criteria) this;
         }
 
-        public Criteria andOrgidNotIn(List<Integer> values) {
+        public Criteria andOrgidNotIn(List<Long> values) {
             addCriterion("Orgid not in", values, "Orgid");
             return (Criteria) this;
         }
 
-        public Criteria andOrgidBetween(Integer value1, Integer value2) {
+        public Criteria andOrgidBetween(Long value1, Long value2) {
             addCriterion("Orgid between", value1, value2, "Orgid");
             return (Criteria) this;
         }
 
-        public Criteria andOrgidNotBetween(Integer value1, Integer value2) {
+        public Criteria andOrgidNotBetween(Long value1, Long value2) {
             addCriterion("Orgid not between", value1, value2, "Orgid");
             return (Criteria) this;
         }
