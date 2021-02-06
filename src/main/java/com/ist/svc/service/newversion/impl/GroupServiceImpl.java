@@ -107,7 +107,7 @@ public class GroupServiceImpl extends BaseServiceImpl implements GroupService {
                         msgMemberDb.setRole(msgMember.getRole());
                         msgMemberDb.setInviteuserid(msgMember.getInviteuserid());
                         msgMemberDb.setOptuserid(msgMember.getOptuserid());
-                        msgMember.setMemberid(msgMemberDb.getMemberid());
+                        msgMemberDb.setTalker(msgMember.getTalker());
                         msgMemberMapper.updateByPrimaryKeySelective(msgMemberDb);
                     }else {
                         msgMemberMapper.insertSelective(msgMember);
@@ -116,6 +116,7 @@ public class GroupServiceImpl extends BaseServiceImpl implements GroupService {
                     memberVo.setMemberId(msgMember.getMemberid().toString());
                     listMemerVo.add(memberVo);
                 }catch (Exception e){
+                    logger.error("addGroup:",e);
                     memberVo.setMemberId("0");
                     listMemerVo.add(memberVo);
                     isFail=true;
@@ -125,10 +126,10 @@ public class GroupServiceImpl extends BaseServiceImpl implements GroupService {
         }
         addGroupVo.setMembers(listMemerVo);
         resp.setData(addGroupVo);
-        if (isFail){
-            resp.setCode(ResultConstant.ADD_GROUP_ERR_CODE);
-            resp.setMsg(ResultConstant.ADD_GROUP_ERR_MSG);
-        }
+//        if (isFail){
+//            resp.setCode(ResultConstant.ADD_GROUP_ERR_CODE);
+//            resp.setMsg(ResultConstant.ADD_GROUP_ERR_MSG);
+//        }
         return resp;
     }
 

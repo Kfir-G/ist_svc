@@ -626,7 +626,16 @@ public class UserServiceImpl extends BaseServiceImpl implements UserService {
 
     @Override
     public void queryUserClientIdByUserId(QueryUserClientIdDto queryUserClientIdDto, ApiBaseResp resp) {
-        String clientId = userLoginHisMapper.selectClientIDByUserId(queryUserClientIdDto.getUserId());
+        String userId = queryUserClientIdDto.getUserId();
+        //先重缓存获取
+        String redisKey = CodeConstant.REDIS_USER_CLIENTID_PREFIX + userId;
+        String clientId = (String) redisUtil.get("redisKey");
+        if (StringUtils.isBlank(clientId)){
+            clientId = userLoginHisMapper.selectClientIDByUserId(userId);
+            if (StringUtils.isNotBlank(clientId)){
+                redisUtil.set(redisKey,clientId,CodeConstant.REDIS_SAVE_TIME_5M);
+            }
+        }
         resp.setData(clientId);
         resp.setCode(ResultConstant.SUCCESS_CODE);
         resp.setMsg(ResultConstant.SUCCESS_CODE_MSG);
@@ -820,7 +829,11 @@ public class UserServiceImpl extends BaseServiceImpl implements UserService {
             userLoginHis.setOsName(osName);
             userLoginHis.setOsVersion(osVersion);
             userLoginHis.setAppId(appId);
-            userLoginHisMapper.insertSelective(userLoginHis);
+            int result = userLoginHisMapper.insertSelective(userLoginHis);
+            if (result > 0) {
+                String redisKey = CodeConstant.REDIS_USER_CLIENTID_PREFIX + userId;
+                redisUtil.del(redisKey);
+            }
         }
     }
     private JSONObject getAccessToken(String weixinCode) throws UnsupportedEncodingException {

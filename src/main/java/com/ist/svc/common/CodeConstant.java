@@ -18,11 +18,12 @@ public class CodeConstant {
     public static final String REIDS_BAG_DRAW_CONCURRENT_BAGNO="IST:BAG:DRAW:CONCURRENT:BAGNO:";
     public static final String REDIS_SMS_VALID_CODE="IST:SMS:VALID:CODE:";
     public static final String REIDS_BAG_BALANCE_MONEY_BAGNO="IST:BAG:BALANCE:MONEY:BAGNO:";
-    public static final String REIDS_BAG_BAGNO="IST:BAG:BAGNO:2020122310384550000000001520001229788021079543";
+    public static final String REIDS_BAG_BAGNO="IST:BAG:BAGNO:";
     public static final String REDIS_BAG_DRAW_RECORD_USERID_BAGNO="IST:BAG:DRAW:RECORD:USERID:BAGNO";
     public static final String REIDS_BAG_SECTION_MIN_MAX_BAGNO="IST:BAG:MIN:MAX:BAGNO:";
     public static final String REIDS_BAG_EFFECT_DRAW_BAGNO="IST:BAG:EFFECT:DRAW:BAGNO:";
     public static final String REDIS_BAG_DRAW_RECORDS_PREFIX = "IST:BAG:DRAW:RECORDS:";
+    public static final String REDIS_USER_CLIENTID_PREFIX = "IST:USER:CLIENTID:";
 
     public static final long REDIS_SAVE_TIME_24h = 24*60*60;
     public static final long USER_TOKEN_ID_SAVE_TIME = 365*24*60*60;
