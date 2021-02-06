@@ -60,7 +60,7 @@ public class GradeServiceImpl extends BaseServiceImpl implements GradeService {
                     gradeProc.setImgs(StringUtils.substringBeforeLast(sb.toString(),","));
                 }
                 gradeProc.setName(gradeOrder.getName()!=null?gradeOrder.getName():"");
-                gradeProc.setNickname(gradeOrder.getNikeName()!=null?gradeOrder.getNikeName():"");
+                gradeProc.setNickname(gradeOrder.getNickName()!=null?gradeOrder.getNickName():"");
                 gradeProc.setOrderid(gradeOrder.getOrderId()!=null?Long.valueOf(gradeOrder.getOrderId()):0L);
                 gradeProc.setProdid(gradeOrder.getProdId()!=null?Integer.parseInt(gradeOrder.getProdId()):0);
                 gradeProc.setProdinfoid(gradeOrder.getProdInfoId()!=null?Integer.parseInt(gradeOrder.getProdInfoId()):0);
@@ -91,7 +91,7 @@ public class GradeServiceImpl extends BaseServiceImpl implements GradeService {
         }
         GradeProcExample example = new GradeProcExample();
         GradeProcExample.Criteria criteria = example.createCriteria();
-        if (StringUtils.isNoneBlank(req.getProdInfoId())){
+        if (StringUtils.isNotBlank(req.getProdInfoId()) && !"null".equals(req.getProdInfoId())){
             criteria.andProdinfoidEqualTo(new BigDecimal(req.getProdInfoId()));
         }
         if (StringUtils.isNotBlank(req.getUserId())){

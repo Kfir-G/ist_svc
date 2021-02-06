@@ -24,7 +24,7 @@ public class GradeOrder {
     @NotNull(message = "anonym不能为空")
     private Integer anonym;
     @NotBlank(message = "nikeName不能为空")
-    private String nikeName;
+    private String nickName;
     @NotBlank(message = "name不能为空")
     private String name;
     @NotBlank(message = "startTime不能为空")
