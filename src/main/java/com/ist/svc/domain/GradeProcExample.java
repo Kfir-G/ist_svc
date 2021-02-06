@@ -586,7 +586,7 @@ public class GradeProcExample {
             return (Criteria) this;
         }
 
-        public Criteria andProdinfoidIn(List<Integer> values) {
+        public Criteria andProdinfoidIn(List<BigDecimal> values) {
             addCriterion("prodinfoid in", values, "prodinfoid");
             return (Criteria) this;
         }

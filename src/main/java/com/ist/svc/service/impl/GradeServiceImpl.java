@@ -90,15 +90,26 @@ public class GradeServiceImpl extends BaseServiceImpl implements GradeService {
             resp.setMsg(ResultConstant.PARAM_ERROR_MSG + "[orderId|userId|prodInfoId]");
         }
         GradeProcExample example = new GradeProcExample();
+        example.setOrderByClause(req.getOrderColum());
         GradeProcExample.Criteria criteria = example.createCriteria();
         if (StringUtils.isNotBlank(req.getProdInfoId()) && !"null".equals(req.getProdInfoId())){
-            criteria.andProdinfoidEqualTo(new BigDecimal(req.getProdInfoId()));
+            String[] split = req.getProdInfoId().split(",");
+            List<BigDecimal> prodInfos = new ArrayList<>();
+            for (String prodInfoId: split){
+                prodInfos.add(new BigDecimal(prodInfoId));
+            }
+            criteria.andProdinfoidIn(prodInfos);
         }
         if (StringUtils.isNotBlank(req.getUserId())){
             criteria.andUseridEqualTo(Long.valueOf(req.getUserId()));
         }
         if (StringUtils.isNotBlank(req.getOrderId())){
-            criteria.andOrderidEqualTo(Long.valueOf(req.getOrderId()));
+            String[] split = req.getOrderId().split(",");
+            List<Long> orderIds = new ArrayList<>();
+            for (String orderId: split){
+                orderIds.add(Long.valueOf(orderId));
+            }
+            criteria.andOrderidIn(orderIds);
         }
         if (StringUtils.isNotBlank(req.getGradeId())){
             criteria.andGradeidEqualTo(Long.valueOf(req.getGradeId()));

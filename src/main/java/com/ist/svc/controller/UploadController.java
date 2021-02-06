@@ -10,6 +10,7 @@ import com.ist.svc.config.IstEnum;
 import com.ist.svc.controller.model.UserVerifyTokenReq;
 import com.ist.svc.controller.model.UserVerifyTokenResp;
 import com.ist.svc.service.UserTokenService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,6 +28,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("upload")
+@Slf4j
 public class UploadController {
 
     @Autowired
@@ -48,35 +50,42 @@ public class UploadController {
      */
     @PostMapping("multi")
     public ResultVO multi(HttpServletRequest request){
-        System.out.println("文件上传请求 》》》");
-        List<MultipartFile> files = ((MultipartHttpServletRequest) request).getFiles("file");
+        int uploadNum = 0;
+        int successNum = 0;
+        try {
+            System.out.println("文件上传请求 》》》");
+            List<MultipartFile> files = ((MultipartHttpServletRequest) request).getFiles("file");
 
-        String userId = request.getParameter("userId");
-        String tokenId = request.getParameter("tokenId");
-        //校验token
-        UserVerifyTokenReq userVerifyTokenReq = new UserVerifyTokenReq();
-        userVerifyTokenReq.setTokenId(tokenId);
-        userVerifyTokenReq.setUserId(userId);
-        UserVerifyTokenResp userVerifyTokenResp = new UserVerifyTokenResp();
-        userTokenService.verifyToken(userVerifyTokenReq,userVerifyTokenResp);
-        if(!ResultConstant.VERIFY_TOKEN_SUCC_CODE.equals(userVerifyTokenResp.getCode())){
-            return ResultUtil.errorResultVO(IstEnum.ResultEnum.OPERATE_FAIL, userVerifyTokenResp.getMsg());
-        }
-        List<FileDTO> fileDTOList = new ArrayList<>();
-        for ( MultipartFile multipartFile : files) {
-            FileDTO fileDTO = fileComponent.fileUpload(multipartFile);
-            if (fileDTO != null) {
-                fileDTOList.add(fileDTO);
+            String userId = request.getParameter("userId");
+            String tokenId = request.getParameter("tokenId");
+            //校验token
+            UserVerifyTokenReq userVerifyTokenReq = new UserVerifyTokenReq();
+            userVerifyTokenReq.setTokenId(tokenId);
+            userVerifyTokenReq.setUserId(userId);
+            UserVerifyTokenResp userVerifyTokenResp = new UserVerifyTokenResp();
+            userTokenService.verifyToken(userVerifyTokenReq,userVerifyTokenResp);
+            if(!ResultConstant.VERIFY_TOKEN_SUCC_CODE.equals(userVerifyTokenResp.getCode())){
+                return ResultUtil.errorResultVO(IstEnum.ResultEnum.OPERATE_FAIL, userVerifyTokenResp.getMsg());
             }
-        }
-        int uploadNum = files.size();
-        int successNum = fileDTOList.size();
+            List<FileDTO> fileDTOList = new ArrayList<>();
+            for ( MultipartFile multipartFile : files) {
+                FileDTO fileDTO = fileComponent.fileUpload(multipartFile);
+                if (fileDTO != null) {
+                    fileDTOList.add(fileDTO);
+                }
+            }
+            uploadNum = files.size();
+            successNum = fileDTOList.size();
 
-        if (successNum == uploadNum) {
-            System.out.println("response >>> "+ JSON.toJSONString(fileDTOList));
-            ResultVO resultVO = ResultUtil.okResultVO(fileDTOList);
-            return resultVO;
+            if (successNum == uploadNum) {
+                System.out.println("response >>> "+ JSON.toJSONString(fileDTOList));
+                ResultVO resultVO = ResultUtil.okResultVO(fileDTOList);
+                return resultVO;
+            }
+        }catch (Exception e){
+            log.error("UploadController.multi:",e);
         }
+
         return ResultUtil.errorResultVO(IstEnum.ResultEnum.OPERATE_FAIL, "上传["+uploadNum+"]个文件，成功["+successNum+"]个。");
     }
 

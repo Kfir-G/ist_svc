@@ -19,6 +19,7 @@ public class GetProdGradeReq {
     private Integer grade;
     private String startTime;
     private String endTime;
+    private String orderColum;
 //    @NotNull(message = "isHaveImg不为空")
     private Integer isHaveImg;//是否带图片
 //    @NotNull(message = "isHaveVideo不为空")
