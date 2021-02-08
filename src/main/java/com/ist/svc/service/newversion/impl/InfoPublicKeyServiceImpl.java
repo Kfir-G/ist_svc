@@ -4,6 +4,7 @@ import com.ist.svc.common.ResultConstant;
 import com.ist.svc.controller.model.dto.AddInfoPublicKeyValueDto;
 import com.ist.svc.controller.model.dto.ApiBaseResp;
 import com.ist.svc.controller.model.dto.QueryInfoPublicValueByPublicKeyDto;
+import com.ist.svc.controller.model.dto.QueryInfoPublicValueByPublicKeyNoTokenDto;
 import com.ist.svc.dao.InfoPublicKeyMapper;
 import com.ist.svc.domain.InfoPublicKey;
 import com.ist.svc.service.impl.BaseServiceImpl;
@@ -36,5 +37,11 @@ public class InfoPublicKeyServiceImpl extends BaseServiceImpl implements IInfoPu
         infoPublicKey.setValue(dto.getValue());
         infoPublicKeyMapper.insertSelective(infoPublicKey);
         return ApiBaseResp.succ(null);
+    }
+
+    @Override
+    public ApiBaseResp queryInfoPublicValueByPublicKeyNoToken(QueryInfoPublicValueByPublicKeyNoTokenDto dto) {
+        String value = infoPublicKeyMapper.selectValueByPublicKey(dto.getKey());
+        return ApiBaseResp.succ(value);
     }
 }

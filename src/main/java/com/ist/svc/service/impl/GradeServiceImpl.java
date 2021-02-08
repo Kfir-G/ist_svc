@@ -63,7 +63,7 @@ public class GradeServiceImpl extends BaseServiceImpl implements GradeService {
                 gradeProc.setNickname(gradeOrder.getNickName()!=null?gradeOrder.getNickName():"");
                 gradeProc.setOrderid(gradeOrder.getOrderId()!=null?Long.valueOf(gradeOrder.getOrderId()):0L);
                 gradeProc.setProdid(gradeOrder.getProdId()!=null?Integer.parseInt(gradeOrder.getProdId()):0);
-                gradeProc.setProdinfoid(gradeOrder.getProdInfoId()!=null?Integer.parseInt(gradeOrder.getProdInfoId()):0);
+                gradeProc.setProdinfoid(gradeOrder.getProdInfoId()!=null?Long.valueOf(gradeOrder.getProdInfoId()):0);
                 gradeProc.setServicegrade(gradeOrder.getServiceGrade()!=null?gradeOrder.getServiceGrade().shortValue():0);
                 gradeProc.setDeliverygrade(gradeOrder.getDeliveryGrade()!=null?gradeOrder.getDeliveryGrade().shortValue():0);
                 gradeProc.setShopid(gradeOrder.getShopId()!=null?Integer.parseInt(gradeOrder.getShopId()):0);

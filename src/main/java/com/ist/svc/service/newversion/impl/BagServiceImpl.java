@@ -372,6 +372,7 @@ public class BagServiceImpl extends BaseServiceImpl implements BagService {
         if (StringUtils.isNotBlank(req.getEndDate())){
             criteria.andCreatetimeLessThanOrEqualTo(DateUtil.formatDateStr(req.getEndDate(),DateUtil.PATTERN_DATE_TIME));
         }
+        criteria.andDrawMoneyGreaterThan(0f);
         List<BagDraw> bagDraws = bagDrawMapper.selectByExample(example);
         List<BagDrawInfo> bagDrawInfos = new ArrayList<>();
         for (BagDraw bagDraw : bagDraws){

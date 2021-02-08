@@ -17,7 +17,7 @@ public class GradeProc {
 
     private Integer shopid;
 
-    private Integer prodinfoid;
+    private Long prodinfoid;
 
     private Integer prodid;
 
@@ -113,11 +113,11 @@ public class GradeProc {
         this.shopid = shopid;
     }
 
-    public Integer getProdinfoid() {
+    public Long getProdinfoid() {
         return prodinfoid;
     }
 
-    public void setProdinfoid(Integer prodinfoid) {
+    public void setProdinfoid(Long prodinfoid) {
         this.prodinfoid = prodinfoid;
     }
 
