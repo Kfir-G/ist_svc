@@ -55,8 +55,7 @@ public class CInfoPublicKeyController extends BaseController {
     }
 
     @RequestMapping(value = "queryInfoPublicValueByPublicKeyNoToken", produces = "application/json;charset=UTF-8", method = RequestMethod.POST, consumes = "application/json;charset=UTF-8")
-    @ApiOperation(value = "查询key对应的value")
-    @TokenCheck
+    @ApiOperation(value = "查询key对应的value(no token)")
     public ApiBaseResp queryInfoPublicValueByPublicKeyNoToken(@Valid @RequestBody QueryInfoPublicValueByPublicKeyNoTokenDto dto, BindingResult bindingResult) {
         ApiBaseResp resp = new ApiBaseResp();
         try {
