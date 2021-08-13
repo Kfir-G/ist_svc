@@ -27,7 +27,7 @@
 		<jsch.version>0.1.54</jsch.version>
 		<swagger2.version>2.7.0</swagger2.version>
 		<swagger2ui.version>2.7.0</swagger2ui.version>
-		<bouncycastle.version>1.56</bouncycastle.version>
+		<bouncycastle.version>1.67</bouncycastle.version>
 	</properties>
 
 	<dependencies>
